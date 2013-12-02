@@ -6,6 +6,7 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Interpreter;
@@ -17,12 +18,12 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 	}
 
 	@Override
-	public Value newValue(Type type) {
+	public Value newValue(final Type type) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
 	@Override
-	public Value newOperation(AbstractInsnNode insn) {
+	public Value newOperation(final AbstractInsnNode insn) {
 
 		switch (insn.getOpcode()) {
 		case ACONST_NULL:
@@ -47,8 +48,8 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case BIPUSH:
 		case SIPUSH:
 			return Constant.WORD;
-		case LDC:
-			Object cst = ((LdcInsnNode) insn).cst;
+		case LDC: {
+			final Object cst = ((LdcInsnNode) insn).cst;
 			if (cst instanceof Integer) {
 				return Constant.WORD;
 			} else if (cst instanceof Float) {
@@ -60,7 +61,7 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 			} else if (cst instanceof String) {
 				return Constant.WORD;
 			} else if (cst instanceof Type) {
-				int sort = ((Type) cst).getSort();
+				final int sort = ((Type) cst).getSort();
 				if (sort == Type.OBJECT || sort == Type.ARRAY || sort == Type.METHOD) {
 					return Constant.WORD;
 				} else {
@@ -71,11 +72,14 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 			} else {
 				throw new IllegalArgumentException("Illegal LDC constant " + cst);
 			}
+		}
 		case JSR:
 			throw new UnsupportedOperationException(
 					"Do not support instruction types JSR - Deprecated in Java 6");
-		case GETSTATIC:
-			throw new UnsupportedOperationException("Not implemented yet");
+		case GETSTATIC: {
+			final FieldInsnNode f = (FieldInsnNode) insn;
+			return new StaticField(f.owner, f.name, f.desc);
+		}
 		case NEW:
 			throw new UnsupportedOperationException("Not implemented yet");
 		default:
@@ -84,42 +88,42 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 	}
 
 	@Override
-	public Value copyOperation(AbstractInsnNode insn, Value value)
+	public Value copyOperation(final AbstractInsnNode insn, final Value value)
 			throws AnalyzerException {
 		return null;
 	}
 
 	@Override
-	public Value unaryOperation(AbstractInsnNode insn, Value value)
+	public Value unaryOperation(final AbstractInsnNode insn, final Value value)
 			throws AnalyzerException {
 		return null;
 	}
 
 	@Override
-	public Value binaryOperation(AbstractInsnNode insn, Value value1,
-			Value value2) throws AnalyzerException {
+	public Value binaryOperation(final AbstractInsnNode insn, final Value value1, final Value value2)
+			throws AnalyzerException {
 		return null;
 	}
 
 	@Override
-	public Value ternaryOperation(AbstractInsnNode insn, Value value1,
-			Value value2, Value value3) throws AnalyzerException {
+	public Value ternaryOperation(final AbstractInsnNode insn, final Value value1,
+			final Value value2, final Value value3) throws AnalyzerException {
 		return null;
 	}
 
 	@Override
-	public Value naryOperation(AbstractInsnNode insn,
-			List<? extends Value> values) throws AnalyzerException {
+	public Value naryOperation(final AbstractInsnNode insn, final List<? extends Value> values)
+			throws AnalyzerException {
 		return null;
 	}
 
 	@Override
-	public void returnOperation(AbstractInsnNode insn, Value value,
-			Value expected) throws AnalyzerException {
+	public void returnOperation(final AbstractInsnNode insn, final Value value, final Value expected)
+			throws AnalyzerException {
 	}
 
 	@Override
-	public Value merge(Value v, Value w) {
+	public Value merge(final Value v, final Value w) {
 		return null;
 	}
 
