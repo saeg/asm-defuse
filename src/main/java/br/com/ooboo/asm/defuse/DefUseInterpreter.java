@@ -8,6 +8,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
@@ -80,8 +81,10 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 			final FieldInsnNode f = (FieldInsnNode) insn;
 			return new StaticField(f.owner, f.name, f.desc);
 		}
-		case NEW:
-			throw new UnsupportedOperationException("Not implemented yet");
+		case NEW: {
+			final TypeInsnNode type = (TypeInsnNode) insn;
+			return new ObjectRef(type.desc);
+		}
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}

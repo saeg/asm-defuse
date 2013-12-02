@@ -19,26 +19,26 @@ public class ADefUseInterpreterNewOperationShouldThrownAnException {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void WhenOpcodeIsInvalid() {
-		AbstractInsnNode insn = new InsnNode(Opcodes.DUP);
+		final AbstractInsnNode insn = new InsnNode(Opcodes.DUP);
 		interpreter.newOperation(insn);
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
 	public void WhenLdcTypeSortIsInvalid() {
-		AbstractInsnNode insn = new LdcInsnNode(Type.getType("V"));
+		final AbstractInsnNode insn = new LdcInsnNode(Type.getType("V"));
 		interpreter.newOperation(insn);
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
 	public void WhenLdcConstantIsInvalid() {
-		AbstractInsnNode insn = new LdcInsnNode(new Object());
+		final AbstractInsnNode insn = new LdcInsnNode(new Object());
 		interpreter.newOperation(insn);
 	}
-	
+
 	@Test(expected = UnsupportedOperationException.class)
 	public void WhenInstructionIsJSR() {
-		AbstractInsnNode insn = new InsnNode(Opcodes.JSR);
+		final AbstractInsnNode insn = new InsnNode(Opcodes.JSR);
 		interpreter.newOperation(insn);
 	}
-	
+
 }
