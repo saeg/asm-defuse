@@ -2,7 +2,7 @@ package br.com.ooboo.asm.defuse;
 
 import org.objectweb.asm.Type;
 
-public abstract class Field extends Variable {
+public class Field extends Variable {
 
 	public final String owner;
 	public final String name;
