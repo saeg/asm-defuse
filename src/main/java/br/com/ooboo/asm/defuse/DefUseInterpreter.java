@@ -25,7 +25,6 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 
 	@Override
 	public Value newOperation(final AbstractInsnNode insn) {
-
 		switch (insn.getOpcode()) {
 		case ACONST_NULL:
 		case ICONST_M1:

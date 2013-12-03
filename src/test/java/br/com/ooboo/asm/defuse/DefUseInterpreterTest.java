@@ -18,7 +18,7 @@ public class DefUseInterpreterTest {
 
 	@Test
 	public void NewOperationShouldReturnAStaticFieldCorrectly() {
-		final FieldInsnNode insn = new FieldInsnNode(Opcodes.GETSTATIC, "Owner", "Name", "Desc");
+		final FieldInsnNode insn = new FieldInsnNode(Opcodes.GETSTATIC, "Owner", "Name", "[I");
 		final StaticField sfield = (StaticField) interpreter.newOperation(insn);
 		Assert.assertEquals(insn.owner, sfield.owner);
 		Assert.assertEquals(insn.name, sfield.name);
@@ -27,9 +27,9 @@ public class DefUseInterpreterTest {
 
 	@Test
 	public void NewOperationShouldReturnAnObjectRefCorrectly() {
-		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "Desc");
+		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "Ljava/lang/String;");
 		final ObjectRef ref = (ObjectRef) interpreter.newOperation(insn);
-		Assert.assertEquals(insn.desc, ref.desc);
+		Assert.assertEquals(insn.desc, ref.type.getDescriptor());
 	}
 
 }

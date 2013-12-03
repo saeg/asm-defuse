@@ -1,14 +1,14 @@
 package br.com.ooboo.asm.defuse;
 
-import java.util.Collections;
-import java.util.List;
+import org.objectweb.asm.Type;
 
-public final class ObjectRef implements Value {
-
-	public final String desc;
+public final class ObjectRef extends Value {
 
 	public ObjectRef(final String desc) {
-		this.desc = desc;
+		super(Type.getType(desc));
+		if (type.getSort() != Type.OBJECT) {
+			throw new IllegalArgumentException(desc + " is not a object descriptor");
+		}
 	}
 
 	@Override
@@ -17,13 +17,8 @@ public final class ObjectRef implements Value {
 	}
 
 	@Override
-	public List<Variable> getVariables() {
-		return Collections.emptyList();
-	}
-
-	@Override
 	public String toString() {
-		return String.format("%s(%s)", getClass().getSimpleName(), desc);
+		return String.format("%s(%s)", getClass().getSimpleName(), type.getClassName());
 	}
 
 }

@@ -10,6 +10,9 @@ public abstract class Field extends Variable {
 
 	public Field(final String owner, final String name, final String desc) {
 		super(Type.getType(desc));
+		if (!type.getDescriptor().equals(desc)) {
+			throw new IllegalArgumentException("Invalid descriptor: " + desc);
+		}
 		this.owner = owner;
 		this.name = name;
 		this.desc = desc;

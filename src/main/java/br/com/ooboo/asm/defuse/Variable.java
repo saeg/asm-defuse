@@ -5,22 +5,15 @@ import java.util.List;
 
 import org.objectweb.asm.Type;
 
-public class Variable implements Value {
-
-	public final Type type;
+public abstract class Variable extends Value {
 
 	public Variable(final Type type) {
-		this.type = type;
+		super(type);
 	}
 
 	@Override
 	public List<Variable> getVariables() {
 		return Collections.singletonList(this);
-	}
-
-	@Override
-	public int getSize() {
-		return type == Type.LONG_TYPE || type == Type.DOUBLE_TYPE ? 2 : 1;
 	}
 
 }
