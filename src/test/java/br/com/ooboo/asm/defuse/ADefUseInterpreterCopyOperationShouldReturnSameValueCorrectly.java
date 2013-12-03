@@ -19,27 +19,27 @@ public class ADefUseInterpreterCopyOperationShouldReturnSameValueCorrectly {
 
 	@Parameters
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] {
-			{ Opcodes.DUP,  },
+		return Arrays.asList(new Object[][] { 
+			{ Opcodes.DUP },
 			{ Opcodes.DUP_X1 },
 			{ Opcodes.DUP_X2 },
 			{ Opcodes.DUP2_X1 },
 			{ Opcodes.DUP2_X2 },
-			{ Opcodes.SWAP },
+			{ Opcodes.SWAP } 
 		});
 	}
-	
-	private AbstractInsnNode insn;
-	
-	public ADefUseInterpreterCopyOperationShouldReturnSameValueCorrectly(int opcode) {
+
+	private final AbstractInsnNode insn;
+
+	public ADefUseInterpreterCopyOperationShouldReturnSameValueCorrectly(final int opcode) {
 		insn = new InsnNode(opcode);
 	}
-	
+
 	@Test
 	public void AssertThatDefUseInterpreterCopyOperationReturnSameValueCorrectly() {
-		Value value = new Value(null);
-		DefUseInterpreter interpreter = new DefUseInterpreter();
-		Value copy = interpreter.copyOperation(insn, value);
+		final Value value = new Value(null);
+		final DefUseInterpreter interpreter = new DefUseInterpreter();
+		final Value copy = interpreter.copyOperation(insn, value);
 		Assert.assertThat(copy, sameInstance(value));
 	}
 

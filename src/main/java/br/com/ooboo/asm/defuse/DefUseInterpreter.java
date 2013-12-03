@@ -9,6 +9,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
@@ -96,7 +97,10 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case LLOAD:
 		case FLOAD:
 		case DLOAD:
-		case ALOAD:
+		case ALOAD: {
+			final VarInsnNode v = (VarInsnNode) insn;
+			return new Local(value.type, v.var);
+		}
 		case ISTORE:
 		case LSTORE:
 		case FSTORE:
