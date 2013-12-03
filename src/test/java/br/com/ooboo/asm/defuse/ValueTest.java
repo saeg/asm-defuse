@@ -15,18 +15,18 @@ public class ValueTest {
 
 	@Before
 	public void setUp() {
-		value = new Value(Type.INT_TYPE){};
+		value = new Value(Type.INT_TYPE);
 	}
 
 	@Test
 	public void SizeOfLongIsTwo() {
-		final Value value = new Value(Type.LONG_TYPE){};
+		final Value value = new Value(Type.LONG_TYPE);
 		Assert.assertEquals(2, value.getSize());
 	}
 
 	@Test
 	public void SizeOfDoubleIsTwo() {
-		final Value value = new Value(Type.DOUBLE_TYPE){};
+		final Value value = new Value(Type.DOUBLE_TYPE);
 		Assert.assertEquals(2, value.getSize());
 	}
 

@@ -90,9 +90,29 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 	}
 
 	@Override
-	public Value copyOperation(final AbstractInsnNode insn, final Value value)
-			throws AnalyzerException {
-		return null;
+	public Value copyOperation(final AbstractInsnNode insn, final Value value) {
+		switch (insn.getOpcode()) {
+		case ILOAD:
+		case LLOAD:
+		case FLOAD:
+		case DLOAD:
+		case ALOAD:
+		case ISTORE:
+		case LSTORE:
+		case FSTORE:
+		case DSTORE:
+		case ASTORE:
+			throw new UnsupportedOperationException("Not implemented yet");
+		case DUP:
+		case DUP_X1:
+		case DUP_X2:
+		case DUP2_X1:
+		case DUP2_X2:
+		case SWAP:
+			return value;
+		default:
+			throw new IllegalArgumentException("Invalid instruction opcode.");
+		}
 	}
 
 	@Override

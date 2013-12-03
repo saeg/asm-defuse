@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.objectweb.asm.Type;
 
-public abstract class Value implements org.objectweb.asm.tree.analysis.Value {
+public class Value implements org.objectweb.asm.tree.analysis.Value {
 
 	public final Type type;
 
