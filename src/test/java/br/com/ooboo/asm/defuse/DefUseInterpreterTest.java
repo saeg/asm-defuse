@@ -32,4 +32,10 @@ public class DefUseInterpreterTest {
 		Assert.assertEquals(insn.desc, ref.type.getDescriptor());
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void CopyOperationShouldThrowAnExceptionWhenOpcodeIsInvalid() {
+		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "Ljava/lang/String;");
+		interpreter.copyOperation(insn, null);
+	}
+
 }

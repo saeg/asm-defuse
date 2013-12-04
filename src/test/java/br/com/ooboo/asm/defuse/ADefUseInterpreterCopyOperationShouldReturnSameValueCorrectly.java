@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 
@@ -37,7 +38,7 @@ public class ADefUseInterpreterCopyOperationShouldReturnSameValueCorrectly {
 
 	@Test
 	public void AssertThatDefUseInterpreterCopyOperationReturnSameValueCorrectly() {
-		final Value value = new Value(null);
+		final Value value = new Value(Type.INT_TYPE);
 		final DefUseInterpreter interpreter = new DefUseInterpreter();
 		final Value copy = interpreter.copyOperation(insn, value);
 		Assert.assertThat(copy, sameInstance(value));

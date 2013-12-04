@@ -45,4 +45,9 @@ public class ValueTest {
 		Assert.assertThat(value.getVariables(), sameInstance(Collections.EMPTY_LIST));
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void ThrowAnExceptionWhenTypeIsNull() {
+		new Value(null);
+	}
+
 }

@@ -3,6 +3,7 @@ package br.com.ooboo.asm.defuse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.objectweb.asm.Type;
 
 public class LocalTest {
 
@@ -10,7 +11,7 @@ public class LocalTest {
 
 	@Before
 	public void setUp() {
-		local = new Local(null, 1);
+		local = new Local(Type.INT_TYPE, 1);
 	}
 
 	@Test
@@ -30,7 +31,7 @@ public class LocalTest {
 
 	@Test
 	public void EqualsButDifferentClassReturnsFalse() {
-		final Local other = new Local(null, 1) {
+		final Local other = new Local(Type.INT_TYPE, 1) {
 			/* other class */
 		};
 		Assert.assertFalse(local.equals(other));
@@ -38,25 +39,25 @@ public class LocalTest {
 
 	@Test
 	public void EqualsButDifferentVarReturnFalse() {
-		final Local other = new Local(null, 2);
+		final Local other = new Local(Type.INT_TYPE, 2);
 		Assert.assertFalse(local.equals(other));
 	}
 
 	@Test
 	public void EqualsReturnTrue() {
-		final Local other = new Local(null, 1);
+		final Local other = new Local(Type.INT_TYPE, 1);
 		Assert.assertTrue(local.equals(other));
 	}
 
 	@Test
 	public void EqualsButDifferentVarReturnOtherHash() {
-		final Local other = new Local(null, 2);
+		final Local other = new Local(Type.INT_TYPE, 2);
 		Assert.assertNotEquals(local.hashCode(), other.hashCode());
 	}
 
 	@Test
 	public void EqualsReturnSameHash() {
-		final Local other = new Local(null, 1);
+		final Local other = new Local(Type.INT_TYPE, 1);
 		Assert.assertEquals(local.hashCode(), other.hashCode());
 	}
 

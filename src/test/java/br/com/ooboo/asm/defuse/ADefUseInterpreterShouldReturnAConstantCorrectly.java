@@ -28,53 +28,54 @@ public class ADefUseInterpreterShouldReturnAConstantCorrectly {
 		return Arrays.asList(
 			new Object[][] {
 					// null
-					{ Opcodes.ACONST_NULL, Constant.WORD, null },
+					{ Opcodes.ACONST_NULL, Value.REFERENCE_VALUE, null },
 					// -1, 0, 1, 2, 3, 4, 5
-					{ Opcodes.ICONST_M1, Constant.WORD, null },
-					{ Opcodes.ICONST_0, Constant.WORD, null },
-					{ Opcodes.ICONST_1, Constant.WORD, null },
-					{ Opcodes.ICONST_2, Constant.WORD, null },
-					{ Opcodes.ICONST_3, Constant.WORD, null },
-					{ Opcodes.ICONST_4, Constant.WORD, null },
-					{ Opcodes.ICONST_5, Constant.WORD, null },
+					{ Opcodes.ICONST_M1, Value.INT_VALUE, null },
+					{ Opcodes.ICONST_0, Value.INT_VALUE, null },
+					{ Opcodes.ICONST_1, Value.INT_VALUE, null },
+					{ Opcodes.ICONST_2, Value.INT_VALUE, null },
+					{ Opcodes.ICONST_3, Value.INT_VALUE, null },
+					{ Opcodes.ICONST_4, Value.INT_VALUE, null },
+					{ Opcodes.ICONST_5, Value.INT_VALUE, null },
 					// 0L, 1L
-					{ Opcodes.LCONST_0, Constant.DWORD, null },
-					{ Opcodes.LCONST_1, Constant.DWORD, null },
+					{ Opcodes.LCONST_0, Value.LONG_VALUE, null },
+					{ Opcodes.LCONST_1, Value.LONG_VALUE, null },
 					// 0f, 1f, 2f
-					{ Opcodes.FCONST_0, Constant.WORD, null },
-					{ Opcodes.FCONST_1, Constant.WORD, null },
-					{ Opcodes.FCONST_2, Constant.WORD, null },
+					{ Opcodes.FCONST_0, Value.FLOAT_VALUE, null },
+					{ Opcodes.FCONST_1, Value.FLOAT_VALUE, null },
+					{ Opcodes.FCONST_2, Value.FLOAT_VALUE, null },
 					// 0d, 1d
-					{ Opcodes.DCONST_0, Constant.DWORD, null },
-					{ Opcodes.DCONST_1, Constant.DWORD, null },
+					{ Opcodes.DCONST_0, Value.DOUBLE_VALUE, null },
+					{ Opcodes.DCONST_1, Value.DOUBLE_VALUE, null },
 					// bipush, sipush
-					{ Opcodes.BIPUSH, Constant.WORD, null },
-					{ Opcodes.SIPUSH, Constant.WORD, null },
+					{ Opcodes.BIPUSH, Value.INT_VALUE, null },
+					{ Opcodes.SIPUSH, Value.INT_VALUE, null },
 					// ldc Integer and Float
-					{ Opcodes.LDC, Constant.WORD, rnd.nextInt() },
-					{ Opcodes.LDC, Constant.WORD, rnd.nextFloat() },
+					{ Opcodes.LDC, Value.INT_VALUE, rnd.nextInt() },
+					{ Opcodes.LDC, Value.FLOAT_VALUE, rnd.nextFloat() },
 					// ldc Long and Double
-					{ Opcodes.LDC, Constant.DWORD, rnd.nextLong() },
-					{ Opcodes.LDC, Constant.DWORD, rnd.nextDouble() },
+					{ Opcodes.LDC, Value.LONG_VALUE, rnd.nextLong() },
+					{ Opcodes.LDC, Value.DOUBLE_VALUE, rnd.nextDouble() },
 					// ldc String
-					{ Opcodes.LDC, Constant.WORD, "String" },
+					{ Opcodes.LDC, Value.REFERENCE_VALUE, "String" },
 					// object type
-					{ Opcodes.LDC, Constant.WORD, Type.getType("Ljava.lang.Object;") },
+					{ Opcodes.LDC, Value.REFERENCE_VALUE, Type.getType("Ljava.lang.Object;") },
 					// array type
-					{ Opcodes.LDC, Constant.WORD, Type.getType("[I") },
+					{ Opcodes.LDC, Value.REFERENCE_VALUE, Type.getType("[I") },
 					// method type
-					{ Opcodes.LDC, Constant.WORD, Type.getType("()I") },
+					{ Opcodes.LDC, Value.REFERENCE_VALUE, Type.getType("()I") },
 					// method handle
-					{ Opcodes.LDC, Constant.WORD, new Handle(0, "", "", "") }
+					{ Opcodes.LDC, Value.REFERENCE_VALUE, new Handle(0, "", "", "") }
 					
 			}
 		);
 	}
-	
+
 	private AbstractInsnNode insn;
+
 	private Value expected;
-	
-	public ADefUseInterpreterShouldReturnAConstantCorrectly(int opcode, Constant c, Object arg) {
+
+	public ADefUseInterpreterShouldReturnAConstantCorrectly(int opcode, Value v, Object arg) {
 		if (opcode >= Opcodes.ACONST_NULL && opcode <= Opcodes.DCONST_1) {
 			insn = new InsnNode(opcode);
 		} else if (opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH) {
@@ -82,13 +83,13 @@ public class ADefUseInterpreterShouldReturnAConstantCorrectly {
 		} else { // if (opcode == Opcodes.LDC)
 			insn = new LdcInsnNode(arg);
 		}
-		expected = c;
+		expected = v;
 	}
-	
+
 	@Test
 	public void AssertThatNewOperationReturnsAConstantCorrectly() {
-		DefUseInterpreter interpreter = new DefUseInterpreter();
-		Value op = interpreter.newOperation(insn);
+		final DefUseInterpreter interpreter = new DefUseInterpreter();
+		final Value op = interpreter.newOperation(insn);
 		Assert.assertThat(op, sameInstance(expected));
 	}
 

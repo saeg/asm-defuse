@@ -21,13 +21,37 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 
 	@Override
 	public Value newValue(final Type type) {
-		throw new UnsupportedOperationException("Not implemented yet");
+		if (type == null) {
+			return Value.UNINITIALIZED_VALUE;
+		}
+		switch (type.getSort()) {
+		case Type.VOID:
+			return null;
+		case Type.BOOLEAN:
+		case Type.CHAR:
+		case Type.BYTE:
+		case Type.SHORT:
+		case Type.INT:
+			return Value.INT_VALUE;
+		case Type.FLOAT:
+			return Value.FLOAT_VALUE;
+		case Type.LONG:
+			return Value.LONG_VALUE;
+		case Type.DOUBLE:
+			return Value.DOUBLE_VALUE;
+		case Type.ARRAY:
+		case Type.OBJECT:
+			return Value.REFERENCE_VALUE;
+		default:
+			throw new IllegalArgumentException("Illegal type" + type);
+		}
 	}
 
 	@Override
 	public Value newOperation(final AbstractInsnNode insn) {
 		switch (insn.getOpcode()) {
 		case ACONST_NULL:
+			return Value.REFERENCE_VALUE;
 		case ICONST_M1:
 		case ICONST_0:
 		case ICONST_1:
@@ -35,41 +59,41 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case ICONST_3:
 		case ICONST_4:
 		case ICONST_5:
-			return Constant.WORD;
+			return Value.INT_VALUE;
 		case LCONST_0:
 		case LCONST_1:
-			return Constant.DWORD;
+			return Value.LONG_VALUE;
 		case FCONST_0:
 		case FCONST_1:
 		case FCONST_2:
-			return Constant.WORD;
+			return Value.FLOAT_VALUE;
 		case DCONST_0:
 		case DCONST_1:
-			return Constant.DWORD;
+			return Value.DOUBLE_VALUE;
 		case BIPUSH:
 		case SIPUSH:
-			return Constant.WORD;
+			return Value.INT_VALUE;
 		case LDC: {
 			final Object cst = ((LdcInsnNode) insn).cst;
 			if (cst instanceof Integer) {
-				return Constant.WORD;
+				return Value.INT_VALUE;
 			} else if (cst instanceof Float) {
-				return Constant.WORD;
+				return Value.FLOAT_VALUE;
 			} else if (cst instanceof Long) {
-				return Constant.DWORD;
+				return Value.LONG_VALUE;
 			} else if (cst instanceof Double) {
-				return Constant.DWORD;
+				return Value.DOUBLE_VALUE;
 			} else if (cst instanceof String) {
-				return Constant.WORD;
+				return Value.REFERENCE_VALUE;
 			} else if (cst instanceof Type) {
 				final int sort = ((Type) cst).getSort();
 				if (sort == Type.OBJECT || sort == Type.ARRAY || sort == Type.METHOD) {
-					return Constant.WORD;
+					return Value.REFERENCE_VALUE;
 				} else {
 					throw new IllegalArgumentException("Illegal LDC constant " + cst);
 				}
 			} else if (cst instanceof Handle) {
-				return Constant.WORD;
+				return Value.REFERENCE_VALUE;
 			} else {
 				throw new IllegalArgumentException("Illegal LDC constant " + cst);
 			}
@@ -106,7 +130,7 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case FSTORE:
 		case DSTORE:
 		case ASTORE:
-			throw new UnsupportedOperationException("Not implemented yet");
+			return newValue(value.type);
 		case DUP:
 		case DUP_X1:
 		case DUP_X2:
