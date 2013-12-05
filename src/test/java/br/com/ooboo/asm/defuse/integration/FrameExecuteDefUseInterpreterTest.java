@@ -86,7 +86,7 @@ public class FrameExecuteDefUseInterpreterTest {
 	public void StoreAValueOfTypeStaticFloat() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
 		frame.push(new StaticField("Owner", "Name", "F"));
-		frame.execute(new VarInsnNode(Opcodes.ISTORE, 0), interpreter);
+		frame.execute(new VarInsnNode(Opcodes.FSTORE, 0), interpreter);
 		Assert.assertEquals(Value.FLOAT_VALUE, frame.getLocal(0));
 	}
 
@@ -103,7 +103,7 @@ public class FrameExecuteDefUseInterpreterTest {
 	public void StoreAValueOfTypeStaticDouble() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(2, 1);
 		frame.push(new StaticField("Owner", "Name", "D"));
-		frame.execute(new VarInsnNode(Opcodes.ISTORE, 0), interpreter);
+		frame.execute(new VarInsnNode(Opcodes.DSTORE, 0), interpreter);
 		Assert.assertEquals(Value.DOUBLE_VALUE, frame.getLocal(0));
 		Assert.assertEquals(Value.UNINITIALIZED_VALUE, frame.getLocal(1));
 	}
@@ -112,7 +112,7 @@ public class FrameExecuteDefUseInterpreterTest {
 	public void StoreAValueOfTypeStaticObjectReference() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
 		frame.push(new StaticField("Owner", "Name", "Ljava/lang/String;"));
-		frame.execute(new VarInsnNode(Opcodes.ISTORE, 0), interpreter);
+		frame.execute(new VarInsnNode(Opcodes.ASTORE, 0), interpreter);
 		Assert.assertEquals(Value.REFERENCE_VALUE, frame.getLocal(0));
 	}
 
@@ -120,7 +120,7 @@ public class FrameExecuteDefUseInterpreterTest {
 	public void StoreAValueOfTypeStaticArrayReference() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
 		frame.push(new StaticField("Owner", "Name", "[I"));
-		frame.execute(new VarInsnNode(Opcodes.ISTORE, 0), interpreter);
+		frame.execute(new VarInsnNode(Opcodes.ASTORE, 0), interpreter);
 		Assert.assertEquals(Value.REFERENCE_VALUE, frame.getLocal(0));
 	}
 

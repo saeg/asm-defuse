@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +14,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 @RunWith(Parameterized.class)
 public class ADefUseInterpreterCopyOperationShouldReturnAValueTypeOnStore {
@@ -38,13 +39,13 @@ public class ADefUseInterpreterCopyOperationShouldReturnAValueTypeOnStore {
 	public ADefUseInterpreterCopyOperationShouldReturnAValueTypeOnStore(
 			final int opcode, final Type type, final Value expected) {
 		
-		this.insn = new InsnNode(opcode);
+		this.insn = new VarInsnNode(opcode, new Random().nextInt());
 		this.value = new Value(type);
 		this.expected = expected;
 	}
 
 	@Test
-	public void AssertThatDefUseInterpreterCopyOperationReturnNullCorrectly() {
+	public void AssertThatDefUseInterpreterCopyOperationReturnValueTypeCorrectly() {
 		final DefUseInterpreter interpreter = new DefUseInterpreter();
 		final Value copy = interpreter.copyOperation(insn, value);
 		Assert.assertThat(copy, sameInstance(expected));
