@@ -24,6 +24,7 @@ public class ADefUseInterpreterCopyOperationShouldReturnSameValueCorrectly {
 			{ Opcodes.DUP },
 			{ Opcodes.DUP_X1 },
 			{ Opcodes.DUP_X2 },
+			{ Opcodes.DUP2 },
 			{ Opcodes.DUP2_X1 },
 			{ Opcodes.DUP2_X2 },
 			{ Opcodes.SWAP } 

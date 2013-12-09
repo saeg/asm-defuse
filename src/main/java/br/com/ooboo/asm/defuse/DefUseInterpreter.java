@@ -134,6 +134,7 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case DUP:
 		case DUP_X1:
 		case DUP_X2:
+		case DUP2:
 		case DUP2_X1:
 		case DUP2_X2:
 		case SWAP:
