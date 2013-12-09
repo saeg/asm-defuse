@@ -184,6 +184,21 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 			return new Cast(Type.CHAR_TYPE, value);
 		case I2S:
 			return new Cast(Type.SHORT_TYPE, value);
+		case IFEQ:
+		case IFNE:
+		case IFLT:
+		case IFGE:
+		case IFGT:
+		case IFLE:
+		case TABLESWITCH:
+		case LOOKUPSWITCH:
+		case IRETURN:
+		case LRETURN:
+		case FRETURN:
+		case DRETURN:
+		case ARETURN:
+		case PUTSTATIC:
+			return null;
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}

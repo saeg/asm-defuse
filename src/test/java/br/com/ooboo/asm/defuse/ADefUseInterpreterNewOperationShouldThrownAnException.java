@@ -6,6 +6,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 
 public class ADefUseInterpreterNewOperationShouldThrownAnException {
@@ -37,7 +38,7 @@ public class ADefUseInterpreterNewOperationShouldThrownAnException {
 
 	@Test(expected = UnsupportedOperationException.class)
 	public void WhenInstructionIsJSR() {
-		final AbstractInsnNode insn = new InsnNode(Opcodes.JSR);
+		final AbstractInsnNode insn = new JumpInsnNode(Opcodes.JSR, null);
 		interpreter.newOperation(insn);
 	}
 
