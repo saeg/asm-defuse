@@ -151,6 +151,8 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case FNEG:
 		case DNEG:
 			return value;
+		case IINC:
+			return Value.INT_VALUE;
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}

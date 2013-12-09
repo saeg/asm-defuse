@@ -2,12 +2,15 @@ package br.com.ooboo.asm.defuse;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
 
+import java.util.Random;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 
@@ -72,6 +75,14 @@ public class DefUseInterpreterTest {
 		final Value value = new Value(Type.DOUBLE_TYPE);
 		final Value op = interpreter.unaryOperation(insn, value);
 		Assert.assertThat(op, sameInstance(value));
+	}
+
+	@Test
+	public void UnaryOperationShouldReturnAIntValueTypeWhenOpcodeIsIINC() {
+		final Random rnd = new Random();
+		final IincInsnNode insn = new IincInsnNode(rnd.nextInt(), rnd.nextInt());
+		final Value op = interpreter.unaryOperation(insn, Value.INT_VALUE);
+		Assert.assertThat(op, sameInstance(Value.INT_VALUE));
 	}
 
 }
