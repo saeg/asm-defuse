@@ -154,6 +154,36 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 			return value;
 		case IINC:
 			return Value.INT_VALUE;
+		case I2L:
+			return new Cast(Type.LONG_TYPE, value);
+		case I2F:
+			return new Cast(Type.FLOAT_TYPE, value);
+		case I2D:
+			return new Cast(Type.DOUBLE_TYPE, value);
+		case L2I:
+			return new Cast(Type.INT_TYPE, value);
+		case L2F:
+			return new Cast(Type.FLOAT_TYPE, value);
+		case L2D:
+			return new Cast(Type.DOUBLE_TYPE, value);
+		case F2I:
+			return new Cast(Type.INT_TYPE, value);
+		case F2L:
+			return new Cast(Type.LONG_TYPE, value);
+		case F2D:
+			return new Cast(Type.DOUBLE_TYPE, value);
+		case D2I:
+			return new Cast(Type.INT_TYPE, value);
+		case D2L:
+			return new Cast(Type.LONG_TYPE, value);
+		case D2F:
+			return new Cast(Type.FLOAT_TYPE, value);
+		case I2B:
+			return new Cast(Type.BYTE_TYPE, value);
+		case I2C:
+			return new Cast(Type.CHAR_TYPE, value);
+		case I2S:
+			return new Cast(Type.SHORT_TYPE, value);
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}
