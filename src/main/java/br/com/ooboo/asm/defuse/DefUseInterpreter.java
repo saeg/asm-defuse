@@ -144,9 +144,16 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 	}
 
 	@Override
-	public Value unaryOperation(final AbstractInsnNode insn, final Value value)
-			throws AnalyzerException {
-		return null;
+	public Value unaryOperation(final AbstractInsnNode insn, final Value value) {
+		switch (insn.getOpcode()) {
+		case INEG:
+		case LNEG:
+		case FNEG:
+		case DNEG:
+			return value;
+		default:
+			throw new IllegalArgumentException("Invalid instruction opcode.");
+		}
 	}
 
 	@Override

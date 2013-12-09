@@ -1,10 +1,14 @@
 package br.com.ooboo.asm.defuse;
 
+import static org.hamcrest.CoreMatchers.sameInstance;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 
 public class DefUseInterpreterTest {
@@ -36,6 +40,38 @@ public class DefUseInterpreterTest {
 	public void CopyOperationShouldThrowAnExceptionWhenOpcodeIsInvalid() {
 		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "Ljava/lang/String;");
 		interpreter.copyOperation(insn, null);
+	}
+
+	@Test
+	public void UnaryOperationShouldReturnSameValueWhenOpcodeIsINEG() {
+		final InsnNode insn = new InsnNode(Opcodes.INEG);
+		final Value value = new Value(Type.INT_TYPE);
+		final Value op = interpreter.unaryOperation(insn, value);
+		Assert.assertThat(op, sameInstance(value));
+	}
+
+	@Test
+	public void UnaryOperationShouldReturnSameValueWhenOpcodeIsLNEG() {
+		final InsnNode insn = new InsnNode(Opcodes.LNEG);
+		final Value value = new Value(Type.LONG_TYPE);
+		final Value op = interpreter.unaryOperation(insn, value);
+		Assert.assertThat(op, sameInstance(value));
+	}
+
+	@Test
+	public void UnaryOperationShouldReturnSameValueWhenOpcodeIsFNEG() {
+		final InsnNode insn = new InsnNode(Opcodes.FNEG);
+		final Value value = new Value(Type.FLOAT_TYPE);
+		final Value op = interpreter.unaryOperation(insn, value);
+		Assert.assertThat(op, sameInstance(value));
+	}
+
+	@Test
+	public void UnaryOperationShouldReturnSameValueWhenOpcodeIsDNEG() {
+		final InsnNode insn = new InsnNode(Opcodes.DNEG);
+		final Value value = new Value(Type.DOUBLE_TYPE);
+		final Value op = interpreter.unaryOperation(insn, value);
+		Assert.assertThat(op, sameInstance(value));
 	}
 
 }
