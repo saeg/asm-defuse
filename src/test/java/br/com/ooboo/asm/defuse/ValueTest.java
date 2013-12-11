@@ -50,4 +50,56 @@ public class ValueTest {
 		new Value(null);
 	}
 
+	@Test
+	public void EqualsASelfReturnTrue() {
+		Assert.assertTrue(value.equals(value));
+	}
+
+	@Test
+	public void EqualsANullReturnsFalse() {
+		Assert.assertFalse(value.equals(null));
+	}
+
+	@Test
+	public void EqualsButDifferentClassReturnsFalse() {
+		final Value other = new Value(Type.INT_TYPE) {
+			/* other class */
+		};
+		Assert.assertFalse(value.equals(other));
+	}
+
+	@Test
+	public void EqualsReturnTrue() {
+		final Value other = new Value(Type.INT_TYPE);
+		Assert.assertTrue(value.equals(other));
+	}
+
+	@Test
+	public void DifferentReturnFalseOnEquals() {
+		final Value other = new Value(Type.LONG_TYPE);
+		Assert.assertFalse(value.equals(other));
+	}
+
+	@Test
+	public void EqualsReturnSameHash() {
+		final Value other = new Value(Type.INT_TYPE);
+		Assert.assertEquals(value.hashCode(), other.hashCode());
+	}
+
+	@Test
+	public void DifferentReturnDifferentHashCode() {
+		final Value other = new Value(Type.LONG_TYPE);
+		Assert.assertNotEquals(value.hashCode(), other.hashCode());
+	}
+
+	@Test
+	public void EqualsDoNotThrowAnExceptionWhenTypeIsNull() {
+		Value.UNINITIALIZED_VALUE.equals(Value.INT_VALUE);
+	}
+
+	@Test
+	public void HashCodeDoNotThrowAnExceptionWhenTypeIsNull() {
+		Value.UNINITIALIZED_VALUE.hashCode();
+	}
+
 }

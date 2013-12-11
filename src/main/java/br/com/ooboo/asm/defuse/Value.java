@@ -37,4 +37,29 @@ public class Value implements org.objectweb.asm.tree.analysis.Value {
 		return type == Type.LONG_TYPE || type == Type.DOUBLE_TYPE ? 2 : 1;
 	}
 
+	@Override
+	public int hashCode() {
+		return 31 + ((type == null) ? 0 : type.hashCode());
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+
+		final Value other = (Value) obj;
+
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+
+		return true;
+	}
+
 }

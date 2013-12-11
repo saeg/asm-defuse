@@ -199,6 +199,10 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case ARETURN:
 		case PUTSTATIC:
 			return null;
+		case GETFIELD: {
+			final FieldInsnNode f = (FieldInsnNode) insn;
+			return new ObjectField(f.owner, f.name, f.desc, value);
+		}
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}
