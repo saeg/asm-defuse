@@ -29,7 +29,7 @@ public final class ObjectField extends Field {
 			root = ObjectField.class.cast(root).value;
 		}
 
-		if (value instanceof Variable && root instanceof Variable) {
+		if (root instanceof Local || root instanceof StaticField) {
 			values.add(this);
 		}
 

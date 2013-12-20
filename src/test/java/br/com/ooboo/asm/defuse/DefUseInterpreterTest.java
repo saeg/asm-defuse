@@ -85,4 +85,21 @@ public class DefUseInterpreterTest {
 		Assert.assertThat(op, sameInstance(Value.INT_VALUE));
 	}
 
+	@Test
+	public void UnaryOperationShouldReturnObjectFieldWhenOpcodeIsGETFIELD() {
+		final FieldInsnNode insn = new FieldInsnNode(Opcodes.GETFIELD, "Owner", "Name", "[I");
+		final Value value = new Value(Type.getObjectType("Owner"));
+		final ObjectField sfield = (ObjectField) interpreter.unaryOperation(insn, value);
+		Assert.assertEquals(insn.owner, sfield.owner);
+		Assert.assertEquals(insn.name, sfield.name);
+		Assert.assertEquals(insn.desc, sfield.desc);
+		Assert.assertThat(sfield.value, sameInstance(value));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void UnaryOperationShouldThrowAnExceptionWhenOpcodeIsInvalid() {
+		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "Ljava/lang/String;");
+		interpreter.unaryOperation(insn, null);
+	}
+
 }

@@ -1,5 +1,8 @@
 package br.com.ooboo.asm.defuse;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.objectweb.asm.Type;
@@ -72,6 +75,61 @@ public class ObjectFieldTest {
 		final ObjectField ofield1 = new ObjectField("pkg/Owner", "Name", "I", v1);
 		final ObjectField ofield2 = new ObjectField("pkg/Owner", "Name", "I", v2);
 		Assert.assertEquals(ofield1.hashCode(), ofield2.hashCode());
+	}
+
+	@Test
+	public void VariablesListIsUnmodifiable() {
+		final Value v1 = new Value(Type.getObjectType("java/lang/Object"));
+		final ObjectField ofield = new ObjectField("pkg/Owner", "Name", "I", v1);
+		assertSuperClasss("UnmodifiableCollection", ofield.getVariables());
+	}
+
+	@Test
+	public void VariableListContainsVariablesFromReferenceValue() {
+		final Variable local = new Local(Type.INT_TYPE, 0);
+		final Value ref = new Value(Type.getObjectType("pkg/Owner")) {
+			@Override
+			public List<Variable> getVariables() {
+				return Collections.singletonList(local);
+			}
+		};
+		final ObjectField ofield = new ObjectField("pkg/Owner", "Name", "I", ref);
+		Assert.assertTrue(ofield.getVariables().contains(local));
+	}
+
+	@Test
+	public void VariableListContainsSelfWhenRootIsALocal() {
+		final Variable local = new Local(Type.getObjectType("pkg/Ref"), 0);
+		final ObjectField ofield = new ObjectField("pkg/Ref", "name", "I", local);
+		Assert.assertTrue(ofield.getVariables().contains(ofield));
+	}
+
+	@Test
+	public void VariableListContainsSelfWhenRootIsAStaticField() {
+		final Variable sfield = new StaticField("Owner", "name", "Lpkg/Ref;");
+		final ObjectField ofield = new ObjectField("pkg/Ref", "name", "I", sfield);
+		Assert.assertTrue(ofield.getVariables().contains(ofield));
+	}
+
+	@Test
+	public void VariableListTest() {
+		final Variable local = new Local(Type.getObjectType("Ref1"), 0);
+		final ObjectField ref1 = new ObjectField("Ref1", "name", "LRef2;", local);
+		final ObjectField ref2 = new ObjectField("Ref2", "name", "I", ref1);
+		final List<Variable> variables = ref2.getVariables();
+		Assert.assertTrue(variables.contains(local));
+		Assert.assertTrue(variables.contains(ref1));
+		Assert.assertTrue(variables.contains(ref2));
+	}
+
+	private static void assertSuperClasss(final String name, final Object o) {
+		Class<?> clazz = o.getClass();
+		while (!Object.class.equals(clazz)) {
+			if (clazz.getSimpleName().equals(name))
+				return;
+			clazz = clazz.getSuperclass();
+		}
+		Assert.fail();
 	}
 
 }
