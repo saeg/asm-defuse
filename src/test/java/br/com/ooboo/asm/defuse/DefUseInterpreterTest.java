@@ -12,6 +12,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 
 public class DefUseInterpreterTest {
@@ -99,6 +100,12 @@ public class DefUseInterpreterTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void UnaryOperationShouldThrowAnExceptionWhenOpcodeIsInvalid() {
 		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "Ljava/lang/String;");
+		interpreter.unaryOperation(insn, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void UnaryOperationShouldThrowAnExceptionWhenArrayTypeIsInvalid() {
+		final IntInsnNode insn = new IntInsnNode(Opcodes.NEWARRAY, -1);
 		interpreter.unaryOperation(insn, null);
 	}
 

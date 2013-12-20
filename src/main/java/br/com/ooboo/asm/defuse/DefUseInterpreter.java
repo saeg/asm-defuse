@@ -7,6 +7,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
@@ -202,6 +203,33 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case GETFIELD: {
 			final FieldInsnNode f = (FieldInsnNode) insn;
 			return new ObjectField(f.owner, f.name, f.desc, value);
+		}
+		case NEWARRAY: {
+			final IntInsnNode iinsn = (IntInsnNode) insn;
+			switch (iinsn.operand) {
+			case T_BOOLEAN:
+				return new ArrayRef(Type.getType("[Z"), value);
+			case T_CHAR:
+				return new ArrayRef(Type.getType("[C"), value);
+			case T_BYTE:
+				return new ArrayRef(Type.getType("[B"), value);
+			case T_SHORT:
+				return new ArrayRef(Type.getType("[S"), value);
+			case T_INT:
+				return new ArrayRef(Type.getType("[I"), value);
+			case T_FLOAT:
+				return new ArrayRef(Type.getType("[F"), value);
+			case T_DOUBLE:
+				return new ArrayRef(Type.getType("[D"), value);
+			case T_LONG:
+				return new ArrayRef(Type.getType("[J"), value);
+			default:
+				throw new IllegalArgumentException("Invalid array type");
+			}
+		}
+		case ANEWARRAY: {
+			final TypeInsnNode tinsn = (TypeInsnNode) insn;
+			return new ArrayRef(Type.getType("[" + Type.getObjectType(tinsn.desc)), value);
 		}
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
