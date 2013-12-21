@@ -35,7 +35,8 @@ public class ADefUseInterpreterUnaryOperationShouldReturnNull {
 				{ Opcodes.FRETURN },
 				{ Opcodes.DRETURN },
 				{ Opcodes.ARETURN },
-				{ Opcodes.PUTSTATIC }
+				{ Opcodes.PUTSTATIC },
+				{ Opcodes.ATHROW }
 		});
 	}
 

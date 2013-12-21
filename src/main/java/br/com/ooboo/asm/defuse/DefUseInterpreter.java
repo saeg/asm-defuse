@@ -233,6 +233,8 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		}
 		case ARRAYLENGTH:
 			return new ArrayLength(value);
+		case ATHROW:
+			return null;
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}
