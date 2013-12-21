@@ -239,6 +239,8 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 			final TypeInsnNode tinsn = (TypeInsnNode) insn;
 			return new Cast(Type.getObjectType(tinsn.desc), value);
 		}
+		case INSTANCEOF:
+			return new InstanceOf(value); // Just wrap to INT_TYPE
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}

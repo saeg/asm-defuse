@@ -118,4 +118,13 @@ public class DefUseInterpreterTest {
 		Assert.assertEquals(value, length.value);
 	}
 
+	@Test
+	public void UnaryOperationShouldReturnInstanceOfWhenOpcodeIsINSTANCEOF() {
+		final TypeInsnNode insn = new TypeInsnNode(Opcodes.INSTANCEOF, "A");
+		final Value value = new Value(Type.getType("LB;"));
+		final InstanceOf iof = (InstanceOf) interpreter.unaryOperation(insn, value);
+		Assert.assertEquals(Type.INT_TYPE, iof.type);
+		Assert.assertEquals(value, iof.value);
+	}
+
 }
