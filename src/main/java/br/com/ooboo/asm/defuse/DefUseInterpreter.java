@@ -235,6 +235,10 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 			return new ArrayLength(value);
 		case ATHROW:
 			return null;
+		case CHECKCAST: {
+			final TypeInsnNode tinsn = (TypeInsnNode) insn;
+			return new Cast(Type.getObjectType(tinsn.desc), value);
+		}
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}

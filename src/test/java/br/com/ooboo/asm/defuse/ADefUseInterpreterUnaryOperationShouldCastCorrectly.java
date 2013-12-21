@@ -12,7 +12,9 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.TypeInsnNode;
 
 @RunWith(Parameterized.class)
 public class ADefUseInterpreterUnaryOperationShouldCastCorrectly {
@@ -34,11 +36,12 @@ public class ADefUseInterpreterUnaryOperationShouldCastCorrectly {
 				{ Opcodes.D2F, Type.DOUBLE_TYPE, Type.FLOAT_TYPE },
 				{ Opcodes.I2B, Type.INT_TYPE, Type.BYTE_TYPE },
 				{ Opcodes.I2C, Type.INT_TYPE, Type.CHAR_TYPE },
-				{ Opcodes.I2S, Type.INT_TYPE, Type.SHORT_TYPE }
+				{ Opcodes.I2S, Type.INT_TYPE, Type.SHORT_TYPE },
+				{ Opcodes.CHECKCAST, Type.getObjectType("A"), Type.getObjectType("B")}
 		});
 	}
 
-	private final InsnNode insn;
+	private final AbstractInsnNode insn;
 
 	private final Value value;
 
@@ -46,7 +49,11 @@ public class ADefUseInterpreterUnaryOperationShouldCastCorrectly {
 
 	public ADefUseInterpreterUnaryOperationShouldCastCorrectly(
 			final int opcode, final Type oldType, final Type newType) {
-		insn = new InsnNode(opcode);
+		if (opcode == Opcodes.CHECKCAST) {
+			insn = new TypeInsnNode(opcode, newType.getInternalName());
+		} else {
+			insn = new InsnNode(opcode);
+		}
 		value = new Value(oldType);
 		expected = newType;
 	}
@@ -55,7 +62,11 @@ public class ADefUseInterpreterUnaryOperationShouldCastCorrectly {
 	public void AssertThatADefUseInterpreterUnaryOperationDoCastCorrectly() {
 		final DefUseInterpreter interpreter = new DefUseInterpreter();
 		final Cast cast = (Cast) interpreter.unaryOperation(insn, value);
-		Assert.assertThat(cast.type, sameInstance(expected));
+		if (insn.getOpcode() == Opcodes.CHECKCAST) {
+			Assert.assertEquals(expected, cast.type);
+		} else {
+			Assert.assertThat(cast.type, sameInstance(expected));
+		}
 	}
 
 }
