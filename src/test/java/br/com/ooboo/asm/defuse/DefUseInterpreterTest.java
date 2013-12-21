@@ -109,4 +109,13 @@ public class DefUseInterpreterTest {
 		interpreter.unaryOperation(insn, null);
 	}
 
+	@Test
+	public void UnaryOperationShouldReturnArrayLengthWhenOpcodeIsARRAYLENGTH() {
+		final InsnNode insn = new InsnNode(Opcodes.ARRAYLENGTH);
+		final Value value = new Value(Type.getType("[I"));
+		final ArrayLength length = (ArrayLength) interpreter.unaryOperation(insn, value);
+		Assert.assertEquals(Type.INT_TYPE, length.type);
+		Assert.assertEquals(value, length.value);
+	}
+
 }

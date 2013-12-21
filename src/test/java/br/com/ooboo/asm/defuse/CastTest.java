@@ -15,6 +15,7 @@ public class CastTest {
 	public void GetVariablesDelegateToValue() {
 		final Value value = new Value(Type.INT_TYPE) {
 			final List<Variable> VAR = new ArrayList<Variable>(0);
+
 			@Override
 			public List<Variable> getVariables() {
 				return VAR;

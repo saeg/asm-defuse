@@ -231,6 +231,8 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 			final TypeInsnNode tinsn = (TypeInsnNode) insn;
 			return new ArrayRef(Type.getType("[" + Type.getObjectType(tinsn.desc)), value);
 		}
+		case ARRAYLENGTH:
+			return new ArrayLength(value);
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}
