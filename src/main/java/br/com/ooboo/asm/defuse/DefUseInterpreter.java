@@ -241,6 +241,11 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		}
 		case INSTANCEOF:
 			return new InstanceOf(value); // Just wrap to INT_TYPE
+		case MONITORENTER:
+		case MONITOREXIT:
+		case IFNULL:
+		case IFNONNULL:
+			return null;
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}

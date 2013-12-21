@@ -36,7 +36,11 @@ public class ADefUseInterpreterUnaryOperationShouldReturnNull {
 				{ Opcodes.DRETURN },
 				{ Opcodes.ARETURN },
 				{ Opcodes.PUTSTATIC },
-				{ Opcodes.ATHROW }
+				{ Opcodes.ATHROW },
+				{ Opcodes.MONITORENTER },
+				{ Opcodes.MONITOREXIT },
+				{ Opcodes.IFNULL },
+				{ Opcodes.IFNONNULL }
 		});
 	}
 
