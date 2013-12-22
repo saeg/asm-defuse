@@ -13,7 +13,7 @@ public class VariableTest {
 
 	@Before
 	public void setUp() {
-		var = new Variable(Type.INT_TYPE){};
+		var = new Variable(Type.INT_TYPE);
 	}
 
 	@Test

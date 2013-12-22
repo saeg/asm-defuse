@@ -3,6 +3,7 @@ package br.com.ooboo.asm.defuse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class FieldTest {
 
@@ -36,10 +37,8 @@ public class FieldTest {
 	}
 
 	@Test
-	public void EqualsButDifferentClassReturnsFalse() {
-		final Field other = new Field("pkg/Owner", "Name", "[D") {
-			/* other class */
-		};
+	public void OnEqualsDifferentClassReturnsFalse() {
+		final Field other = Mockito.mock(Field.class);
 		Assert.assertFalse(field.equals(other));
 	}
 

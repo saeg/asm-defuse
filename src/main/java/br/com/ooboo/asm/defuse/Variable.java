@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.objectweb.asm.Type;
 
-public abstract class Variable extends Value {
+public class Variable extends Value {
 
 	public Variable(final Type type) {
 		super(type);

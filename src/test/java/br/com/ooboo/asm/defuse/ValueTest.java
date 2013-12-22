@@ -7,6 +7,7 @@ import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.objectweb.asm.Type;
 
 public class ValueTest {
@@ -61,10 +62,8 @@ public class ValueTest {
 	}
 
 	@Test
-	public void EqualsButDifferentClassReturnsFalse() {
-		final Value other = new Value(Type.INT_TYPE) {
-			/* other class */
-		};
+	public void OnEqualsDifferentClassReturnsFalse() {
+		final Value other = Mockito.mock(Value.class);
 		Assert.assertFalse(value.equals(other));
 	}
 

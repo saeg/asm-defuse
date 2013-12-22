@@ -3,6 +3,7 @@ package br.com.ooboo.asm.defuse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.objectweb.asm.Type;
 
 public class LocalTest {
@@ -30,10 +31,8 @@ public class LocalTest {
 	}
 
 	@Test
-	public void EqualsButDifferentClassReturnsFalse() {
-		final Local other = new Local(Type.INT_TYPE, 1) {
-			/* other class */
-		};
+	public void OnEqualsDifferentClassReturnsFalse() {
+		final Local other = Mockito.mock(Local.class);
 		Assert.assertFalse(local.equals(other));
 	}
 
