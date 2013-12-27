@@ -49,7 +49,12 @@ public class ADefUseInterpreterBinaryOperationShouldReturnBinaryValue {
 				{ Opcodes.IOR, Type.INT_TYPE },
 				{ Opcodes.LOR, Type.LONG_TYPE },
 				{ Opcodes.IXOR, Type.INT_TYPE },
-				{ Opcodes.LXOR, Type.LONG_TYPE }
+				{ Opcodes.LXOR, Type.LONG_TYPE },
+				{ Opcodes.LCMP, Type.INT_TYPE },
+				{ Opcodes.FCMPL, Type.INT_TYPE },
+				{ Opcodes.FCMPG, Type.INT_TYPE },
+				{ Opcodes.DCMPL, Type.INT_TYPE },
+				{ Opcodes.DCMPG, Type.INT_TYPE }
 		});
 	}
 

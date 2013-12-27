@@ -282,6 +282,11 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case IAND:
 		case IOR:
 		case IXOR:
+        case LCMP:
+        case FCMPL:
+        case FCMPG:
+        case DCMPL:
+        case DCMPG:
 			return new Binary(Type.INT_TYPE, value1, value2);
 		case LADD:
 		case LSUB:
