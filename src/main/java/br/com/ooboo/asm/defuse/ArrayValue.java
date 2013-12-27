@@ -28,7 +28,7 @@ public class ArrayValue extends Value {
 
 	@Override
 	public String toString() {
-		return String.format("%s[%s]", getClass().getSimpleName(), arref, index);
+		return String.format("%s[%s]", arref, index);
 	}
 
 }
