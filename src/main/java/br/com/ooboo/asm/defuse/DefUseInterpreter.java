@@ -8,10 +8,11 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
 public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
@@ -334,9 +335,22 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 	}
 
 	@Override
-	public Value naryOperation(final AbstractInsnNode insn, final List<? extends Value> values)
-			throws AnalyzerException {
-		return null;
+	public Value naryOperation(final AbstractInsnNode insn, final List<? extends Value> values) {
+		switch (insn.getOpcode()) {
+		case INVOKEVIRTUAL:
+		case INVOKESPECIAL:
+		case INVOKESTATIC:
+		case INVOKEINTERFACE: {
+			final MethodInsnNode invoke = (MethodInsnNode) insn;
+			return new Invoke(Type.getReturnType(invoke.desc), values);
+		}
+		case INVOKEDYNAMIC: {
+			final InvokeDynamicInsnNode invoke = (InvokeDynamicInsnNode) insn;
+			return new Invoke(Type.getReturnType(invoke.desc), values);
+		}
+		default:
+			throw new IllegalArgumentException("Invalid instruction opcode.");
+		}
 	}
 
 	@Override
