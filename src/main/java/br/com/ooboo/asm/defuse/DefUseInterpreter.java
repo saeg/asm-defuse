@@ -11,6 +11,7 @@ import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.Interpreter;
@@ -347,6 +348,10 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case INVOKEDYNAMIC: {
 			final InvokeDynamicInsnNode invoke = (InvokeDynamicInsnNode) insn;
 			return new Invoke(Type.getReturnType(invoke.desc), values);
+		}
+		case MULTIANEWARRAY: {
+			final MultiANewArrayInsnNode arr = (MultiANewArrayInsnNode) insn;
+			return new ArrayRef(Type.getType(arr.desc), values);
 		}
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");

@@ -2,6 +2,8 @@ package br.com.ooboo.asm.defuse;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.junit.Assert;
@@ -13,6 +15,7 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 
 public class DefUseInterpreterTest {
@@ -141,6 +144,21 @@ public class DefUseInterpreterTest {
 	@Test
 	public void ReturnOperationDoNothing() {
 		interpreter.returnOperation(null, null, null);
+	}
+
+	@Test
+	public void NaryOperationShouldReturnArrayRefOfWhenOpcodeIsMULTIANEWARRAY() {
+		final MultiANewArrayInsnNode arr = new MultiANewArrayInsnNode("[[I", 2);
+		final List<Value> values = new ArrayList<Value>();
+		final ArrayRef arref = (ArrayRef) interpreter.naryOperation(arr, values);
+		Assert.assertTrue(arref.counts == values);
+		Assert.assertEquals(arref.type, Type.getType("[[I"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void NaryOperationShouldThrowAnExceptionWhenOpcodeIsInvalid() {
+		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "Ljava/lang/String;");
+		interpreter.naryOperation(insn, null);
 	}
 
 }
