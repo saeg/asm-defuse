@@ -133,4 +133,14 @@ public class DefUseInterpreterTest {
 		interpreter.binaryOperation(insn, null, null);
 	}
 
+	@Test
+	public void TernaryOperationReturnNull() {
+		Assert.assertNull(interpreter.ternaryOperation(null, null, null, null));
+	}
+
+	@Test
+	public void ReturnOperationDoNothing() {
+		interpreter.returnOperation(null, null, null);
+	}
+
 }
