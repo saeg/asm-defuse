@@ -282,11 +282,11 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case IAND:
 		case IOR:
 		case IXOR:
-        case LCMP:
-        case FCMPL:
-        case FCMPG:
-        case DCMPL:
-        case DCMPG:
+		case LCMP:
+		case FCMPL:
+		case FCMPG:
+		case DCMPL:
+		case DCMPG:
 			return new Binary(Type.INT_TYPE, value1, value2);
 		case LADD:
 		case LSUB:
@@ -312,6 +312,15 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case DDIV:
 		case DREM:
 			return new Binary(Type.DOUBLE_TYPE, value1, value2);
+		case IF_ICMPEQ:
+		case IF_ICMPNE:
+		case IF_ICMPLT:
+		case IF_ICMPGE:
+		case IF_ICMPGT:
+		case IF_ICMPLE:
+		case IF_ACMPEQ:
+		case IF_ACMPNE:
+			return null;
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}
