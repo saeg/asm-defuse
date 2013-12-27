@@ -127,4 +127,10 @@ public class DefUseInterpreterTest {
 		Assert.assertEquals(value, iof.value);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void BinaryOperationShouldThrowAnExceptionWhenOpcodeIsInvalid() {
+		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "Ljava/lang/String;");
+		interpreter.binaryOperation(insn, null, null);
+	}
+
 }
