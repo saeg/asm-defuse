@@ -253,6 +253,7 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 
 	@Override
 	public Value binaryOperation(final AbstractInsnNode insn, final Value value1, final Value value2) {
+		// no problem not maintain order. javac is generating lookupswitch
 		switch (insn.getOpcode()) {
 		case IALOAD:
 			return new ArrayValue(Type.INT_TYPE, value1, value2);
@@ -271,12 +272,40 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case SALOAD:
 			return new ArrayValue(Type.SHORT_TYPE, value1, value2);
 		case IADD:
+		case ISUB:
+		case IMUL:
+		case IDIV:
+		case IREM:
+		case ISHL:
+		case ISHR:
+		case IUSHR:
+		case IAND:
+		case IOR:
+		case IXOR:
 			return new Binary(Type.INT_TYPE, value1, value2);
 		case LADD:
+		case LSUB:
+		case LMUL:
+		case LDIV:
+		case LREM:
+		case LSHL:
+		case LSHR:
+		case LUSHR:
+		case LAND:
+		case LOR:
+		case LXOR:
 			return new Binary(Type.LONG_TYPE, value1, value2);
 		case FADD:
+		case FSUB:
+		case FMUL:
+		case FDIV:
+		case FREM:
 			return new Binary(Type.FLOAT_TYPE, value1, value2);
 		case DADD:
+		case DSUB:
+		case DMUL:
+		case DDIV:
+		case DREM:
 			return new Binary(Type.DOUBLE_TYPE, value1, value2);
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
