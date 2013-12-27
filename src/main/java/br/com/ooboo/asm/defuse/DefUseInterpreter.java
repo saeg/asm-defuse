@@ -252,9 +252,27 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 	}
 
 	@Override
-	public Value binaryOperation(final AbstractInsnNode insn, final Value value1, final Value value2)
-			throws AnalyzerException {
-		return null;
+	public Value binaryOperation(final AbstractInsnNode insn, final Value value1, final Value value2) {
+		switch (insn.getOpcode()) {
+		case IALOAD:
+			return new ArrayValue(Type.INT_TYPE, value1, value2);
+		case LALOAD:
+			return new ArrayValue(Type.LONG_TYPE, value1, value2);
+		case FALOAD:
+			return new ArrayValue(Type.FLOAT_TYPE, value1, value2);
+		case DALOAD:
+			return new ArrayValue(Type.DOUBLE_TYPE, value1, value2);
+		case AALOAD:
+			return new ArrayValue(Type.getObjectType("java/lang/Object"), value1, value2);
+		case BALOAD:
+			return new ArrayValue(Type.BYTE_TYPE, value1, value2);
+		case CALOAD:
+			return new ArrayValue(Type.CHAR_TYPE, value1, value2);
+		case SALOAD:
+			return new ArrayValue(Type.SHORT_TYPE, value1, value2);
+		default:
+			throw new IllegalArgumentException("Invalid instruction opcode.");
+		}
 	}
 
 	@Override
