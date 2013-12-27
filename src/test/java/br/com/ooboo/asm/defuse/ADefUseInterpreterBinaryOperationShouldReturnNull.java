@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 
 @RunWith(Parameterized.class)
@@ -24,14 +26,19 @@ public class ADefUseInterpreterBinaryOperationShouldReturnNull {
 				{ Opcodes.IF_ICMPGT },
 				{ Opcodes.IF_ICMPLE },
 				{ Opcodes.IF_ACMPEQ },
-				{ Opcodes.IF_ACMPNE }
+				{ Opcodes.IF_ACMPNE },
+				{ Opcodes.PUTFIELD }
 		});
 	}
 
-	private final JumpInsnNode insn;
+	private final AbstractInsnNode insn;
 
 	public ADefUseInterpreterBinaryOperationShouldReturnNull(final int opcode) {
-		insn = new JumpInsnNode(opcode, null);
+		if (opcode == Opcodes.PUTFIELD) {
+			insn = new FieldInsnNode(opcode, null, null, null);
+		} else {
+			insn = new JumpInsnNode(opcode, null);
+		}
 	}
 
 	@Test

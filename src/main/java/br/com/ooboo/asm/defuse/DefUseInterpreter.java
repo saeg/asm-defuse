@@ -320,6 +320,7 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case IF_ICMPLE:
 		case IF_ACMPEQ:
 		case IF_ACMPNE:
+		case PUTFIELD:
 			return null;
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
