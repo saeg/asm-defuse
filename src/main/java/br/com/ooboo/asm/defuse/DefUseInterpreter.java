@@ -270,6 +270,14 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 			return new ArrayValue(Type.CHAR_TYPE, value1, value2);
 		case SALOAD:
 			return new ArrayValue(Type.SHORT_TYPE, value1, value2);
+		case IADD:
+			return new Binary(Type.INT_TYPE, value1, value2);
+		case LADD:
+			return new Binary(Type.LONG_TYPE, value1, value2);
+		case FADD:
+			return new Binary(Type.FLOAT_TYPE, value1, value2);
+		case DADD:
+			return new Binary(Type.DOUBLE_TYPE, value1, value2);
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");
 		}

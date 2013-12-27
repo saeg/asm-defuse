@@ -9,13 +9,13 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.objectweb.asm.Type;
 
-public class ArrayValueTest {
+public class BinaryTest {
 
 	private static final Type type = Mockito.mock(Type.class);
 	private static final List<Variable> value1Vars = Collections.singletonList(new Variable(type));
 	private static final List<Variable> value2Vars = Collections.singletonList(new Variable(type));
 
-	private ArrayValue value;
+	private Binary value;
 
 	@Before
 	public void setUp() {
@@ -25,16 +25,16 @@ public class ArrayValueTest {
 		Mockito.when(value2.toString()).thenReturn("B");
 		Mockito.when(value1.getVariables()).thenReturn(value1Vars);
 		Mockito.when(value2.getVariables()).thenReturn(value2Vars);
-		value = new ArrayValue(type, value1, value2);
+		value = new Binary(type, value1, value2);
 	}
 
 	@Test
-	public void ArrayRefToString() {
-		Assert.assertEquals("A[B]", value.toString());
+	public void BinaryToString() {
+		Assert.assertEquals("Binary(A,B)", value.toString());
 	}
 
 	@Test
-	public void VariableListContainsVariablesFromReferenceAndIndex() {
+	public void VariableListContainsVariablesFromValue1AndValue2() {
 		final List<Variable> vars = value.getVariables();
 		Assert.assertEquals(value1Vars.size() + value2Vars.size(), vars.size());
 		Assert.assertTrue(vars.containsAll(value1Vars));
