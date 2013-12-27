@@ -329,7 +329,7 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 
 	@Override
 	public Value ternaryOperation(final AbstractInsnNode insn, final Value value1,
-			final Value value2, final Value value3) throws AnalyzerException {
+			final Value value2, final Value value3) {
 		return null;
 	}
 
@@ -340,8 +340,7 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 	}
 
 	@Override
-	public void returnOperation(final AbstractInsnNode insn, final Value value, final Value expected)
-			throws AnalyzerException {
+	public void returnOperation(final AbstractInsnNode insn, final Value value, final Value expected) {
 	}
 
 	@Override
