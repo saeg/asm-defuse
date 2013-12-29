@@ -62,4 +62,15 @@ public class Value implements org.objectweb.asm.tree.analysis.Value {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		if (this == UNINITIALIZED_VALUE) {
+			return ".";
+		} else if (this == REFERENCE_VALUE) {
+			return "R";
+		} else {
+			return type.getDescriptor();
+		}
+	}
+
 }

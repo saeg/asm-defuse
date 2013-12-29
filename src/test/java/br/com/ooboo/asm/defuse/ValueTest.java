@@ -101,4 +101,23 @@ public class ValueTest {
 		Value.UNINITIALIZED_VALUE.hashCode();
 	}
 
+	@Test
+	public void UNINITIALIZED_VALUEValueToString() {
+		Assert.assertEquals(".", Value.UNINITIALIZED_VALUE.toString());
+	}
+
+	@Test
+	public void REFERENCE_VALUEValueToString() {
+		Assert.assertEquals("R", Value.REFERENCE_VALUE.toString());
+	}
+
+	@Test
+	public void ValueToString() {
+		final Type type = Mockito.mock(Type.class);
+		final Value value = new Value(type);
+		Mockito.when(type.getDescriptor()).thenReturn("Some Value");
+		Assert.assertEquals("Some Value", value.toString());
+		Mockito.verify(type, Mockito.times(1)).getDescriptor();
+	}
+
 }
