@@ -289,7 +289,7 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case FCMPG:
 		case DCMPL:
 		case DCMPG:
-			return new Binary(Type.INT_TYPE, value1, value2);
+			return new Merge(Type.INT_TYPE, value1, value2);
 		case LADD:
 		case LSUB:
 		case LMUL:
@@ -301,19 +301,19 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case LAND:
 		case LOR:
 		case LXOR:
-			return new Binary(Type.LONG_TYPE, value1, value2);
+			return new Merge(Type.LONG_TYPE, value1, value2);
 		case FADD:
 		case FSUB:
 		case FMUL:
 		case FDIV:
 		case FREM:
-			return new Binary(Type.FLOAT_TYPE, value1, value2);
+			return new Merge(Type.FLOAT_TYPE, value1, value2);
 		case DADD:
 		case DSUB:
 		case DMUL:
 		case DDIV:
 		case DREM:
-			return new Binary(Type.DOUBLE_TYPE, value1, value2);
+			return new Merge(Type.DOUBLE_TYPE, value1, value2);
 		case IF_ICMPEQ:
 		case IF_ICMPNE:
 		case IF_ICMPLT:
@@ -364,7 +364,13 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 
 	@Override
 	public Value merge(final Value v, final Value w) {
-		return null;
+		if (v.getVariables().containsAll(w.getVariables())) {
+			return v;
+		}
+		if (w.getVariables().containsAll(v.getVariables())) {
+			return w;
+		}
+		return new Merge(v.type, v, w);
 	}
 
 }

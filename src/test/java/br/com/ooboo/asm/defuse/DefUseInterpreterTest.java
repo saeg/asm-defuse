@@ -161,4 +161,89 @@ public class DefUseInterpreterTest {
 		interpreter.naryOperation(insn, null);
 	}
 
+	@Test
+	public void MergeTwoDifferentListOfVariables1() {
+		final List<Variable> aVars = new ArrayList<Variable>();
+		aVars.add(new Local(Type.INT_TYPE, 0));
+		aVars.add(new Local(Type.INT_TYPE, 1));
+		final Value a = new Value(Type.INT_TYPE) {
+			@Override
+			public List<Variable> getVariables() {
+				return aVars;
+			};
+		};
+
+		final List<Variable> bVars = new ArrayList<Variable>();
+		bVars.add(new Local(Type.INT_TYPE, 2));
+		bVars.add(new Local(Type.INT_TYPE, 3));
+		final Value b = new Value(Type.INT_TYPE) {
+			@Override
+			public List<Variable> getVariables() {
+				return bVars;
+			};
+		};
+
+		final Merge merged = (Merge) interpreter.merge(a, b);
+		Assert.assertTrue(merged.getVariables().contains(new Local(Type.INT_TYPE, 0)));
+		Assert.assertTrue(merged.getVariables().contains(new Local(Type.INT_TYPE, 1)));
+		Assert.assertTrue(merged.getVariables().contains(new Local(Type.INT_TYPE, 2)));
+		Assert.assertTrue(merged.getVariables().contains(new Local(Type.INT_TYPE, 3)));
+	}
+
+	@Test
+	public void MergeTwoDifferentListOfVariables2() {
+		final List<Variable> aVars = new ArrayList<Variable>();
+		aVars.add(new Local(Type.INT_TYPE, 0));
+		aVars.add(new Local(Type.INT_TYPE, 1));
+		aVars.add(new Local(Type.INT_TYPE, 2));
+		aVars.add(new Local(Type.INT_TYPE, 3));
+		final Value a = new Value(Type.INT_TYPE) {
+			@Override
+			public List<Variable> getVariables() {
+				return aVars;
+			};
+		};
+
+		final List<Variable> bVars = new ArrayList<Variable>();
+		bVars.add(new Local(Type.INT_TYPE, 2));
+		bVars.add(new Local(Type.INT_TYPE, 3));
+		final Value b = new Value(Type.INT_TYPE) {
+			@Override
+			public List<Variable> getVariables() {
+				return bVars;
+			};
+		};
+
+		final Value merged = interpreter.merge(a, b);
+		Assert.assertThat(merged, sameInstance(a));
+	}
+
+	@Test
+	public void MergeTwoDifferentListOfVariables3() {
+		final List<Variable> aVars = new ArrayList<Variable>();
+		aVars.add(new Local(Type.INT_TYPE, 0));
+		aVars.add(new Local(Type.INT_TYPE, 1));
+		final Value a = new Value(Type.INT_TYPE) {
+			@Override
+			public List<Variable> getVariables() {
+				return aVars;
+			};
+		};
+
+		final List<Variable> bVars = new ArrayList<Variable>();
+		bVars.add(new Local(Type.INT_TYPE, 0));
+		bVars.add(new Local(Type.INT_TYPE, 1));
+		bVars.add(new Local(Type.INT_TYPE, 2));
+		bVars.add(new Local(Type.INT_TYPE, 3));
+		final Value b = new Value(Type.INT_TYPE) {
+			@Override
+			public List<Variable> getVariables() {
+				return bVars;
+			};
+		};
+
+		final Value merged = interpreter.merge(a, b);
+		Assert.assertThat(merged, sameInstance(b));
+	}
+
 }

@@ -15,7 +15,7 @@ public class BinaryTest {
 	private static final List<Variable> value1Vars = Collections.singletonList(new Variable(type));
 	private static final List<Variable> value2Vars = Collections.singletonList(new Variable(type));
 
-	private Binary value;
+	private Merge value;
 
 	@Before
 	public void setUp() {
@@ -25,12 +25,12 @@ public class BinaryTest {
 		Mockito.when(value2.toString()).thenReturn("B");
 		Mockito.when(value1.getVariables()).thenReturn(value1Vars);
 		Mockito.when(value2.getVariables()).thenReturn(value2Vars);
-		value = new Binary(type, value1, value2);
+		value = new Merge(type, value1, value2);
 	}
 
 	@Test
 	public void BinaryToString() {
-		Assert.assertEquals("Binary(A,B)", value.toString());
+		Assert.assertEquals("Merge(A,B)", value.toString());
 	}
 
 	@Test

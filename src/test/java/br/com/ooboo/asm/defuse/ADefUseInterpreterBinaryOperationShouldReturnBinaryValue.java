@@ -70,7 +70,7 @@ public class ADefUseInterpreterBinaryOperationShouldReturnBinaryValue {
 	@Test
 	public void AssertThatADefUseInterpreterBinaryOperationReturnsBinaryValueCorrectly() {
 		final DefUseInterpreter interpreter = new DefUseInterpreter();
-		final Binary value = (Binary) interpreter.binaryOperation(insn, null, null);
+		final Merge value = (Merge) interpreter.binaryOperation(insn, null, null);
 		Assert.assertEquals(expected, value.type);
 	}
 

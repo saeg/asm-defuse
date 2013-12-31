@@ -6,13 +6,13 @@ import java.util.List;
 
 import org.objectweb.asm.Type;
 
-public class Binary extends Value {
+public class Merge extends Value {
 
 	public final Value value1;
 
 	public final Value value2;
 
-	public Binary(final Type type, final Value value1, final Value value2) {
+	public Merge(final Type type, final Value value1, final Value value2) {
 		super(type);
 		this.value1 = value1;
 		this.value2 = value2;
