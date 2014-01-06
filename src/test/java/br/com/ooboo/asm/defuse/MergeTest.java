@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.objectweb.asm.Type;
 
-public class BinaryTest {
+public class MergeTest {
 
 	private static final Type type = Mockito.mock(Type.class);
 	private static final List<Variable> value1Vars = Collections.singletonList(new Variable(type));
@@ -29,7 +29,7 @@ public class BinaryTest {
 	}
 
 	@Test
-	public void BinaryToString() {
+	public void MergeToString() {
 		Assert.assertEquals("Merge(A,B)", value.toString());
 	}
 

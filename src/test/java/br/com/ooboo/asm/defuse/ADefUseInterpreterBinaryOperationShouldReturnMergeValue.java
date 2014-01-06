@@ -13,7 +13,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.InsnNode;
 
 @RunWith(Parameterized.class)
-public class ADefUseInterpreterBinaryOperationShouldReturnBinaryValue {
+public class ADefUseInterpreterBinaryOperationShouldReturnMergeValue {
 
 	@Parameters
 	public static Collection<Object[]> data() {
@@ -62,13 +62,13 @@ public class ADefUseInterpreterBinaryOperationShouldReturnBinaryValue {
 
 	private final Type expected;
 
-	public ADefUseInterpreterBinaryOperationShouldReturnBinaryValue(final int op, final Type expected) {
+	public ADefUseInterpreterBinaryOperationShouldReturnMergeValue(final int op, final Type expected) {
 		this.insn = new InsnNode(op);
 		this.expected = expected;
 	}
 
 	@Test
-	public void AssertThatADefUseInterpreterBinaryOperationReturnsBinaryValueCorrectly() {
+	public void AssertThatADefUseInterpreterBinaryOperationReturnsMergeValueCorrectly() {
 		final DefUseInterpreter interpreter = new DefUseInterpreter();
 		final Merge value = (Merge) interpreter.binaryOperation(insn, null, null);
 		Assert.assertEquals(expected, value.type);
