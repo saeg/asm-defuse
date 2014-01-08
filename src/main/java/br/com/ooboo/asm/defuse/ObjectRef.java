@@ -4,10 +4,10 @@ import org.objectweb.asm.Type;
 
 public final class ObjectRef extends Value {
 
-	public ObjectRef(final String desc) {
-		super(Type.getType(desc));
+	public ObjectRef(final Type type) {
+		super(type);
 		if (type.getSort() != Type.OBJECT) {
-			throw new IllegalArgumentException(desc + " is not a object descriptor");
+			throw new IllegalArgumentException(type.getDescriptor() + " is not a object descriptor");
 		}
 	}
 

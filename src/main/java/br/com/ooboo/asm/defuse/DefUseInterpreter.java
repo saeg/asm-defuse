@@ -110,7 +110,7 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		}
 		case NEW: {
 			final TypeInsnNode type = (TypeInsnNode) insn;
-			return new ObjectRef(type.desc);
+			return new ObjectRef(Type.getObjectType(type.desc));
 		}
 		default:
 			throw new IllegalArgumentException("Invalid instruction opcode.");

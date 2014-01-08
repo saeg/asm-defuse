@@ -38,14 +38,14 @@ public class DefUseInterpreterTest {
 
 	@Test
 	public void NewOperationShouldReturnAnObjectRefCorrectly() {
-		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "Ljava/lang/String;");
+		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "java/lang/String");
 		final ObjectRef ref = (ObjectRef) interpreter.newOperation(insn);
-		Assert.assertEquals(insn.desc, ref.type.getDescriptor());
+		Assert.assertEquals(insn.desc, ref.type.getInternalName());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void CopyOperationShouldThrowAnExceptionWhenOpcodeIsInvalid() {
-		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "Ljava/lang/String;");
+		final TypeInsnNode insn = new TypeInsnNode(Opcodes.NEW, "java/lang/String");
 		interpreter.copyOperation(insn, null);
 	}
 

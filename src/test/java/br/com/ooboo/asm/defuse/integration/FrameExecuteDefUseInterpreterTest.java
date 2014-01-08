@@ -69,7 +69,7 @@ public class FrameExecuteDefUseInterpreterTest {
 	@Test
 	public void StoreAValueOfTypeObjectRef() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
-		frame.push(new ObjectRef("Ljava/lang/String;"));
+		frame.push(new ObjectRef(Type.getType("Ljava/lang/String;")));
 		frame.execute(new VarInsnNode(Opcodes.ASTORE, 0), interpreter);
 		Assert.assertEquals(Value.REFERENCE_VALUE, frame.getLocal(0));
 	}

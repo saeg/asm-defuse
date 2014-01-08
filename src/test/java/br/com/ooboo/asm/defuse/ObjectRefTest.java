@@ -3,6 +3,7 @@ package br.com.ooboo.asm.defuse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.objectweb.asm.Type;
 
 public class ObjectRefTest {
 
@@ -10,7 +11,7 @@ public class ObjectRefTest {
 
 	@Before
 	public void setUp() {
-		ref = new ObjectRef("Ljava.lang.String;");
+		ref = new ObjectRef(Type.getType("Ljava/lang/String;"));
 	}
 
 	@Test
@@ -25,7 +26,7 @@ public class ObjectRefTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ThrowAnExceptionWhenObjectDescriptorIsInvalid() {
-		new ObjectRef("[I");
+		new ObjectRef(Type.getType("[I"));
 	}
 
 }
