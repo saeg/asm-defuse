@@ -7,6 +7,8 @@ import org.objectweb.asm.Type;
 
 public class Variable extends Value {
 
+	public static Variable NONE = new Variable(Type.VOID_TYPE);
+
 	public Variable(final Type type) {
 		super(type);
 	}
