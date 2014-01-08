@@ -30,7 +30,7 @@ public class MergeTest {
 
 	@Test
 	public void MergeToString() {
-		Assert.assertEquals("Merge(A,B)", value.toString());
+		Assert.assertEquals("(A,B)", value.toString());
 	}
 
 	@Test
