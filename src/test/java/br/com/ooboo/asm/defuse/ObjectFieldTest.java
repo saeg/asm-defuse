@@ -1,7 +1,7 @@
 package br.com.ooboo.asm.defuse;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -89,8 +89,8 @@ public class ObjectFieldTest {
 		final Variable local = new Local(Type.INT_TYPE, 0);
 		final Value ref = new Value(Type.getObjectType("pkg/Owner")) {
 			@Override
-			public List<Variable> getVariables() {
-				return Collections.singletonList(local);
+			public Set<Variable> getVariables() {
+				return Collections.singleton(local);
 			}
 		};
 		final ObjectField ofield = new ObjectField("pkg/Owner", "Name", "I", ref);
@@ -116,7 +116,7 @@ public class ObjectFieldTest {
 		final Variable local = new Local(Type.getObjectType("Ref1"), 0);
 		final ObjectField ref1 = new ObjectField("Ref1", "name", "LRef2;", local);
 		final ObjectField ref2 = new ObjectField("Ref2", "name", "I", ref1);
-		final List<Variable> variables = ref2.getVariables();
+		final Set<Variable> variables = ref2.getVariables();
 		Assert.assertTrue(variables.contains(local));
 		Assert.assertTrue(variables.contains(ref1));
 		Assert.assertTrue(variables.contains(ref2));

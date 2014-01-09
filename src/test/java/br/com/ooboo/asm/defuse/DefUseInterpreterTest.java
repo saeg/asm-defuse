@@ -3,8 +3,10 @@ package br.com.ooboo.asm.defuse;
 import static org.hamcrest.CoreMatchers.sameInstance;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -163,22 +165,22 @@ public class DefUseInterpreterTest {
 
 	@Test
 	public void MergeTwoDifferentListOfVariables1() {
-		final List<Variable> aVars = new ArrayList<Variable>();
+		final Set<Variable> aVars = new HashSet<Variable>();
 		aVars.add(new Local(Type.INT_TYPE, 0));
 		aVars.add(new Local(Type.INT_TYPE, 1));
 		final Value a = new Value(Type.INT_TYPE) {
 			@Override
-			public List<Variable> getVariables() {
+			public Set<Variable> getVariables() {
 				return aVars;
 			};
 		};
 
-		final List<Variable> bVars = new ArrayList<Variable>();
+		final Set<Variable> bVars = new HashSet<Variable>();
 		bVars.add(new Local(Type.INT_TYPE, 2));
 		bVars.add(new Local(Type.INT_TYPE, 3));
 		final Value b = new Value(Type.INT_TYPE) {
 			@Override
-			public List<Variable> getVariables() {
+			public Set<Variable> getVariables() {
 				return bVars;
 			};
 		};
@@ -192,24 +194,24 @@ public class DefUseInterpreterTest {
 
 	@Test
 	public void MergeTwoDifferentListOfVariables2() {
-		final List<Variable> aVars = new ArrayList<Variable>();
+		final Set<Variable> aVars = new HashSet<Variable>();
 		aVars.add(new Local(Type.INT_TYPE, 0));
 		aVars.add(new Local(Type.INT_TYPE, 1));
 		aVars.add(new Local(Type.INT_TYPE, 2));
 		aVars.add(new Local(Type.INT_TYPE, 3));
 		final Value a = new Value(Type.INT_TYPE) {
 			@Override
-			public List<Variable> getVariables() {
+			public Set<Variable> getVariables() {
 				return aVars;
 			};
 		};
 
-		final List<Variable> bVars = new ArrayList<Variable>();
+		final Set<Variable> bVars = new HashSet<Variable>();
 		bVars.add(new Local(Type.INT_TYPE, 2));
 		bVars.add(new Local(Type.INT_TYPE, 3));
 		final Value b = new Value(Type.INT_TYPE) {
 			@Override
-			public List<Variable> getVariables() {
+			public Set<Variable> getVariables() {
 				return bVars;
 			};
 		};
@@ -220,24 +222,24 @@ public class DefUseInterpreterTest {
 
 	@Test
 	public void MergeTwoDifferentListOfVariables3() {
-		final List<Variable> aVars = new ArrayList<Variable>();
+		final Set<Variable> aVars = new HashSet<Variable>();
 		aVars.add(new Local(Type.INT_TYPE, 0));
 		aVars.add(new Local(Type.INT_TYPE, 1));
 		final Value a = new Value(Type.INT_TYPE) {
 			@Override
-			public List<Variable> getVariables() {
+			public Set<Variable> getVariables() {
 				return aVars;
 			};
 		};
 
-		final List<Variable> bVars = new ArrayList<Variable>();
+		final Set<Variable> bVars = new HashSet<Variable>();
 		bVars.add(new Local(Type.INT_TYPE, 0));
 		bVars.add(new Local(Type.INT_TYPE, 1));
 		bVars.add(new Local(Type.INT_TYPE, 2));
 		bVars.add(new Local(Type.INT_TYPE, 3));
 		final Value b = new Value(Type.INT_TYPE) {
 			@Override
-			public List<Variable> getVariables() {
+			public Set<Variable> getVariables() {
 				return bVars;
 			};
 		};

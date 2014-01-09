@@ -43,7 +43,7 @@ public class ValueTest {
 
 	@Test
 	public void VariablesListIsUnmodifiable() {
-		Assert.assertThat(value.getVariables(), sameInstance(Collections.EMPTY_LIST));
+		Assert.assertThat(value.getVariables(), sameInstance(Collections.EMPTY_SET));
 	}
 
 	@Test(expected = IllegalArgumentException.class)

@@ -1,8 +1,9 @@
 package br.com.ooboo.asm.defuse;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,7 +21,7 @@ public class ArrayRefTest {
 	public void setUp() {
 		value = Mockito.mock(Value.class);
 		Mockito.when(value.toString()).thenReturn("value");
-		Mockito.when(value.getVariables()).thenReturn(new ArrayList<Variable>(0));
+		Mockito.when(value.getVariables()).thenReturn(new HashSet<Variable>(0));
 		ref = new ArrayRef(Type.getType("[I"), value);
 	}
 
@@ -46,7 +47,7 @@ public class ArrayRefTest {
 		final Variable var2 = new Variable(aType);
 		final List<Variable> valueVars = Arrays.asList(var1, var2);
 		final ArrayRef arref = new ArrayRef(Type.getType("[I"), valueVars);
-		final List<Variable> vars = arref.getVariables();
+		final Set<Variable> vars = arref.getVariables();
 		Assert.assertEquals(var1.getVariables().size() + var2.getVariables().size(), vars.size());
 		Assert.assertTrue(vars.containsAll(var1.getVariables()));
 		Assert.assertTrue(vars.containsAll(var2.getVariables()));

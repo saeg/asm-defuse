@@ -23,8 +23,7 @@ public class VariableTest {
 
 	@Test
 	public void VariablesListIsUnmodifiable() {
-		Assert.assertEquals(var.getVariables().getClass(), 
-				Collections.singletonList(var).getClass());
+		Assert.assertEquals(var.getVariables().getClass(), Collections.singleton(var).getClass());
 	}
 
 }

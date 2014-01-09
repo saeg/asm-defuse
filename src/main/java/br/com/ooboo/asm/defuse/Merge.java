@@ -1,8 +1,8 @@
 package br.com.ooboo.asm.defuse;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.objectweb.asm.Type;
 
@@ -19,11 +19,11 @@ public class Merge extends Value {
 	}
 
 	@Override
-	public List<Variable> getVariables() {
-		final List<Variable> values = new ArrayList<Variable>();
+	public Set<Variable> getVariables() {
+		final Set<Variable> values = new LinkedHashSet<Variable>();
 		values.addAll(value1.getVariables());
 		values.addAll(value2.getVariables());
-		return Collections.unmodifiableList(values);
+		return Collections.unmodifiableSet(values);
 	}
 
 	@Override

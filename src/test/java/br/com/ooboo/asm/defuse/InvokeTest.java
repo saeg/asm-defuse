@@ -2,6 +2,7 @@ package br.com.ooboo.asm.defuse;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,7 +30,7 @@ public class InvokeTest {
 		final Variable var2 = new Variable(aType);
 		final List<Variable> valueVars = Arrays.asList(var1, var2);
 		final Invoke invoke = new Invoke(aType, valueVars);
-		final List<Variable> vars = invoke.getVariables();
+		final Set<Variable> vars = invoke.getVariables();
 		Assert.assertEquals(var1.getVariables().size() + var2.getVariables().size(), vars.size());
 		Assert.assertTrue(vars.containsAll(var1.getVariables()));
 		Assert.assertTrue(vars.containsAll(var2.getVariables()));

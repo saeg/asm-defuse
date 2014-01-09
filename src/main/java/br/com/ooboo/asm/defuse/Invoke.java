@@ -1,8 +1,9 @@
 package br.com.ooboo.asm.defuse;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.objectweb.asm.Type;
 
@@ -24,12 +25,12 @@ public class Invoke extends Value {
 	}
 
 	@Override
-	public List<Variable> getVariables() {
-		final List<Variable> values = new ArrayList<Variable>();
+	public Set<Variable> getVariables() {
+		final Set<Variable> values = new LinkedHashSet<Variable>();
 		for (final Value value : this.values) {
 			values.addAll(value.getVariables());
 		}
-		return Collections.unmodifiableList(values);
+		return Collections.unmodifiableSet(values);
 	}
 
 	@Override

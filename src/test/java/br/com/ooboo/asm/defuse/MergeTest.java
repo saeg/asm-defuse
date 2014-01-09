@@ -1,7 +1,7 @@
 package br.com.ooboo.asm.defuse;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,8 +12,8 @@ import org.objectweb.asm.Type;
 public class MergeTest {
 
 	private static final Type type = Mockito.mock(Type.class);
-	private static final List<Variable> value1Vars = Collections.singletonList(new Variable(type));
-	private static final List<Variable> value2Vars = Collections.singletonList(new Variable(type));
+	private static final Set<Variable> value1Vars = Collections.singleton(new Variable(type));
+	private static final Set<Variable> value2Vars = Collections.singleton(new Variable(type));
 
 	private Merge value;
 
@@ -35,7 +35,7 @@ public class MergeTest {
 
 	@Test
 	public void VariableListContainsVariablesFromValue1AndValue2() {
-		final List<Variable> vars = value.getVariables();
+		final Set<Variable> vars = value.getVariables();
 		Assert.assertEquals(value1Vars.size() + value2Vars.size(), vars.size());
 		Assert.assertTrue(vars.containsAll(value1Vars));
 		Assert.assertTrue(vars.containsAll(value2Vars));

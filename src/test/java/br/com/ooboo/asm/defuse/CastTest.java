@@ -2,7 +2,7 @@ package br.com.ooboo.asm.defuse;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,7 +20,7 @@ public class CastTest {
 	public void setUp() {
 		value = Mockito.mock(Value.class);
 		Mockito.when(value.toString()).thenReturn("value");
-		Mockito.when(value.getVariables()).thenReturn(new ArrayList<Variable>(0));
+		Mockito.when(value.getVariables()).thenReturn(new HashSet<Variable>(0));
 		cast = new Cast(Type.INT_TYPE, value);
 	}
 

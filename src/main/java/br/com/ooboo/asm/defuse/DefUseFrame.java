@@ -2,7 +2,9 @@ package br.com.ooboo.asm.defuse;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -20,7 +22,7 @@ public class DefUseFrame extends Frame<Value> {
 
 	private Variable def = Variable.NONE;
 
-	private List<Variable> uses = Collections.emptyList();
+	private Set<Variable> uses = Collections.emptySet();
 
 	public DefUseFrame(final int nLocals, final int nStack) {
 		super(nLocals, nStack);
@@ -34,7 +36,7 @@ public class DefUseFrame extends Frame<Value> {
 		return def;
 	}
 
-	public List<Variable> getUses() {
+	public Set<Variable> getUses() {
 		return uses;
 	}
 
@@ -125,7 +127,7 @@ public class DefUseFrame extends Frame<Value> {
 			if (value1.getSize() == 1) {
 				value2 = pop();
 			}
-			uses = new ArrayList<Variable>();
+			uses = new LinkedHashSet<Variable>();
 			if (value1 instanceof Invoke) {
 				uses.addAll(value1.getVariables());
 			}
@@ -182,7 +184,7 @@ public class DefUseFrame extends Frame<Value> {
 			var = ((IincInsnNode) insn).var;
 			setLocal(var, interpreter.unaryOperation(insn, getLocal(var)));
 			def = new Local(Type.INT_TYPE, var);
-			uses = Collections.singletonList(def);
+			uses = Collections.singleton(def);
 			break;
 		case Opcodes.I2L:
 		case Opcodes.I2F:
@@ -222,7 +224,7 @@ public class DefUseFrame extends Frame<Value> {
 		case Opcodes.IF_ICMPLE:
 		case Opcodes.IF_ACMPEQ:
 		case Opcodes.IF_ACMPNE:
-			uses = new ArrayList<Variable>();
+			uses = new LinkedHashSet<Variable>();
 			uses.addAll(pop().getVariables());
 			uses.addAll(pop().getVariables());
 			break;
@@ -260,7 +262,7 @@ public class DefUseFrame extends Frame<Value> {
 			value2 = pop();
 			value1 = pop();
 			def = new ObjectField(f.owner, f.name, f.desc, value1);
-			uses = new ArrayList<Variable>();
+			uses = new LinkedHashSet<Variable>();
 			uses.addAll(value2.getVariables());
 			uses.addAll(value1.getVariables());
 			break;

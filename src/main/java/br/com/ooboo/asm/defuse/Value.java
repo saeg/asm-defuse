@@ -1,7 +1,7 @@
 package br.com.ooboo.asm.defuse;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import org.objectweb.asm.Type;
 
@@ -28,8 +28,8 @@ public class Value implements org.objectweb.asm.tree.analysis.Value {
 		this.type = type;
 	}
 
-	public List<Variable> getVariables() {
-		return Collections.emptyList();
+	public Set<Variable> getVariables() {
+		return Collections.emptySet();
 	}
 
 	@Override

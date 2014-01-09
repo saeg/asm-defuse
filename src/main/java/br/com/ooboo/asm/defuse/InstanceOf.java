@@ -1,6 +1,6 @@
 package br.com.ooboo.asm.defuse;
 
-import java.util.List;
+import java.util.Set;
 
 import org.objectweb.asm.Type;
 
@@ -14,7 +14,7 @@ public class InstanceOf extends Value {
 	}
 
 	@Override
-	public List<Variable> getVariables() {
+	public Set<Variable> getVariables() {
 		return value.getVariables();
 	}
 
