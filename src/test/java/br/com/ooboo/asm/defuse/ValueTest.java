@@ -32,23 +32,57 @@ public class ValueTest {
 	}
 
 	@Test
-	public void SizeOfAnyOtherTypeIsOne() {
-		Assert.assertEquals(1, value.getSize());
+	public void SizeOfVoidIsZero() {
+		final Value value = new Value(Type.VOID_TYPE);
+		Assert.assertEquals(0, value.getSize());
 	}
 
 	@Test
-	public void VariableListIsEmpty() {
+	public void SizeOfUNINITIALIZED_VALUEIsOne() {
+		Assert.assertEquals(1, Value.UNINITIALIZED_VALUE.getSize());
+	}
+
+	@Test
+	public void SizeOfAnyOtherTypeIsOne() {
+		Assert.assertEquals(1, new Value(Type.BOOLEAN_TYPE).getSize());
+		Assert.assertEquals(1, new Value(Type.CHAR_TYPE).getSize());
+		Assert.assertEquals(1, new Value(Type.BYTE_TYPE).getSize());
+		Assert.assertEquals(1, new Value(Type.SHORT_TYPE).getSize());
+		Assert.assertEquals(1, new Value(Type.INT_TYPE).getSize());
+		Assert.assertEquals(1, new Value(Type.FLOAT_TYPE).getSize());
+		Assert.assertEquals(1, new Value(Type.getObjectType("java/lang/String")).getSize());
+		Assert.assertEquals(1, new Value(Type.getType("Ljava/lang/String;")).getSize());
+		Assert.assertEquals(1, new Value(Type.getType("[I")).getSize());
+	}
+
+	@Test
+	public void DefinedValuesHaveCorrectType() {
+		Assert.assertEquals(null, Value.UNINITIALIZED_VALUE.type);
+		Assert.assertEquals(Type.INT_TYPE, Value.INT_VALUE.type);
+		Assert.assertEquals(Type.FLOAT_TYPE, Value.FLOAT_VALUE.type);
+		Assert.assertEquals(Type.LONG_TYPE, Value.LONG_VALUE.type);
+		Assert.assertEquals(Type.DOUBLE_TYPE, Value.DOUBLE_VALUE.type);
+		Assert.assertEquals(Type.getObjectType("java/lang/Object"), Value.REFERENCE_VALUE.type);
+	}
+
+	@Test
+	public void VariablesSetIsEmpty() {
 		Assert.assertTrue(value.getVariables().isEmpty());
 	}
 
 	@Test
-	public void VariablesListIsUnmodifiable() {
+	public void VariablesSetIsUnmodifiable() {
 		Assert.assertThat(value.getVariables(), sameInstance(Collections.EMPTY_SET));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ThrowAnExceptionWhenTypeIsNull() {
 		new Value(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void ThrowAnExceptionWhenTypeIsAMethodType() {
+		new Value(Type.getMethodType("()V"));
 	}
 
 	@Test
@@ -62,7 +96,7 @@ public class ValueTest {
 	}
 
 	@Test
-	public void OnEqualsDifferentClassReturnsFalse() {
+	public void DifferentClassReturnsFalseOnEquals() {
 		final Value other = Mockito.mock(Value.class);
 		Assert.assertFalse(value.equals(other));
 	}
@@ -80,7 +114,7 @@ public class ValueTest {
 	}
 
 	@Test
-	public void EqualsReturnSameHash() {
+	public void EqualsReturnSameHashCode() {
 		final Value other = new Value(Type.INT_TYPE);
 		Assert.assertEquals(value.hashCode(), other.hashCode());
 	}

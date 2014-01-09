@@ -25,6 +25,9 @@ public class Value implements org.objectweb.asm.tree.analysis.Value {
 		if (type == null) {
 			throw new IllegalArgumentException("Type can't be null");
 		}
+		if (type.getSort() == Type.METHOD) {
+			throw new IllegalArgumentException("Type can't be METHOD");
+		}
 		this.type = type;
 	}
 
@@ -34,7 +37,7 @@ public class Value implements org.objectweb.asm.tree.analysis.Value {
 
 	@Override
 	public int getSize() {
-		return type == Type.LONG_TYPE || type == Type.DOUBLE_TYPE ? 2 : 1;
+		return type != null ? type.getSize() : 1;
 	}
 
 	@Override
