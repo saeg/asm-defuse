@@ -1,5 +1,8 @@
 package br.com.ooboo.asm.defuse;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.Analyzer;
@@ -11,6 +14,8 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 	private final DefUseInterpreter interpreter;
 
 	private DefUseFrame[] duframes;
+
+	private Variable[] variables;
 
 	public DefUseAnalyzer() {
 		this(new DefUseInterpreter());
@@ -26,6 +31,7 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 		final Frame<Value>[] frames = super.analyze(owner, m);
 		final DefUseFrame[] duframes = new DefUseFrame[frames.length];
+		final Set<Variable> variables = new LinkedHashSet<Variable>();
 
 		AbstractInsnNode insn;
 
@@ -39,15 +45,24 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 				break;
 			default:
 				duframes[i].execute(m.instructions.get(i), interpreter);
+				variables.add(duframes[i].getDefinition());
+				variables.addAll(duframes[i].getUses());
 				break;
 			}
 		}
 
+		variables.remove(Variable.NONE);
 		this.duframes = duframes;
+		this.variables = variables.toArray(new Variable[variables.size()]);
 		return frames;
 	}
 
 	public DefUseFrame[] getDefUseFrames() {
 		return duframes;
 	}
+
+	public Variable[] getVariables() {
+		return variables;
+	}
+
 }
