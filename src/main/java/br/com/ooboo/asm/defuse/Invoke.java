@@ -17,14 +17,6 @@ public class Invoke extends Value {
 	}
 
 	@Override
-	public int getSize() {
-		if (type.equals(Type.VOID_TYPE)) {
-			return 0;
-		}
-		return super.getSize();
-	}
-
-	@Override
 	public Set<Variable> getVariables() {
 		final Set<Variable> values = new LinkedHashSet<Variable>();
 		for (final Value value : this.values) {
