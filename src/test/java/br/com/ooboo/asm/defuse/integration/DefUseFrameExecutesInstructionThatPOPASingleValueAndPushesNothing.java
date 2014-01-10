@@ -48,7 +48,6 @@ public class DefUseFrameExecutesInstructionThatPOPASingleValueAndPushesNothing {
 				{ Opcodes.DRETURN },
 				{ Opcodes.ARETURN },
 				{ Opcodes.ATHROW },
-				{ Opcodes.ATHROW },
 				{ Opcodes.MONITORENTER },
 				{ Opcodes.MONITOREXIT },
 				{ Opcodes.IFNULL },
