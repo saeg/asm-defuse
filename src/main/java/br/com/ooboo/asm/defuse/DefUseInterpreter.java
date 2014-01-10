@@ -158,35 +158,35 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case IINC:
 			return Value.INT_VALUE;
 		case I2L:
-			return new Cast(Type.LONG_TYPE, value);
+			return ValueHolder.cast(Type.LONG_TYPE, value);
 		case I2F:
-			return new Cast(Type.FLOAT_TYPE, value);
+			return ValueHolder.cast(Type.FLOAT_TYPE, value);
 		case I2D:
-			return new Cast(Type.DOUBLE_TYPE, value);
+			return ValueHolder.cast(Type.DOUBLE_TYPE, value);
 		case L2I:
-			return new Cast(Type.INT_TYPE, value);
+			return ValueHolder.cast(Type.INT_TYPE, value);
 		case L2F:
-			return new Cast(Type.FLOAT_TYPE, value);
+			return ValueHolder.cast(Type.FLOAT_TYPE, value);
 		case L2D:
-			return new Cast(Type.DOUBLE_TYPE, value);
+			return ValueHolder.cast(Type.DOUBLE_TYPE, value);
 		case F2I:
-			return new Cast(Type.INT_TYPE, value);
+			return ValueHolder.cast(Type.INT_TYPE, value);
 		case F2L:
-			return new Cast(Type.LONG_TYPE, value);
+			return ValueHolder.cast(Type.LONG_TYPE, value);
 		case F2D:
-			return new Cast(Type.DOUBLE_TYPE, value);
+			return ValueHolder.cast(Type.DOUBLE_TYPE, value);
 		case D2I:
-			return new Cast(Type.INT_TYPE, value);
+			return ValueHolder.cast(Type.INT_TYPE, value);
 		case D2L:
-			return new Cast(Type.LONG_TYPE, value);
+			return ValueHolder.cast(Type.LONG_TYPE, value);
 		case D2F:
-			return new Cast(Type.FLOAT_TYPE, value);
+			return ValueHolder.cast(Type.FLOAT_TYPE, value);
 		case I2B:
-			return new Cast(Type.BYTE_TYPE, value);
+			return ValueHolder.cast(Type.BYTE_TYPE, value);
 		case I2C:
-			return new Cast(Type.CHAR_TYPE, value);
+			return ValueHolder.cast(Type.CHAR_TYPE, value);
 		case I2S:
-			return new Cast(Type.SHORT_TYPE, value);
+			return ValueHolder.cast(Type.SHORT_TYPE, value);
 		case IFEQ:
 		case IFNE:
 		case IFLT:
@@ -234,15 +234,15 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 			return new ArrayRef(Type.getType("[" + Type.getObjectType(tinsn.desc)), value);
 		}
 		case ARRAYLENGTH:
-			return new ArrayLength(value);
+			return ValueHolder.arrayLength(value);
 		case ATHROW:
 			return null;
 		case CHECKCAST: {
 			final TypeInsnNode tinsn = (TypeInsnNode) insn;
-			return new Cast(Type.getObjectType(tinsn.desc), value);
+			return ValueHolder.cast(Type.getObjectType(tinsn.desc), value);
 		}
 		case INSTANCEOF:
-			return new InstanceOf(value); // Just wrap to INT_TYPE
+			return ValueHolder.instanceOf(value);
 		case MONITORENTER:
 		case MONITOREXIT:
 		case IFNULL:

@@ -13,14 +13,14 @@ public class ArrayLengthTest {
 
 	private Value value;
 
-	private ArrayLength length;
+	private ValueHolder length;
 
 	@Before
 	public void setUp() {
 		value = Mockito.mock(Value.class);
 		Mockito.when(value.toString()).thenReturn("value");
 		Mockito.when(value.getVariables()).thenReturn(new HashSet<Variable>(0));
-		length = new ArrayLength(value);
+		length = ValueHolder.arrayLength(value);
 	}
 
 	@Test
@@ -30,7 +30,7 @@ public class ArrayLengthTest {
 
 	@Test
 	public void ArrayLengthToString() {
-		Assert.assertEquals("ArrayLength(value)", length.toString());
+		Assert.assertEquals("Length(value)", length.toString());
 	}
 
 	@Test

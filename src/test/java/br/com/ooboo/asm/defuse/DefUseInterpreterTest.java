@@ -115,19 +115,19 @@ public class DefUseInterpreterTest {
 	}
 
 	@Test
-	public void UnaryOperationShouldReturnArrayLengthWhenOpcodeIsARRAYLENGTH() {
+	public void UnaryOperationShouldReturnValueHolderWhenOpcodeIsARRAYLENGTH() {
 		final InsnNode insn = new InsnNode(Opcodes.ARRAYLENGTH);
 		final Value value = new Value(Type.getType("[I"));
-		final ArrayLength length = (ArrayLength) interpreter.unaryOperation(insn, value);
+		final ValueHolder length = (ValueHolder) interpreter.unaryOperation(insn, value);
 		Assert.assertEquals(Type.INT_TYPE, length.type);
 		Assert.assertEquals(value, length.value);
 	}
 
 	@Test
-	public void UnaryOperationShouldReturnInstanceOfWhenOpcodeIsINSTANCEOF() {
+	public void UnaryOperationShouldReturnValueHolderWhenOpcodeIsINSTANCEOF() {
 		final TypeInsnNode insn = new TypeInsnNode(Opcodes.INSTANCEOF, "A");
 		final Value value = new Value(Type.getType("LB;"));
-		final InstanceOf iof = (InstanceOf) interpreter.unaryOperation(insn, value);
+		final ValueHolder iof = (ValueHolder) interpreter.unaryOperation(insn, value);
 		Assert.assertEquals(Type.INT_TYPE, iof.type);
 		Assert.assertEquals(value, iof.value);
 	}

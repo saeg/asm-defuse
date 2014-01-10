@@ -61,7 +61,7 @@ public class ADefUseInterpreterUnaryOperationShouldCastCorrectly {
 	@Test
 	public void AssertThatADefUseInterpreterUnaryOperationDoCastCorrectly() {
 		final DefUseInterpreter interpreter = new DefUseInterpreter();
-		final Cast cast = (Cast) interpreter.unaryOperation(insn, value);
+		final ValueHolder cast = (ValueHolder) interpreter.unaryOperation(insn, value);
 		if (insn.getOpcode() == Opcodes.CHECKCAST) {
 			Assert.assertEquals(expected, cast.type);
 		} else {

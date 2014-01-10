@@ -13,14 +13,14 @@ public class InstanceOfTest {
 
 	private Value value;
 
-	private InstanceOf iof;
+	private ValueHolder iof;
 
 	@Before
 	public void setUp() {
 		value = Mockito.mock(Value.class);
 		Mockito.when(value.toString()).thenReturn("value");
 		Mockito.when(value.getVariables()).thenReturn(new HashSet<Variable>(0));
-		iof = new InstanceOf(value);
+		iof = ValueHolder.instanceOf(value);
 	}
 
 	@Test
@@ -29,7 +29,7 @@ public class InstanceOfTest {
 	}
 
 	@Test
-	public void ArrayLengthToString() {
+	public void InstanceOfToString() {
 		Assert.assertEquals("InstanceOf(value)", iof.toString());
 	}
 

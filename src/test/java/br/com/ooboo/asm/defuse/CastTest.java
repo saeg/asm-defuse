@@ -14,14 +14,14 @@ public class CastTest {
 
 	private Value value;
 
-	private Cast cast;
+	private ValueHolder cast;
 
 	@Before
 	public void setUp() {
 		value = Mockito.mock(Value.class);
 		Mockito.when(value.toString()).thenReturn("value");
 		Mockito.when(value.getVariables()).thenReturn(new HashSet<Variable>(0));
-		cast = new Cast(Type.INT_TYPE, value);
+		cast = ValueHolder.cast(Type.INT_TYPE, value);
 	}
 
 	@Test
@@ -30,8 +30,8 @@ public class CastTest {
 	}
 
 	@Test
-	public void ToStringDelegateToValue() {
-		Assert.assertThat(cast.toString(), sameInstance(value.toString()));
+	public void CastToString() {
+		Assert.assertEquals("Cast(value)", cast.toString());
 	}
 
 }
