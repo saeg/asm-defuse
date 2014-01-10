@@ -31,7 +31,6 @@ public class CastTest {
 
 	@Test
 	public void ToStringDelegateToValue() {
-		final Cast cast = new Cast(Type.INT_TYPE, value);
 		Assert.assertThat(cast.toString(), sameInstance(value.toString()));
 	}
 

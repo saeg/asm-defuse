@@ -1,26 +1,11 @@
 package br.com.ooboo.asm.defuse;
 
-import java.util.Set;
-
 import org.objectweb.asm.Type;
 
-public class InstanceOf extends Value {
-
-	public final Value value;
+public class InstanceOf extends ValueHolder {
 
 	public InstanceOf(final Value value) {
-		super(Type.INT_TYPE);
-		this.value = value;
-	}
-
-	@Override
-	public Set<Variable> getVariables() {
-		return value.getVariables();
-	}
-
-	@Override
-	public int getSize() {
-		return 1;
+		super(Type.INT_TYPE, value);
 	}
 
 	@Override
