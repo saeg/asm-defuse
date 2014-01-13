@@ -1,9 +1,11 @@
 package br.com.ooboo.asm.defuse;
 
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.Analyzer;
@@ -22,6 +24,8 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 	private int[][] predecessors;
 
+	private RDSet[] rdSets;
+
 	private int n;
 
 	public DefUseAnalyzer() {
@@ -39,10 +43,25 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		n = m.instructions.size();
 		successors = new int[n][n + 1];
 		predecessors = new int[n][n + 1];
+		rdSets = new RDSet[n];
 
 		final Frame<Value>[] frames = super.analyze(owner, m);
 		final DefUseFrame[] duframes = new DefUseFrame[frames.length];
-		final Set<Variable> variables = new LinkedHashSet<Variable>();
+		final Set<Variable> vars = new LinkedHashSet<Variable>();
+
+		final Type[] args = Type.getArgumentTypes(m.desc);
+		int local = 0;
+		if ((m.access & ACC_STATIC) == 0) {
+			final Type ctype = Type.getObjectType(owner);
+			vars.add(new Local(ctype, local++));
+		}
+		for (int i = 0; i < args.length; ++i) {
+			vars.add(new Local(args[i], local++));
+			if (args[i].getSize() == 2) {
+				local++;
+			}
+		}
+		int nargs = (m.access & ACC_STATIC) == 0 ? args.length + 1 : args.length + 0;
 
 		AbstractInsnNode insn;
 
@@ -55,18 +74,67 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			case AbstractInsnNode.FRAME:
 				break;
 			default:
-				duframes[i].execute(m.instructions.get(i), interpreter);
-				variables.add(duframes[i].getDefinition());
-				variables.addAll(duframes[i].getUses());
+				duframes[i].execute(insn, interpreter);
+				vars.add(duframes[i].getDefinition());
+				vars.addAll(duframes[i].getUses());
 				break;
 			}
 			successors[i] = Arrays.copyOf(successors[i], successors[i][n]);
 			predecessors[i] = Arrays.copyOf(predecessors[i], predecessors[i][n]);
 		}
 
-		variables.remove(Variable.NONE);
+		vars.remove(Variable.NONE);
 		this.duframes = duframes;
-		this.variables = variables.toArray(new Variable[variables.size()]);
+		this.variables = vars.toArray(new Variable[vars.size()]);
+
+		Variable def, other;
+		for (int i = 0; i < n; i++) {
+			rdSets[i] = new RDSet(n, variables);
+			def = duframes[i].getDefinition();
+			if (def != Variable.NONE) {
+				rdSets[i].gen(i, def);
+				for (int j = 0; j < n; j++) {
+					other = duframes[j].getDefinition();
+					if (i != j && def.equals(other)) {
+						rdSets[i].kill(j, def);
+					}
+				}
+			}
+		}
+		for (int i = 0; i < nargs; i++) {
+			def = variables[i];
+			rdSets[0].gen(0, def);
+			for (int j = 1; j < n; j++) {
+				other = duframes[j].getDefinition();
+				if (def.equals(other)) {
+					rdSets[0].kill(j, def);
+				}
+			}
+		}
+
+		boolean changed = true;
+		while (changed) {
+			changed = false;
+			for (int i = 0; i < n; i++) {
+
+				rdSets[i].in.clear();
+				for (final int pred : predecessors[i]) {
+					rdSets[i].in.or(rdSets[pred].out);
+				}
+
+				final BitSet oldout = (BitSet) rdSets[i].out.clone();
+				final BitSet temp = (BitSet) rdSets[i].in.clone();
+				temp.andNot(rdSets[i].kill);
+				rdSets[i].out.clear();
+				rdSets[i].out.or(rdSets[i].gen);
+				rdSets[i].out.or(temp);
+
+				if (!rdSets[i].out.equals(oldout)) {
+					changed = true;
+				}
+			}
+		}
+
 		return frames;
 	}
 
@@ -88,6 +156,65 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 	public Variable[] getVariables() {
 		return variables;
+	}
+
+	private static class RDSet {
+
+		private final BitSet in;
+		private final BitSet out;
+		private final BitSet gen;
+		private final BitSet kill;
+
+		private final Variable[] vars;
+
+		public RDSet(final int insns, final Variable[] variables) {
+			in = new BitSet(insns * variables.length);
+			out = new BitSet(insns * variables.length);
+			gen = new BitSet(insns * variables.length);
+			kill = new BitSet(insns * variables.length);
+			vars = variables;
+		}
+
+		public void gen(final int insn, final Variable var) {
+			gen.set(insn * vars.length + indexOf(var));
+		}
+
+		public void kill(final int insn, final Variable var) {
+			kill.set(insn * vars.length + indexOf(var));
+		}
+
+		private int indexOf(final Variable var) {
+			for (int i = 0; i < vars.length; i++) {
+				if (vars[i].equals(var))
+					return i;
+			}
+			throw new IllegalStateException("Invalid variable:" + var);
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("in:").append(printSet(in));
+			builder.append("out:").append(printSet(out));
+			builder.append("gen:").append(printSet(gen));
+			builder.append("kill:").append(printSet(kill));
+			return builder.toString();
+		}
+
+		private String printSet(final BitSet set) {
+			StringBuilder builder = new StringBuilder();
+			builder.append("{ ");
+			for (int i = set.nextSetBit(0); i != -1; i = set.nextSetBit(i + 1)) {
+				int insn = i / vars.length;
+				int var = i % vars.length;
+				builder.append(insn);
+				builder.append(':');
+				builder.append(vars[var]);
+				builder.append(',');
+			}
+			builder.append(" }\n");
+			return builder.toString();
+		}
 	}
 
 }
