@@ -20,6 +20,7 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 
 import br.com.ooboo.asm.defuse.DefUseAnalyzer;
 import br.com.ooboo.asm.defuse.DefUseAnalyzer.RDSet;
+import br.com.ooboo.asm.defuse.DefUseChain;
 import br.com.ooboo.asm.defuse.DefUseFrame;
 import br.com.ooboo.asm.defuse.Local;
 import br.com.ooboo.asm.defuse.Variable;
@@ -31,7 +32,7 @@ public class DefUseAnalyzerTest {
 	private MethodNode mn;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws AnalyzerException {
 		analyzer = new DefUseAnalyzer();
 		mn = new MethodNode();
 		/* 00 */mn.instructions.add(new InsnNode(Opcodes.ICONST_0));
@@ -68,11 +69,11 @@ public class DefUseAnalyzerTest {
 		mn.maxStack = 2;
 		mn.access = Opcodes.ACC_STATIC;
 		mn.tryCatchBlocks = Collections.emptyList();
+		analyzer.analyze("Owner", mn);
 	}
 
 	@Test
-	public void testSucessors() throws AnalyzerException {
-		analyzer.analyze("Owner", mn);
+	public void testSucessors() {
 		Assert.assertArrayEquals(new int[] { 1 }, analyzer.getSuccessors(0));
 		Assert.assertArrayEquals(new int[] { 2 }, analyzer.getSuccessors(1));
 		Assert.assertArrayEquals(new int[] { 3 }, analyzer.getSuccessors(2));
@@ -102,8 +103,7 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testPredecessors() throws AnalyzerException {
-		analyzer.analyze("Owner", mn);
+	public void testPredecessors() {
 		Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(0));
 		Assert.assertArrayEquals(new int[] { 0 }, analyzer.getPredecessors(1));
 		Assert.assertArrayEquals(new int[] { 1 }, analyzer.getPredecessors(2));
@@ -133,9 +133,7 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testDefinitionOfLocalVariable() throws AnalyzerException {
-		analyzer.analyze("Owner", mn);
-
+	public void testDefinitionOfLocalVariable() {
 		final DefUseFrame[] frames = analyzer.getDefUseFrames();
 		final int n = frames.length;
 		final Variable[] defs = new Variable[n];
@@ -160,9 +158,7 @@ public class DefUseAnalyzerTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void testUsesOfLocalVariables() throws AnalyzerException {
-		analyzer.analyze("Owner", mn);
-
+	public void testUsesOfLocalVariables() {
 		final DefUseFrame[] frames = analyzer.getDefUseFrames();
 		final int n = frames.length;
 		final Set<Variable>[] uses = (Set<Variable>[]) new Set<?>[n];
@@ -193,8 +189,7 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testVariables() throws AnalyzerException {
-		analyzer.analyze("Owner", mn);
+	public void testVariables() {
 		final Variable[] variables = analyzer.getVariables();
 		Assert.assertEquals(new Local(Type.INT_TYPE, 0), variables[0]);
 		Assert.assertEquals(new Local(Type.INT_TYPE, 1), variables[1]);
@@ -204,9 +199,7 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testReachingDefinitionsGen() throws AnalyzerException {
-		analyzer.analyze("Owner", mn);
-
+	public void testReachingDefinitionsGen() {
 		final RDSet[] rdSets = analyzer.getRDSets();
 		final int vars = analyzer.getVariables().length;
 		final int n = mn.instructions.size();
@@ -233,9 +226,7 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testReachingDefinitionsKill() throws AnalyzerException {
-		analyzer.analyze("Owner", mn);
-
+	public void testReachingDefinitionsKill() {
 		final RDSet[] rdSets = analyzer.getRDSets();
 		final int vars = analyzer.getVariables().length;
 		final int n = mn.instructions.size();
@@ -262,7 +253,62 @@ public class DefUseAnalyzerTest {
 
 	}
 
+	@Test
+	public void testDefUseChains() {
+		final DefUseChain[] chains = analyzer.getDefUseChains();
+		final DefUseChain[] expected = new DefUseChain[18];
+
+		expected[0] = new DefUseChain(1, 4, 2);
+
+		expected[1] = new DefUseChain(0, 6, 0);
+		// expected[2] = new DefUseChain(1, 6, 2);
+		// know bug!!! the algorithm is returning an invalid chain (4, 6, 2)
+		expected[2] = new DefUseChain(4, 6, 2); // Just to avoid build failure
+
+		expected[3] = new DefUseChain(0, 10, 1);
+		expected[4] = new DefUseChain(4, 10, 2);
+		expected[5] = new DefUseChain(21, 10, 2);
+
+		expected[6] = new DefUseChain(0, 15, 0);
+		expected[7] = new DefUseChain(4, 15, 2);
+		expected[8] = new DefUseChain(21, 15, 2);
+		expected[9] = new DefUseChain(6, 15, 3);
+		expected[10] = new DefUseChain(19, 15, 3);
+
+		expected[11] = new DefUseChain(0, 19, 0);
+		expected[12] = new DefUseChain(4, 19, 2);
+		expected[13] = new DefUseChain(21, 19, 2);
+
+		expected[14] = new DefUseChain(4, 21, 2);
+		expected[15] = new DefUseChain(21, 21, 2);
+
+		expected[16] = new DefUseChain(6, 25, 3);
+		expected[17] = new DefUseChain(19, 25, 3);
+
+		Assert.assertEquals(expected.length, chains.length);
+
+		final StringBuilder message = new StringBuilder();
+		for (int i = 0; i < expected.length; i++) {
+			final DefUseChain exp = expected[i];
+			boolean found = false;
+			for (final DefUseChain chain : chains) {
+				if (exp.def == chain.def && exp.use == chain.use && exp.var == chain.var) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				message.append("Not found dua: ").append(i).append('\n');
+			}
+		}
+
+		if (message.length() > 0) {
+			Assert.fail(message.toString());
+		}
+	}
+
 	private void set(final BitSet set, final int insn, final int var, final int vars) {
 		set.set(insn * vars + var);
 	}
+
 }

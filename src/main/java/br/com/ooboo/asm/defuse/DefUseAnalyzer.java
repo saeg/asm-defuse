@@ -1,8 +1,10 @@
 package br.com.ooboo.asm.defuse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.objectweb.asm.Type;
@@ -25,6 +27,8 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 	private int[][] predecessors;
 
 	private RDSet[] rdSets;
+
+	private DefUseChain[] chains;
 
 	private int n;
 
@@ -135,6 +139,18 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			}
 		}
 
+		final List<DefUseChain> chains = new ArrayList<DefUseChain>();
+		for (int i = 0; i < n; i++) {
+			for (final Variable use : duframes[i].getUses()) {
+				for (int j = 0; j < n; j++) {
+					if (rdSets[i].in(j, use)) {
+						chains.add(new DefUseChain(j, i, indexOf(use)));
+					}
+				}
+			}
+		}
+		this.chains = chains.toArray(new DefUseChain[chains.size()]);
+
 		return frames;
 	}
 
@@ -162,12 +178,24 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		return rdSets;
 	}
 
+	public DefUseChain[] getDefUseChains() {
+		return chains;
+	}
+
 	public int[] getSuccessors(final int insn) {
 		return successors[insn];
 	}
 
 	public int[] getPredecessors(final int insn) {
 		return predecessors[insn];
+	}
+
+	private int indexOf(final Variable var) {
+		for (int i = 0; i < variables.length; i++) {
+			if (variables[i].equals(var))
+				return i;
+		}
+		throw new IllegalStateException("Invalid variable:" + var);
 	}
 
 	public static class RDSet {
@@ -193,6 +221,10 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 		public void kill(final int insn, final Variable var) {
 			kill.set(insn * vars.length + indexOf(var));
+		}
+
+		public boolean in(final int insn, final Variable var) {
+			return in.get(insn * vars.length + indexOf(var));
 		}
 
 		private int indexOf(final Variable var) {
