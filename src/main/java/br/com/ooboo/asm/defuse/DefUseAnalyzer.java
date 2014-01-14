@@ -61,7 +61,7 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 				local++;
 			}
 		}
-		int nargs = (m.access & ACC_STATIC) == 0 ? args.length + 1 : args.length + 0;
+		final int nargs = (m.access & ACC_STATIC) == 0 ? args.length + 1 : args.length + 0;
 
 		AbstractInsnNode insn;
 
@@ -158,12 +158,24 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		return variables;
 	}
 
-	private static class RDSet {
+	public RDSet[] getRDSets() {
+		return rdSets;
+	}
 
-		private final BitSet in;
-		private final BitSet out;
-		private final BitSet gen;
-		private final BitSet kill;
+	public int[] getSuccessors(final int insn) {
+		return successors[insn];
+	}
+
+	public int[] getPredecessors(final int insn) {
+		return predecessors[insn];
+	}
+
+	public static class RDSet {
+
+		public final BitSet in;
+		public final BitSet out;
+		public final BitSet gen;
+		public final BitSet kill;
 
 		private final Variable[] vars;
 
@@ -193,7 +205,7 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 		@Override
 		public String toString() {
-			StringBuilder builder = new StringBuilder();
+			final StringBuilder builder = new StringBuilder();
 			builder.append("in:").append(printSet(in));
 			builder.append("out:").append(printSet(out));
 			builder.append("gen:").append(printSet(gen));
@@ -202,11 +214,11 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		}
 
 		private String printSet(final BitSet set) {
-			StringBuilder builder = new StringBuilder();
+			final StringBuilder builder = new StringBuilder();
 			builder.append("{ ");
 			for (int i = set.nextSetBit(0); i != -1; i = set.nextSetBit(i + 1)) {
-				int insn = i / vars.length;
-				int var = i % vars.length;
+				final int insn = i / vars.length;
+				final int var = i % vars.length;
 				builder.append(insn);
 				builder.append(':');
 				builder.append(vars[var]);
