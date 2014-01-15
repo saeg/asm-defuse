@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -17,12 +16,14 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
+import org.objectweb.asm.tree.analysis.Frame;
 
 import br.com.ooboo.asm.defuse.DefUseAnalyzer;
 import br.com.ooboo.asm.defuse.DefUseAnalyzer.RDSet;
 import br.com.ooboo.asm.defuse.DefUseChain;
 import br.com.ooboo.asm.defuse.DefUseFrame;
 import br.com.ooboo.asm.defuse.Local;
+import br.com.ooboo.asm.defuse.Value;
 import br.com.ooboo.asm.defuse.Variable;
 
 public class DefUseAnalyzerTest {
@@ -31,8 +32,7 @@ public class DefUseAnalyzerTest {
 
 	private MethodNode mn;
 
-	@Before
-	public void setUp() throws AnalyzerException {
+	public void setUp1() throws AnalyzerException {
 		analyzer = new DefUseAnalyzer();
 		mn = new MethodNode();
 		/* 00 */mn.instructions.add(new InsnNode(Opcodes.ICONST_0));
@@ -72,8 +72,22 @@ public class DefUseAnalyzerTest {
 		analyzer.analyze("Owner", mn);
 	}
 
+	public void setUp2() {
+		analyzer = new DefUseAnalyzer();
+		mn = new MethodNode();
+		mn.instructions.add(new InsnNode(Opcodes.RETURN));
+		// unreachable instruction (frame will be null)
+		mn.instructions.add(new LabelNode());
+		mn.desc = "()V";
+		mn.maxLocals = 0;
+		mn.maxStack = 0;
+		mn.access = Opcodes.ACC_STATIC;
+		mn.tryCatchBlocks = Collections.emptyList();
+	}
+
 	@Test
-	public void testSucessors() {
+	public void testSucessors() throws AnalyzerException {
+		setUp1();
 		Assert.assertArrayEquals(new int[] { 1 }, analyzer.getSuccessors(0));
 		Assert.assertArrayEquals(new int[] { 2 }, analyzer.getSuccessors(1));
 		Assert.assertArrayEquals(new int[] { 3 }, analyzer.getSuccessors(2));
@@ -103,7 +117,8 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testPredecessors() {
+	public void testPredecessors() throws AnalyzerException {
+		setUp1();
 		Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(0));
 		Assert.assertArrayEquals(new int[] { 0 }, analyzer.getPredecessors(1));
 		Assert.assertArrayEquals(new int[] { 1 }, analyzer.getPredecessors(2));
@@ -133,7 +148,8 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testDefinitionOfLocalVariable() {
+	public void testDefinitionOfLocalVariable() throws AnalyzerException {
+		setUp1();
 		final DefUseFrame[] frames = analyzer.getDefUseFrames();
 		final int n = frames.length;
 		final Variable[] defs = new Variable[n];
@@ -158,7 +174,8 @@ public class DefUseAnalyzerTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void testUsesOfLocalVariables() {
+	public void testUsesOfLocalVariables() throws AnalyzerException {
+		setUp1();
 		final DefUseFrame[] frames = analyzer.getDefUseFrames();
 		final int n = frames.length;
 		final Set<Variable>[] uses = (Set<Variable>[]) new Set<?>[n];
@@ -189,7 +206,8 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testVariables() {
+	public void testVariables() throws AnalyzerException {
+		setUp1();
 		final Variable[] variables = analyzer.getVariables();
 		Assert.assertEquals(new Local(Type.INT_TYPE, 0), variables[0]);
 		Assert.assertEquals(new Local(Type.INT_TYPE, 1), variables[1]);
@@ -199,7 +217,8 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testReachingDefinitionsGen() {
+	public void testReachingDefinitionsGen() throws AnalyzerException {
+		setUp1();
 		final RDSet[] rdSets = analyzer.getRDSets();
 		final int vars = analyzer.getVariables().length;
 		final int n = mn.instructions.size();
@@ -226,7 +245,8 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testReachingDefinitionsKill() {
+	public void testReachingDefinitionsKill() throws AnalyzerException {
+		setUp1();
 		final RDSet[] rdSets = analyzer.getRDSets();
 		final int vars = analyzer.getVariables().length;
 		final int n = mn.instructions.size();
@@ -254,7 +274,8 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testDefUseChains() {
+	public void testDefUseChains() throws AnalyzerException {
+		setUp1();
 		final DefUseChain[] chains = analyzer.getDefUseChains();
 		final DefUseChain[] expected = new DefUseChain[18];
 
@@ -305,6 +326,36 @@ public class DefUseAnalyzerTest {
 		if (message.length() > 0) {
 			Assert.fail(message.toString());
 		}
+	}
+
+	@Test
+	public void ShouldNotThrowAnExceptionWhenAFrameIsNull() {
+		setUp2();
+		Exception exception = null;
+		try {
+			analyzer.analyze("Owner", mn);
+		} catch (final Exception e) {
+			exception = e;
+		}
+		final Frame<Value> frame = analyzer.getFrames()[1];
+		final DefUseFrame duframe = analyzer.getDefUseFrames()[1];
+		Assert.assertNull(exception);
+		Assert.assertNull(frame);
+		Assert.assertEquals(0, duframe.getLocals());
+		Assert.assertEquals(0, duframe.getStackSize());
+		Assert.assertEquals(Variable.NONE, duframe.getDefinition());
+		Assert.assertTrue(duframe.getUses().isEmpty());
+	}
+
+	@Test
+	public void ShouldNotCreateEdgesToUnreachableInstruction() throws AnalyzerException {
+		setUp2();
+		analyzer.analyze("Owner", mn);
+		Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(0));
+		Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(1));
+		Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(0));
+		Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(1));
+
 	}
 
 	private void set(final BitSet set, final int insn, final int var, final int vars) {

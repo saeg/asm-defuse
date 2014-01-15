@@ -70,7 +70,11 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		AbstractInsnNode insn;
 
 		for (int i = 0; i < n; i++) {
-			duframes[i] = new DefUseFrame(frames[i]);
+			if (frames[i] == null) {
+				duframes[i] = new DefUseFrame(0, 0);
+			} else {
+				duframes[i] = new DefUseFrame(frames[i]);
+			}
 			insn = m.instructions.get(i);
 			switch (insn.getType()) {
 			case AbstractInsnNode.LABEL:
