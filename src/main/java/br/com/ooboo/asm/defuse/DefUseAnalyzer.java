@@ -30,6 +30,8 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 	private DefUseChain[] chains;
 
+	private int[] basicBlocks;
+
 	private int n;
 
 	public DefUseAnalyzer() {
@@ -48,6 +50,8 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		successors = new int[n][n + 1];
 		predecessors = new int[n][n + 1];
 		rdSets = new RDSet[n];
+		basicBlocks = new int[n];
+		Arrays.fill(basicBlocks, -1);
 
 		final Frame<Value>[] frames = super.analyze(owner, m);
 		final DefUseFrame[] duframes = new DefUseFrame[frames.length];
@@ -154,6 +158,29 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			}
 		}
 		this.chains = chains.toArray(new DefUseChain[chains.size()]);
+
+		final int[] queue = new int[n];
+		int top = 0;
+		int basicBlock = 0;
+		queue[top++] = 0;
+
+		while (top > 0) {
+			int i = queue[--top];
+			basicBlocks[i] = basicBlock;
+			while (successors[i].length == 1) {
+				if (predecessors[successors[i][0]].length == 1) {
+					i = successors[i][0];
+					basicBlocks[i] = basicBlock;
+				} else {
+					break;
+				}
+			}
+			basicBlock++;
+			for (final int successor : successors[i]) {
+				if (basicBlocks[successor] == -1)
+					queue[top++] = successor;
+			}
+		}
 
 		return frames;
 	}
