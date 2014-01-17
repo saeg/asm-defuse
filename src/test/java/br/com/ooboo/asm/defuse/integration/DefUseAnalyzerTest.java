@@ -358,6 +358,54 @@ public class DefUseAnalyzerTest {
 
 	}
 
+	@Test
+	public void testBasicBlocksLeaders() throws AnalyzerException {
+		setUp1();
+		final int[] leaders = analyzer.getLeaders();
+		Assert.assertEquals(0, leaders[0]);
+		Assert.assertEquals(0, leaders[1]);
+		Assert.assertEquals(0, leaders[2]);
+		Assert.assertEquals(0, leaders[3]);
+		Assert.assertEquals(0, leaders[4]);
+		Assert.assertEquals(0, leaders[5]);
+		Assert.assertEquals(0, leaders[6]);
+
+		Assert.assertEquals(1, leaders[7]);
+		Assert.assertEquals(1, leaders[8]);
+		Assert.assertEquals(1, leaders[9]);
+		Assert.assertEquals(1, leaders[10]);
+
+		Assert.assertEquals(3, leaders[11]);
+		Assert.assertEquals(3, leaders[12]);
+		Assert.assertEquals(3, leaders[13]);
+		Assert.assertEquals(3, leaders[14]);
+		Assert.assertEquals(3, leaders[15]);
+
+		Assert.assertEquals(5, leaders[16]);
+		Assert.assertEquals(5, leaders[17]);
+		Assert.assertEquals(5, leaders[18]);
+		Assert.assertEquals(5, leaders[19]);
+
+		Assert.assertEquals(4, leaders[20]);
+		Assert.assertEquals(4, leaders[21]);
+		Assert.assertEquals(4, leaders[22]);
+
+		Assert.assertEquals(2, leaders[23]);
+		Assert.assertEquals(2, leaders[24]);
+		Assert.assertEquals(2, leaders[25]);
+	}
+
+	@Test
+	public void testBasicBlockInstructionsSequence() throws AnalyzerException {
+		setUp1();
+		Assert.assertArrayEquals(new int[] { 0, 1, 2, 3, 4, 5, 6 }, analyzer.getBasicBlock(0));
+		Assert.assertArrayEquals(new int[] { 7, 8, 9, 10 }, analyzer.getBasicBlock(1));
+		Assert.assertArrayEquals(new int[] { 23, 24, 25 }, analyzer.getBasicBlock(2));
+		Assert.assertArrayEquals(new int[] { 11, 12, 13, 14, 15 }, analyzer.getBasicBlock(3));
+		Assert.assertArrayEquals(new int[] { 20, 21, 22 }, analyzer.getBasicBlock(4));
+		Assert.assertArrayEquals(new int[] { 16, 17, 18, 19 }, analyzer.getBasicBlock(5));
+	}
+
 	private void set(final BitSet set, final int insn, final int var, final int vars) {
 		set.set(insn * vars + var);
 	}

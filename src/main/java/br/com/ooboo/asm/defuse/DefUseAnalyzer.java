@@ -30,7 +30,9 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 	private DefUseChain[] chains;
 
-	private int[] basicBlocks;
+	private int[][] bBlocks;
+
+	private int[] leaders;
 
 	private int n;
 
@@ -50,8 +52,9 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		successors = new int[n][n + 1];
 		predecessors = new int[n][n + 1];
 		rdSets = new RDSet[n];
-		basicBlocks = new int[n];
-		Arrays.fill(basicBlocks, -1);
+		bBlocks = new int[n][n + 1];
+		leaders = new int[n];
+		Arrays.fill(leaders, -1);
 
 		final Frame<Value>[] frames = super.analyze(owner, m);
 		final DefUseFrame[] duframes = new DefUseFrame[frames.length];
@@ -163,24 +166,32 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		int top = 0;
 		int basicBlock = 0;
 		queue[top++] = 0;
+		int[] insns;
 
 		while (top > 0) {
 			int i = queue[--top];
-			basicBlocks[i] = basicBlock;
+			leaders[i] = basicBlock;
+			insns = bBlocks[basicBlock];
+			insns[insns[n]] = i;
+			insns[n] = insns[n] + 1;
 			while (successors[i].length == 1) {
 				if (predecessors[successors[i][0]].length == 1) {
 					i = successors[i][0];
-					basicBlocks[i] = basicBlock;
+					leaders[i] = basicBlock;
+					insns[insns[n]] = i;
+					insns[n] = insns[n] + 1;
 				} else {
 					break;
 				}
 			}
+			bBlocks[basicBlock] = Arrays.copyOf(bBlocks[basicBlock], bBlocks[basicBlock][n]);
 			basicBlock++;
 			for (final int successor : successors[i]) {
-				if (basicBlocks[successor] == -1)
+				if (leaders[successor] == -1)
 					queue[top++] = successor;
 			}
 		}
+		bBlocks = Arrays.copyOf(bBlocks, basicBlock);
 
 		return frames;
 	}
@@ -219,6 +230,14 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 	public int[] getPredecessors(final int insn) {
 		return predecessors[insn];
+	}
+
+	public int[] getLeaders() {
+		return leaders;
+	}
+
+	public int[] getBasicBlock(final int id) {
+		return bBlocks[id];
 	}
 
 	private int indexOf(final Variable var) {
