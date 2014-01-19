@@ -22,8 +22,10 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 	private Variable[] variables;
 
+	private IntList[] successorsList;
 	private int[][] successors;
 
+	private IntList[] predecessorsList;
 	private int[][] predecessors;
 
 	private RDSet[] rdSets;
@@ -49,12 +51,18 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 	public Frame<Value>[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
 
 		n = m.instructions.size();
-		successors = new int[n][n + 1];
-		predecessors = new int[n][n + 1];
+		successors = new int[n][];
+		predecessors = new int[n][];
 		rdSets = new RDSet[n];
-		bBlocks = new int[n][n + 1];
+		bBlocks = new int[n][];
 		leaders = new int[n];
 		Arrays.fill(leaders, -1);
+		successorsList = new IntList[n];
+		predecessorsList = new IntList[n];
+		for (int i = 0; i < n; i++) {
+			successorsList[i] = new IntList();
+			predecessorsList[i] = new IntList();
+		}
 
 		final Frame<Value>[] frames = super.analyze(owner, m);
 		final DefUseFrame[] duframes = new DefUseFrame[frames.length];
@@ -94,10 +102,11 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 				vars.addAll(duframes[i].getUses());
 				break;
 			}
-			successors[i] = Arrays.copyOf(successors[i], successors[i][n]);
-			predecessors[i] = Arrays.copyOf(predecessors[i], predecessors[i][n]);
+			successors[i] = successorsList[i].toArray();
+			predecessors[i] = predecessorsList[i].toArray();
 		}
-
+		successorsList = null;
+		predecessorsList = null;
 		vars.remove(Variable.NONE);
 		this.duframes = duframes;
 		this.variables = vars.toArray(new Variable[vars.size()]);
@@ -166,25 +175,23 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		int top = 0;
 		int basicBlock = 0;
 		queue[top++] = 0;
-		int[] insns;
+		final IntList list = new IntList();
 
 		while (top > 0) {
 			int i = queue[--top];
 			leaders[i] = basicBlock;
-			insns = bBlocks[basicBlock];
-			insns[insns[n]] = i;
-			insns[n] = insns[n] + 1;
+			list.add(i);
 			while (successors[i].length == 1) {
 				if (predecessors[successors[i][0]].length == 1) {
 					i = successors[i][0];
 					leaders[i] = basicBlock;
-					insns[insns[n]] = i;
-					insns[n] = insns[n] + 1;
+					list.add(i);
 				} else {
 					break;
 				}
 			}
-			bBlocks[basicBlock] = Arrays.copyOf(bBlocks[basicBlock], bBlocks[basicBlock][n]);
+			bBlocks[basicBlock] = list.toArray();
+			list.clear();
 			basicBlock++;
 			for (final int successor : successors[i]) {
 				if (leaders[successor] == -1)
@@ -198,14 +205,8 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 	@Override
 	protected void newControlFlowEdge(final int insn, final int successor) {
-		final int[] insnSuccessors = successors[insn];
-		final int[] insnPredecessors = predecessors[successor];
-
-		insnSuccessors[insnSuccessors[n]] = successor;
-		insnPredecessors[insnPredecessors[n]] = insn;
-
-		insnSuccessors[n] = insnSuccessors[n] + 1;
-		insnPredecessors[n] = insnPredecessors[n] + 1;
+		successorsList[insn].add(successor);
+		predecessorsList[successor].add(insn);
 	}
 
 	public DefUseFrame[] getDefUseFrames() {
