@@ -1,6 +1,5 @@
 package br.com.ooboo.asm.defuse.integration;
 
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -217,16 +216,17 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testReachingDefinitionsGen() throws AnalyzerException {
 		setUp1();
 		final RDSet[] rdSets = analyzer.getRDSets();
 		final int vars = analyzer.getVariables().length;
 		final int n = mn.instructions.size();
-		final BitSet[] gens = new BitSet[n];
+		final Set<Integer>[] gens = (Set<Integer>[]) new HashSet<?>[n];
 
 		// Default
 		for (int i = 0; i < n; i++) {
-			gens[i] = new BitSet(n * vars);
+			gens[i] = new HashSet<Integer>();
 		}
 
 		set(gens[0], 0, 0, vars);
@@ -239,22 +239,23 @@ public class DefUseAnalyzerTest {
 
 		// Assert
 		for (int i = 0; i < n; i++) {
-			Assert.assertEquals("Instruction: " + i, gens[i], rdSets[i].gen);
+			Assert.assertTrue("Instruction: " + i, gens[i].containsAll(rdSets[i].gen()));
 		}
 
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testReachingDefinitionsKill() throws AnalyzerException {
 		setUp1();
 		final RDSet[] rdSets = analyzer.getRDSets();
 		final int vars = analyzer.getVariables().length;
 		final int n = mn.instructions.size();
-		final BitSet[] kills = new BitSet[n];
+		final Set<Integer>[] kills = (Set<Integer>[]) new HashSet<?>[n];
 
 		// Default
 		for (int i = 0; i < n; i++) {
-			kills[i] = new BitSet(n * vars);
+			kills[i] = new HashSet<Integer>();
 		}
 
 		set(kills[1], 4, 2, vars);
@@ -268,7 +269,7 @@ public class DefUseAnalyzerTest {
 
 		// Assert
 		for (int i = 0; i < n; i++) {
-			Assert.assertEquals("Instruction: " + i, kills[i], rdSets[i].kill);
+			Assert.assertTrue("Instruction: " + i, kills[i].containsAll(rdSets[i].kill()));
 		}
 
 	}
@@ -406,8 +407,8 @@ public class DefUseAnalyzerTest {
 		Assert.assertArrayEquals(new int[] { 16, 17, 18, 19 }, analyzer.getBasicBlock(5));
 	}
 
-	private void set(final BitSet set, final int insn, final int var, final int vars) {
-		set.set(insn * vars + var);
+	private void set(final Set<Integer> set, final int insn, final int var, final int vars) {
+		set.add(insn * vars + var);
 	}
 
 }

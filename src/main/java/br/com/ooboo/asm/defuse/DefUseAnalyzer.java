@@ -2,7 +2,8 @@ package br.com.ooboo.asm.defuse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -143,15 +144,15 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 				rdSets[i].in.clear();
 				for (final int pred : predecessors[i]) {
-					rdSets[i].in.or(rdSets[pred].out);
+					rdSets[i].in.addAll(rdSets[pred].out);
 				}
 
-				final BitSet oldout = (BitSet) rdSets[i].out.clone();
-				final BitSet temp = (BitSet) rdSets[i].in.clone();
-				temp.andNot(rdSets[i].kill);
+				final Set<Integer> oldout = new HashSet<Integer>(rdSets[i].out);
+				final Set<Integer> temp = new HashSet<Integer>(rdSets[i].in);
+				temp.removeAll(rdSets[i].kill);
 				rdSets[i].out.clear();
-				rdSets[i].out.or(rdSets[i].gen);
-				rdSets[i].out.or(temp);
+				rdSets[i].out.addAll(rdSets[i].gen);
+				rdSets[i].out.addAll(temp);
 
 				if (!rdSets[i].out.equals(oldout)) {
 					changed = true;
@@ -251,31 +252,39 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 	public static class RDSet {
 
-		public final BitSet in;
-		public final BitSet out;
-		public final BitSet gen;
-		public final BitSet kill;
+		private final Set<Integer> in;
+		private final Set<Integer> out;
+		private final Set<Integer> gen;
+		private final Set<Integer> kill;
 
 		private final Variable[] vars;
 
 		public RDSet(final int insns, final Variable[] variables) {
-			in = new BitSet(insns * variables.length);
-			out = new BitSet(insns * variables.length);
-			gen = new BitSet(insns * variables.length);
-			kill = new BitSet(insns * variables.length);
+			in = new HashSet<Integer>();
+			out = new HashSet<Integer>();
+			gen = new HashSet<Integer>();
+			kill = new HashSet<Integer>();
 			vars = variables;
 		}
 
+		public Set<Integer> gen() {
+			return Collections.unmodifiableSet(gen);
+		}
+
 		public void gen(final int insn, final Variable var) {
-			gen.set(insn * vars.length + indexOf(var));
+			gen.add(insn * vars.length + indexOf(var));
+		}
+
+		public Set<Integer> kill() {
+			return Collections.unmodifiableSet(kill);
 		}
 
 		public void kill(final int insn, final Variable var) {
-			kill.set(insn * vars.length + indexOf(var));
+			kill.add(insn * vars.length + indexOf(var));
 		}
 
 		public boolean in(final int insn, final Variable var) {
-			return in.get(insn * vars.length + indexOf(var));
+			return in.contains(insn * vars.length + indexOf(var));
 		}
 
 		private int indexOf(final Variable var) {
@@ -296,10 +305,10 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			return builder.toString();
 		}
 
-		private String printSet(final BitSet set) {
+		private String printSet(final Set<Integer> set) {
 			final StringBuilder builder = new StringBuilder();
 			builder.append("{ ");
-			for (int i = set.nextSetBit(0); i != -1; i = set.nextSetBit(i + 1)) {
+			for (final Integer i : set) {
 				final int insn = i / vars.length;
 				final int var = i % vars.length;
 				builder.append(insn);
