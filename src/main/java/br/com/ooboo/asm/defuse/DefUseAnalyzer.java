@@ -210,6 +210,12 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		predecessorsList[successor].add(insn);
 	}
 
+	@Override
+	protected boolean newControlFlowExceptionEdge(final int insn, final int successor) {
+		// ignoring exception flow
+		return false;
+	}
+
 	public DefUseFrame[] getDefUseFrames() {
 		return duframes;
 	}
