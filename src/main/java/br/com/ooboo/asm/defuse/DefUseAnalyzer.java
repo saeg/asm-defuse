@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,11 +24,9 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 	private Variable[] variables;
 
-	private IntList[] successorsList;
-	private int[][] successors;
+	private Set<Integer>[] successors;
 
-	private IntList[] predecessorsList;
-	private int[][] predecessors;
+	private Set<Integer>[] predecessors;
 
 	private RDSet[] rdSets;
 
@@ -49,20 +48,19 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Frame<Value>[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
 
 		n = m.instructions.size();
-		successors = new int[n][];
-		predecessors = new int[n][];
 		rdSets = new RDSet[n];
 		bBlocks = new int[n][];
 		leaders = new int[n];
 		Arrays.fill(leaders, -1);
-		successorsList = new IntList[n];
-		predecessorsList = new IntList[n];
+		successors = (Set<Integer>[]) new Set<?>[n];
+		predecessors = (Set<Integer>[]) new Set<?>[n];
 		for (int i = 0; i < n; i++) {
-			successorsList[i] = new IntList();
-			predecessorsList[i] = new IntList();
+			successors[i] = new LinkedHashSet<Integer>();
+			predecessors[i] = new LinkedHashSet<Integer>();
 		}
 
 		final Frame<Value>[] frames = super.analyze(owner, m);
@@ -103,11 +101,7 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 				vars.addAll(duframes[i].getUses());
 				break;
 			}
-			successors[i] = successorsList[i].toArray();
-			predecessors[i] = predecessorsList[i].toArray();
 		}
-		successorsList = null;
-		predecessorsList = null;
 		vars.remove(Variable.NONE);
 		this.duframes = duframes;
 		this.variables = vars.toArray(new Variable[vars.size()]);
@@ -182,9 +176,10 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			int i = queue[--top];
 			leaders[i] = basicBlock;
 			list.add(i);
-			while (successors[i].length == 1) {
-				if (predecessors[successors[i][0]].length == 1) {
-					i = successors[i][0];
+			while (successors[i].size() == 1) {
+				final int child = successors[i].iterator().next();
+				if (predecessors[child].size() == 1) {
+					i = child;
 					leaders[i] = basicBlock;
 					list.add(i);
 				} else {
@@ -206,8 +201,8 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 	@Override
 	protected void newControlFlowEdge(final int insn, final int successor) {
-		successorsList[insn].add(successor);
-		predecessorsList[successor].add(insn);
+		successors[insn].add(successor);
+		predecessors[successor].add(insn);
 	}
 
 	public DefUseFrame[] getDefUseFrames() {
@@ -227,11 +222,11 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 	}
 
 	public int[] getSuccessors(final int insn) {
-		return successors[insn];
+		return toArray(successors[insn]);
 	}
 
 	public int[] getPredecessors(final int insn) {
-		return predecessors[insn];
+		return toArray(predecessors[insn]);
 	}
 
 	public int[] getLeaders() {
@@ -248,6 +243,16 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 				return i;
 		}
 		throw new IllegalStateException("Invalid variable:" + var);
+	}
+
+	private int[] toArray(final Set<Integer> set) {
+		final int[] array = new int[set.size()];
+		final Iterator<Integer> it = set.iterator();
+		int i = 0;
+		while (it.hasNext()) {
+			array[i++] = it.next();
+		}
+		return array;
 	}
 
 	public static class RDSet {
