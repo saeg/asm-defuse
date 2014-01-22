@@ -498,6 +498,42 @@ public class DefUseAnalyzerTest {
 		Assert.assertArrayEquals(new int[] { 16, 17, 18, 19 }, analyzer.getBasicBlock(5));
 	}
 
+	@Test
+	public void ShouldNotCreateEdgesOnExceptionFlow() throws AnalyzerException {
+		prepareMethodWithTryCatchBlock();
+		analyzer.analyze("Owner", mn);
+
+		Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(0));
+		Assert.assertArrayEquals(new int[] { 0 }, analyzer.getPredecessors(1));
+		Assert.assertArrayEquals(new int[] { 1 }, analyzer.getPredecessors(2));
+		Assert.assertArrayEquals(new int[] { 2 }, analyzer.getPredecessors(3));
+		Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(4));
+		Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(5));
+		Assert.assertArrayEquals(new int[] { 3 }, analyzer.getPredecessors(6));
+		Assert.assertArrayEquals(new int[] { 6 }, analyzer.getPredecessors(7));
+
+		Assert.assertArrayEquals(new int[] { 1 }, analyzer.getSuccessors(0));
+		Assert.assertArrayEquals(new int[] { 2 }, analyzer.getSuccessors(1));
+		Assert.assertArrayEquals(new int[] { 3 }, analyzer.getSuccessors(2));
+		Assert.assertArrayEquals(new int[] { 6 }, analyzer.getSuccessors(3));
+		Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(4));
+		Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(5));
+		Assert.assertArrayEquals(new int[] { 7 }, analyzer.getSuccessors(6));
+		Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(7));
+
+		Assert.assertArrayEquals(new int[] { 0, 1, 2, 3, 6, 7 }, analyzer.getBasicBlock(0));
+
+		final int[] leaders = analyzer.getLeaders();
+		Assert.assertEquals(0, leaders[0]);
+		Assert.assertEquals(0, leaders[1]);
+		Assert.assertEquals(0, leaders[2]);
+		Assert.assertEquals(0, leaders[3]);
+		Assert.assertEquals(0, leaders[6]);
+		Assert.assertEquals(0, leaders[7]);
+		Assert.assertEquals(-1, leaders[4]);
+		Assert.assertEquals(-1, leaders[5]);
+	}
+
 	private void set(final Set<Integer> set, final int insn, final int var, final int vars) {
 		set.add(insn * vars + var);
 	}
