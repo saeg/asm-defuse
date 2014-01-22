@@ -87,7 +87,7 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 		for (int i = 0; i < n; i++) {
 			if (frames[i] == null) {
-				duframes[i] = new DefUseFrame(0, 0);
+				duframes[i] = DefUseFrame.NONE;
 			} else {
 				duframes[i] = new DefUseFrame(frames[i]);
 			}
@@ -98,9 +98,11 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			case AbstractInsnNode.FRAME:
 				break;
 			default:
-				duframes[i].execute(insn, interpreter);
-				vars.add(duframes[i].getDefinition());
-				vars.addAll(duframes[i].getUses());
+				if (duframes[i] != DefUseFrame.NONE) {
+					duframes[i].execute(insn, interpreter);
+					vars.add(duframes[i].getDefinition());
+					vars.addAll(duframes[i].getUses());
+				}
 				break;
 			}
 			successors[i] = successorsList[i].toArray();

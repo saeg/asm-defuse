@@ -20,6 +20,8 @@ import org.objectweb.asm.tree.analysis.Interpreter;
 
 public class DefUseFrame extends Frame<Value> {
 
+	public static final DefUseFrame NONE = new DefUseFrame(0, 0);
+
 	private Variable def = Variable.NONE;
 
 	private Set<Variable> uses = Collections.emptySet();

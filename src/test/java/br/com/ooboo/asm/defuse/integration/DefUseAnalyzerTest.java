@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -13,6 +14,7 @@ import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TryCatchBlockNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Frame;
@@ -31,8 +33,12 @@ public class DefUseAnalyzerTest {
 
 	private MethodNode mn;
 
-	public void setUp1() throws AnalyzerException {
+	@Before
+	public void setUp() {
 		analyzer = new DefUseAnalyzer();
+	}
+
+	public void prepareMethodMax() {
 		mn = new MethodNode();
 		/* 00 */mn.instructions.add(new InsnNode(Opcodes.ICONST_0));
 		/* 01 */mn.instructions.add(new VarInsnNode(Opcodes.ISTORE, 2));
@@ -68,11 +74,9 @@ public class DefUseAnalyzerTest {
 		mn.maxStack = 2;
 		mn.access = Opcodes.ACC_STATIC;
 		mn.tryCatchBlocks = Collections.emptyList();
-		analyzer.analyze("Owner", mn);
 	}
 
-	public void setUp2() {
-		analyzer = new DefUseAnalyzer();
+	public void prepareMethodWhitUnreachableCode() {
 		mn = new MethodNode();
 		mn.instructions.add(new InsnNode(Opcodes.RETURN));
 		// unreachable instruction (frame will be null)
@@ -84,9 +88,46 @@ public class DefUseAnalyzerTest {
 		mn.tryCatchBlocks = Collections.emptyList();
 	}
 
+	public void prepareMethodWhitUnreachableCodeThatManipuleteVariableArrayAndStack() {
+		mn = new MethodNode();
+		mn.instructions.add(new InsnNode(Opcodes.RETURN));
+		// unreachable instruction (frame will be null)
+		mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+		mn.instructions.add(new VarInsnNode(Opcodes.ASTORE, 1));
+		mn.desc = "()V";
+		mn.maxLocals = 2;
+		mn.maxStack = 1;
+		mn.access = 0;
+		mn.tryCatchBlocks = Collections.emptyList();
+	}
+
+	public void prepareMethodWithTryCatchBlock() {
+		final LabelNode begin = new LabelNode();
+		final LabelNode end = new LabelNode();
+		final LabelNode handler = new LabelNode();
+		final LabelNode jmp = new LabelNode();
+		final TryCatchBlockNode tcb = new TryCatchBlockNode(begin, end, handler, "Exception");
+
+		mn = new MethodNode();
+		mn.instructions.add(begin);
+		mn.instructions.add(new InsnNode(Opcodes.NOP));
+		mn.instructions.add(end);
+		mn.instructions.add(new JumpInsnNode(Opcodes.GOTO, jmp));
+		mn.instructions.add(handler);
+		mn.instructions.add(new InsnNode(Opcodes.POP));
+		mn.instructions.add(jmp);
+		mn.instructions.add(new InsnNode(Opcodes.RETURN));
+		mn.desc = "()V";
+		mn.maxLocals = 0;
+		mn.maxStack = 1;
+		mn.access = Opcodes.ACC_STATIC;
+		mn.tryCatchBlocks = Collections.singletonList(tcb);
+	}
+
 	@Test
 	public void testSucessors() throws AnalyzerException {
-		setUp1();
+		prepareMethodMax();
+		analyzer.analyze("Owner", mn);
 		Assert.assertArrayEquals(new int[] { 1 }, analyzer.getSuccessors(0));
 		Assert.assertArrayEquals(new int[] { 2 }, analyzer.getSuccessors(1));
 		Assert.assertArrayEquals(new int[] { 3 }, analyzer.getSuccessors(2));
@@ -117,7 +158,8 @@ public class DefUseAnalyzerTest {
 
 	@Test
 	public void testPredecessors() throws AnalyzerException {
-		setUp1();
+		prepareMethodMax();
+		analyzer.analyze("Owner", mn);
 		Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(0));
 		Assert.assertArrayEquals(new int[] { 0 }, analyzer.getPredecessors(1));
 		Assert.assertArrayEquals(new int[] { 1 }, analyzer.getPredecessors(2));
@@ -148,7 +190,8 @@ public class DefUseAnalyzerTest {
 
 	@Test
 	public void testDefinitionOfLocalVariable() throws AnalyzerException {
-		setUp1();
+		prepareMethodMax();
+		analyzer.analyze("Owner", mn);
 		final DefUseFrame[] frames = analyzer.getDefUseFrames();
 		final int n = frames.length;
 		final Variable[] defs = new Variable[n];
@@ -174,7 +217,8 @@ public class DefUseAnalyzerTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testUsesOfLocalVariables() throws AnalyzerException {
-		setUp1();
+		prepareMethodMax();
+		analyzer.analyze("Owner", mn);
 		final DefUseFrame[] frames = analyzer.getDefUseFrames();
 		final int n = frames.length;
 		final Set<Variable>[] uses = (Set<Variable>[]) new Set<?>[n];
@@ -206,7 +250,8 @@ public class DefUseAnalyzerTest {
 
 	@Test
 	public void testVariables() throws AnalyzerException {
-		setUp1();
+		prepareMethodMax();
+		analyzer.analyze("Owner", mn);
 		final Variable[] variables = analyzer.getVariables();
 		Assert.assertEquals(new Local(Type.INT_TYPE, 0), variables[0]);
 		Assert.assertEquals(new Local(Type.INT_TYPE, 1), variables[1]);
@@ -218,7 +263,8 @@ public class DefUseAnalyzerTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testReachingDefinitionsGen() throws AnalyzerException {
-		setUp1();
+		prepareMethodMax();
+		analyzer.analyze("Owner", mn);
 		final RDSet[] rdSets = analyzer.getRDSets();
 		final int vars = analyzer.getVariables().length;
 		final int n = mn.instructions.size();
@@ -247,7 +293,8 @@ public class DefUseAnalyzerTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testReachingDefinitionsKill() throws AnalyzerException {
-		setUp1();
+		prepareMethodMax();
+		analyzer.analyze("Owner", mn);
 		final RDSet[] rdSets = analyzer.getRDSets();
 		final int vars = analyzer.getVariables().length;
 		final int n = mn.instructions.size();
@@ -276,7 +323,8 @@ public class DefUseAnalyzerTest {
 
 	@Test
 	public void testDefUseChains() throws AnalyzerException {
-		setUp1();
+		prepareMethodMax();
+		analyzer.analyze("Owner", mn);
 		final DefUseChain[] chains = analyzer.getDefUseChains();
 		final DefUseChain[] expected = new DefUseChain[18];
 
@@ -331,26 +379,67 @@ public class DefUseAnalyzerTest {
 
 	@Test
 	public void ShouldNotThrowAnExceptionWhenAFrameIsNull() {
-		setUp2();
+		prepareMethodWhitUnreachableCode();
 		Exception exception = null;
 		try {
 			analyzer.analyze("Owner", mn);
 		} catch (final Exception e) {
 			exception = e;
 		}
-		final Frame<Value> frame = analyzer.getFrames()[1];
-		final DefUseFrame duframe = analyzer.getDefUseFrames()[1];
+		final Frame<Value>[] frames = analyzer.getFrames();
+		final DefUseFrame[] duframes = analyzer.getDefUseFrames();
 		Assert.assertNull(exception);
-		Assert.assertNull(frame);
-		Assert.assertEquals(0, duframe.getLocals());
-		Assert.assertEquals(0, duframe.getStackSize());
-		Assert.assertEquals(Variable.NONE, duframe.getDefinition());
-		Assert.assertTrue(duframe.getUses().isEmpty());
+		Assert.assertNotNull(frames[0]);
+		Assert.assertNull(frames[1]);
+		Assert.assertEquals(DefUseFrame.NONE, duframes[1]);
+	}
+
+	@Test
+	public void ShouldNotThrowAnExceptionWhenExecuteUnreachableCode() {
+		prepareMethodWhitUnreachableCodeThatManipuleteVariableArrayAndStack();
+		Exception exception = null;
+		try {
+			analyzer.analyze("Owner", mn);
+		} catch (final Exception e) {
+			exception = e;
+		}
+		final Frame<Value>[] frames = analyzer.getFrames();
+		final DefUseFrame[] duframes = analyzer.getDefUseFrames();
+		Assert.assertNull(exception);
+		Assert.assertNotNull(frames[0]);
+		Assert.assertNull(frames[1]);
+		Assert.assertNull(frames[2]);
+		Assert.assertEquals(DefUseFrame.NONE, duframes[1]);
+		Assert.assertEquals(DefUseFrame.NONE, duframes[2]);
+	}
+
+	@Test
+	public void ShouldNotThrowAnExceptionWhenExecuteUnreachableCodeCausedByExceptionFlow() {
+		prepareMethodWithTryCatchBlock();
+		Exception exception = null;
+		try {
+			analyzer.analyze("Owner", mn);
+		} catch (final Exception e) {
+			exception = e;
+		}
+		final Frame<Value>[] frames = analyzer.getFrames();
+		final DefUseFrame[] duframes = analyzer.getDefUseFrames();
+		Assert.assertNull(exception);
+		Assert.assertNotNull(frames[0]);
+		Assert.assertNotNull(frames[1]);
+		Assert.assertNotNull(frames[2]);
+		Assert.assertNotNull(frames[3]);
+		Assert.assertNull(frames[4]);
+		Assert.assertNull(frames[5]);
+		Assert.assertNotNull(frames[6]);
+		Assert.assertNotNull(frames[7]);
+		Assert.assertEquals(DefUseFrame.NONE, duframes[4]);
+		Assert.assertEquals(DefUseFrame.NONE, duframes[5]);
 	}
 
 	@Test
 	public void ShouldNotCreateEdgesToUnreachableInstruction() throws AnalyzerException {
-		setUp2();
+		prepareMethodWhitUnreachableCode();
 		analyzer.analyze("Owner", mn);
 		Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(0));
 		Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(1));
@@ -361,7 +450,8 @@ public class DefUseAnalyzerTest {
 
 	@Test
 	public void testBasicBlocksLeaders() throws AnalyzerException {
-		setUp1();
+		prepareMethodMax();
+		analyzer.analyze("Owner", mn);
 		final int[] leaders = analyzer.getLeaders();
 		Assert.assertEquals(0, leaders[0]);
 		Assert.assertEquals(0, leaders[1]);
@@ -398,7 +488,8 @@ public class DefUseAnalyzerTest {
 
 	@Test
 	public void testBasicBlockInstructionsSequence() throws AnalyzerException {
-		setUp1();
+		prepareMethodMax();
+		analyzer.analyze("Owner", mn);
 		Assert.assertArrayEquals(new int[] { 0, 1, 2, 3, 4, 5, 6 }, analyzer.getBasicBlock(0));
 		Assert.assertArrayEquals(new int[] { 7, 8, 9, 10 }, analyzer.getBasicBlock(1));
 		Assert.assertArrayEquals(new int[] { 23, 24, 25 }, analyzer.getBasicBlock(2));
