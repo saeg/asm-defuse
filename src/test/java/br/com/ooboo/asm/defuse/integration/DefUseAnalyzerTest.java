@@ -558,7 +558,7 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void DefinitionOfAStaticFieldKills() throws AnalyzerException {
+	public void DefinitionOfAStaticFieldKillsEntryDef() throws AnalyzerException {
 		mn = new MethodNode();
 		mn.instructions.add(new InsnNode(Opcodes.ICONST_1));
 		mn.instructions.add(new FieldInsnNode(Opcodes.PUTSTATIC, "Owner", "name", "I"));
@@ -579,6 +579,52 @@ public class DefUseAnalyzerTest {
 		Assert.assertEquals(1, chains[0].def);
 		Assert.assertEquals(3, chains[0].use);
 		Assert.assertEquals(new StaticField("Owner", "name", "I"), vars[chains[0].var]);
+		Assert.assertTrue(isSet(sets[1].kill(), 0, chains[0].var, vars.length));
+	}
+
+	@Test
+	public void UseOfParameterdWithoutDefinition() throws AnalyzerException {
+		mn = new MethodNode();
+		mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 0));
+		mn.instructions.add(new InsnNode(Opcodes.IRETURN));
+		mn.desc = "(I)I";
+		mn.maxLocals = 1;
+		mn.maxStack = 1;
+		mn.access = Opcodes.ACC_STATIC;
+		mn.tryCatchBlocks = Collections.emptyList();
+
+		analyzer.analyze("Owner", mn);
+
+		final DefUseChain[] chains = analyzer.getDefUseChains();
+		final Variable[] vars = analyzer.getVariables();
+		Assert.assertEquals(1, chains.length);
+		Assert.assertEquals(0, chains[0].def);
+		Assert.assertEquals(1, chains[0].use);
+		Assert.assertEquals(new Local(Type.INT_TYPE, 0), vars[chains[0].var]);
+	}
+
+	@Test
+	public void DefinitionOfParameterKillsEntryDef() throws AnalyzerException {
+		mn = new MethodNode();
+		mn.instructions.add(new InsnNode(Opcodes.ICONST_1));
+		mn.instructions.add(new VarInsnNode(Opcodes.ISTORE, 0));
+		mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 0));
+		mn.instructions.add(new InsnNode(Opcodes.IRETURN));
+		mn.desc = "(I)I";
+		mn.maxLocals = 1;
+		mn.maxStack = 1;
+		mn.access = Opcodes.ACC_STATIC;
+		mn.tryCatchBlocks = Collections.emptyList();
+
+		analyzer.analyze("Owner", mn);
+
+		final DefUseChain[] chains = analyzer.getDefUseChains();
+		final Variable[] vars = analyzer.getVariables();
+		final RDSet[] sets = analyzer.getRDSets();
+		Assert.assertEquals(1, chains.length);
+		Assert.assertEquals(1, chains[0].def);
+		Assert.assertEquals(3, chains[0].use);
+		Assert.assertEquals(new Local(Type.INT_TYPE, 0), vars[chains[0].var]);
 		Assert.assertTrue(isSet(sets[1].kill(), 0, chains[0].var, vars.length));
 	}
 

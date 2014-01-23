@@ -135,10 +135,11 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 				other = duframes[j].getDefinition();
 				if (def.equals(other)) {
 					rdSets[0].kill(j, def);
+					rdSets[j].kill(i, def);
 				}
 			}
 		}
-		for (int i = nargs ; i < variables.length; i++) {
+		for (int i = nargs; i < variables.length; i++) {
 			def = variables[i];
 			if (def instanceof StaticField) {
 				rdSets[0].gen(0, def);
