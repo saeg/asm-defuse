@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
@@ -24,6 +25,7 @@ import br.com.ooboo.asm.defuse.DefUseAnalyzer.RDSet;
 import br.com.ooboo.asm.defuse.DefUseChain;
 import br.com.ooboo.asm.defuse.DefUseFrame;
 import br.com.ooboo.asm.defuse.Local;
+import br.com.ooboo.asm.defuse.StaticField;
 import br.com.ooboo.asm.defuse.Value;
 import br.com.ooboo.asm.defuse.Variable;
 
@@ -534,8 +536,58 @@ public class DefUseAnalyzerTest {
 		Assert.assertEquals(-1, leaders[5]);
 	}
 
+	@Test
+	public void UseOfStaticFieldWithoutDefinition() throws AnalyzerException {
+		mn = new MethodNode();
+		mn.instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "Owner", "name", "I"));
+		mn.instructions.add(new InsnNode(Opcodes.IRETURN));
+		mn.desc = "()I";
+		mn.maxLocals = 0;
+		mn.maxStack = 1;
+		mn.access = Opcodes.ACC_STATIC;
+		mn.tryCatchBlocks = Collections.emptyList();
+
+		analyzer.analyze("Owner", mn);
+
+		final DefUseChain[] chains = analyzer.getDefUseChains();
+		final Variable[] vars = analyzer.getVariables();
+		Assert.assertEquals(1, chains.length);
+		Assert.assertEquals(0, chains[0].def);
+		Assert.assertEquals(1, chains[0].use);
+		Assert.assertEquals(new StaticField("Owner", "name", "I"), vars[chains[0].var]);
+	}
+
+	@Test
+	public void DefinitionOfAStaticFieldKills() throws AnalyzerException {
+		mn = new MethodNode();
+		mn.instructions.add(new InsnNode(Opcodes.ICONST_1));
+		mn.instructions.add(new FieldInsnNode(Opcodes.PUTSTATIC, "Owner", "name", "I"));
+		mn.instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "Owner", "name", "I"));
+		mn.instructions.add(new InsnNode(Opcodes.IRETURN));
+		mn.desc = "()I";
+		mn.maxLocals = 0;
+		mn.maxStack = 1;
+		mn.access = Opcodes.ACC_STATIC;
+		mn.tryCatchBlocks = Collections.emptyList();
+
+		analyzer.analyze("Owner", mn);
+
+		final DefUseChain[] chains = analyzer.getDefUseChains();
+		final Variable[] vars = analyzer.getVariables();
+		final RDSet[] sets = analyzer.getRDSets();
+		Assert.assertEquals(1, chains.length);
+		Assert.assertEquals(1, chains[0].def);
+		Assert.assertEquals(3, chains[0].use);
+		Assert.assertEquals(new StaticField("Owner", "name", "I"), vars[chains[0].var]);
+		Assert.assertTrue(isSet(sets[1].kill(), 0, chains[0].var, vars.length));
+	}
+
 	private void set(final Set<Integer> set, final int insn, final int var, final int vars) {
 		set.add(insn * vars + var);
+	}
+
+	private boolean isSet(final Set<Integer> set, final int insn, final int var, final int vars) {
+		return set.contains(insn * vars + var);
 	}
 
 }
