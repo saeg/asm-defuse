@@ -128,7 +128,7 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 					for (Variable other : duframes[j].getDefinitions()) {
 						if (def.equals(other)) {
 							rdSets[0].kill(j, def);
-							rdSets[j].kill(i, def);
+							rdSets[j].kill(0, def);
 						}
 					}
 				}
