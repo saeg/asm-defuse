@@ -31,10 +31,6 @@ public class IntList {
 		return values;
 	}
 
-	public int length() {
-		return val;
-	}
-
 	public void clear() {
 		IntList x = this;
 		val = 0;
