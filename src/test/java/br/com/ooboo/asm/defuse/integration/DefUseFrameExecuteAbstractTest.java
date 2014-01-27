@@ -1,7 +1,5 @@
 package br.com.ooboo.asm.defuse.integration;
 
-import static org.hamcrest.CoreMatchers.sameInstance;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,12 +49,11 @@ public class DefUseFrameExecuteAbstractTest {
 		}
 	}
 
-	public void assertDef() {
-		Assert.assertThat(frame.getDefinition(), sameInstance(Variable.NONE));
-	}
-
-	public void assertDef(final Variable var) {
-		Assert.assertEquals(var, frame.getDefinition());
+	public void assertDef(final Variable... vars) {
+		Assert.assertEquals(vars.length, frame.getDefinitions().size());
+		for (final Variable variable : vars) {
+			Assert.assertTrue(frame.getDefinitions().contains(variable));
+		}
 	}
 
 	public void assertUses(final Variable... vars) {

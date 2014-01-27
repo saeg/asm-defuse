@@ -22,7 +22,7 @@ public class DefUseFrame extends Frame<Value> {
 
 	public static final DefUseFrame NONE = new DefUseFrame(0, 0);
 
-	private Variable def = Variable.NONE;
+	private Set<Variable> defs = Collections.emptySet();
 
 	private Set<Variable> uses = Collections.emptySet();
 
@@ -34,8 +34,8 @@ public class DefUseFrame extends Frame<Value> {
 		super(src);
 	}
 
-	public Variable getDefinition() {
-		return def;
+	public Set<Variable> getDefinitions() {
+		return defs;
 	}
 
 	public Set<Variable> getUses() {
@@ -49,6 +49,7 @@ public class DefUseFrame extends Frame<Value> {
 		Value value1, value2;
 		List<Value> values;
 		int var;
+		Variable variable;
 
 		switch (insn.getOpcode()) {
 		case Opcodes.NOP:
@@ -93,7 +94,8 @@ public class DefUseFrame extends Frame<Value> {
 		case Opcodes.ASTORE:
 			var = ((VarInsnNode) insn).var;
 			value1 = pop();
-			def = new Local(value1.type, var);
+			variable = new Local(value1.type, var);
+			defs = Collections.singleton(variable);
 			uses = value1.getVariables();
 			value1 = interpreter.copyOperation(insn, value1);
 			setLocal(var, value1);
@@ -185,8 +187,9 @@ public class DefUseFrame extends Frame<Value> {
 		case Opcodes.IINC:
 			var = ((IincInsnNode) insn).var;
 			setLocal(var, interpreter.unaryOperation(insn, getLocal(var)));
-			def = new Local(Type.INT_TYPE, var);
-			uses = Collections.singleton(def);
+			variable = new Local(Type.INT_TYPE, var);
+			defs = Collections.singleton(variable);
+			uses = defs;
 			break;
 		case Opcodes.I2L:
 		case Opcodes.I2F:
@@ -252,7 +255,8 @@ public class DefUseFrame extends Frame<Value> {
 			break;
 		case Opcodes.PUTSTATIC: {
 			final FieldInsnNode f = (FieldInsnNode) insn;
-			def = new StaticField(f.owner, f.name, f.desc);
+			variable = new StaticField(f.owner, f.name, f.desc);
+			defs = Collections.singleton(variable);
 			uses = pop().getVariables();
 			break;
 		}
@@ -263,10 +267,12 @@ public class DefUseFrame extends Frame<Value> {
 			final FieldInsnNode f = (FieldInsnNode) insn;
 			value2 = pop();
 			value1 = pop();
-			def = new ObjectField(f.owner, f.name, f.desc, value1);
+			variable = new ObjectField(f.owner, f.name, f.desc, value1);
+			defs = Collections.singleton(variable);
 			uses = new LinkedHashSet<Variable>();
 			uses.addAll(value2.getVariables());
 			uses.addAll(value1.getVariables());
+			uses = Collections.unmodifiableSet(uses);
 			break;
 		}
 		case Opcodes.INVOKEVIRTUAL:

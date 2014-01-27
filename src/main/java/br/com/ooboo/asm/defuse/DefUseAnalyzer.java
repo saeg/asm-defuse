@@ -98,39 +98,38 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			default:
 				if (duframes[i] != DefUseFrame.NONE) {
 					duframes[i].execute(insn, interpreter);
-					vars.add(duframes[i].getDefinition());
+					vars.addAll(duframes[i].getDefinitions());
 					vars.addAll(duframes[i].getUses());
 				}
 				break;
 			}
 		}
-		vars.remove(Variable.NONE);
 		this.duframes = duframes;
 		this.variables = vars.toArray(new Variable[vars.size()]);
 
-		Variable def, other;
 		for (int i = 0; i < n; i++) {
 			rdSets[i] = new RDSet(n, variables);
-			def = duframes[i].getDefinition();
-			if (def != Variable.NONE) {
+			for (Variable def : duframes[i].getDefinitions()) {
 				rdSets[i].gen(i, def);
 				for (int j = 0; j < n; j++) {
-					other = duframes[j].getDefinition();
-					if (i != j && def.equals(other)) {
-						rdSets[i].kill(j, def);
+					for (Variable other : duframes[j].getDefinitions()) {
+						if (i != j && def.equals(other)) {
+							rdSets[i].kill(j, def);
+						}
 					}
 				}
 			}
 		}
 		for (int i = 0; i < variables.length; i++) {
-			def = variables[i];
+			final Variable def = variables[i];
 			if (i < nargs || def instanceof StaticField) {
 				rdSets[0].gen(0, def);
 				for (int j = 1; j < n; j++) {
-					other = duframes[j].getDefinition();
-					if (def.equals(other)) {
-						rdSets[0].kill(j, def);
-						rdSets[j].kill(i, def);
+					for (Variable other : duframes[j].getDefinitions()) {
+						if (def.equals(other)) {
+							rdSets[0].kill(j, def);
+							rdSets[j].kill(i, def);
+						}
 					}
 				}
 			}

@@ -2,6 +2,7 @@ package br.com.ooboo.asm.defuse.integration;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -191,28 +192,29 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testDefinitionOfLocalVariable() throws AnalyzerException {
 		prepareMethodMax();
 		analyzer.analyze("Owner", mn);
 		final DefUseFrame[] frames = analyzer.getDefUseFrames();
 		final int n = frames.length;
-		final Variable[] defs = new Variable[n];
+		final Set<Variable>[] defs = (Set<Variable>[]) new Set<?>[n];
 
 		// Default
 		for (int i = 0; i < n; i++) {
-			defs[i] = Variable.NONE;
+			defs[i] = new LinkedHashSet<Variable>();
 		}
 
 		// Set instructions that define a local variable
-		defs[1] = new Local(Type.INT_TYPE, 2);
-		defs[4] = new Local(Type.INT_TYPE, 2);
-		defs[6] = new Local(Type.INT_TYPE, 3);
-		defs[19] = new Local(Type.INT_TYPE, 3);
-		defs[21] = new Local(Type.INT_TYPE, 2);
+		defs[1].add(new Local(Type.INT_TYPE, 2));
+		defs[4].add(new Local(Type.INT_TYPE, 2));
+		defs[6].add(new Local(Type.INT_TYPE, 3));
+		defs[19].add(new Local(Type.INT_TYPE, 3));
+		defs[21].add(new Local(Type.INT_TYPE, 2));
 
 		// Assert
 		for (int i = 0; i < n; i++) {
-			Assert.assertEquals("Instruction: " + i, defs[i], frames[i].getDefinition());
+			Assert.assertEquals("Instruction: " + i, defs[i], frames[i].getDefinitions());
 		}
 	}
 
