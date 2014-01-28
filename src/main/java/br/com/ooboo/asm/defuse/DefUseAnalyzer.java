@@ -79,7 +79,7 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 				local++;
 			}
 		}
-		final int nargs = (m.access & ACC_STATIC) == 0 ? args.length + 1 : args.length + 0;
+		final int nargs = (m.access & ACC_STATIC) == 0 ? args.length + 1 : args.length;
 
 		AbstractInsnNode insn;
 
@@ -106,6 +106,11 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		}
 		this.duframes = duframes;
 		this.variables = vars.toArray(new Variable[vars.size()]);
+
+		if ((m.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
+			chains = new DefUseChain[0];
+			return (Frame<Value>[]) new Frame<?>[0];
+		}
 
 		for (int i = 0; i < n; i++) {
 			rdSets[i] = new RDSet(n, variables);

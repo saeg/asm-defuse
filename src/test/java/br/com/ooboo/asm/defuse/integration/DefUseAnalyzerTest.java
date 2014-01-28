@@ -655,6 +655,51 @@ public class DefUseAnalyzerTest {
 		Assert.assertTrue(isSet(sets[1].kill(), 0, chains[0].var, vars.length));
 	}
 
+	@Test
+	public void ShouldNotThrowAnExceptionWhenAnalyzeAbstractMethods() throws AnalyzerException {
+		mn = new MethodNode();
+		mn.desc = "()V";
+		mn.access = Opcodes.ACC_ABSTRACT;
+		analyzer.analyze("Owner", mn);
+
+		Assert.assertEquals(0, analyzer.getFrames().length);
+		Assert.assertEquals(0, analyzer.getDefUseFrames().length);
+		Assert.assertEquals(1, analyzer.getVariables().length);
+		Assert.assertEquals(0, analyzer.getRDSets().length);
+		Assert.assertEquals(0, analyzer.getDefUseChains().length);
+		Assert.assertEquals(0, analyzer.getLeaders().length);
+	}
+
+	@Test
+	public void ShouldNotThrowAnExceptionWhenAnalyzeNativeMethods() throws AnalyzerException {
+		mn = new MethodNode();
+		mn.desc = "()V";
+		mn.access = Opcodes.ACC_NATIVE;
+		analyzer.analyze("Owner", mn);
+
+		Assert.assertEquals(0, analyzer.getFrames().length);
+		Assert.assertEquals(0, analyzer.getDefUseFrames().length);
+		Assert.assertEquals(1, analyzer.getVariables().length);
+		Assert.assertEquals(0, analyzer.getRDSets().length);
+		Assert.assertEquals(0, analyzer.getDefUseChains().length);
+		Assert.assertEquals(0, analyzer.getLeaders().length);
+	}
+
+	@Test
+	public void ShouldNotThrowAnExceptionWhenAnalyzeStaticNativeMethods() throws AnalyzerException {
+		mn = new MethodNode();
+		mn.desc = "()V";
+		mn.access = Opcodes.ACC_NATIVE | Opcodes.ACC_STATIC;
+		analyzer.analyze("Owner", mn);
+
+		Assert.assertEquals(0, analyzer.getFrames().length);
+		Assert.assertEquals(0, analyzer.getDefUseFrames().length);
+		Assert.assertEquals(0, analyzer.getVariables().length);
+		Assert.assertEquals(0, analyzer.getRDSets().length);
+		Assert.assertEquals(0, analyzer.getDefUseChains().length);
+		Assert.assertEquals(0, analyzer.getLeaders().length);
+	}
+
 	private void set(final Set<Integer> set, final int insn, final int var, final int vars) {
 		set.add(insn * vars + var);
 	}
