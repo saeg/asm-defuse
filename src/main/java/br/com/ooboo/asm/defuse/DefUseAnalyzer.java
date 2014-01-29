@@ -129,6 +129,12 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			return (Frame<Value>[]) new Frame<?>[0];
 		}
 
+		for (int i = 0; i < variables.length; i++) {
+			final Variable def = variables[i];
+			if (i < nargs || def instanceof StaticField) {
+				duframes[0].addDef(def);
+			}
+		}
 		for (int i = 0; i < n; i++) {
 			rdSets[i] = new RDSet(n, variables);
 			for (final Variable def : duframes[i].getDefinitions()) {
@@ -137,21 +143,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 					for (final Variable other : duframes[j].getDefinitions()) {
 						if (i != j && def.equals(other)) {
 							rdSets[i].kill(j, def);
-						}
-					}
-				}
-			}
-		}
-		for (int i = 0; i < variables.length; i++) {
-			final Variable def = variables[i];
-			if (i < nargs || def instanceof StaticField) {
-				rdSets[0].gen(0, def);
-				duframes[0].addDef(def);
-				for (int j = 1; j < n; j++) {
-					for (final Variable other : duframes[j].getDefinitions()) {
-						if (def.equals(other)) {
-							rdSets[0].kill(j, def);
-							rdSets[j].kill(0, def);
 						}
 					}
 				}
