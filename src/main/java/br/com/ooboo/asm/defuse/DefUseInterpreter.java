@@ -161,35 +161,35 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case IINC:
 			return Value.INT_VALUE.with(insn);
 		case I2L:
-			return new ValueHolder(Type.LONG_TYPE, value, "Cast");
+			return new ValueHolder(Type.LONG_TYPE, value);
 		case I2F:
-			return new ValueHolder(Type.FLOAT_TYPE, value, "Cast");
+			return new ValueHolder(Type.FLOAT_TYPE, value);
 		case I2D:
-			return new ValueHolder(Type.DOUBLE_TYPE, value, "Cast");
+			return new ValueHolder(Type.DOUBLE_TYPE, value);
 		case L2I:
-			return new ValueHolder(Type.INT_TYPE, value, "Cast");
+			return new ValueHolder(Type.INT_TYPE, value);
 		case L2F:
-			return new ValueHolder(Type.FLOAT_TYPE, value, "Cast");
+			return new ValueHolder(Type.FLOAT_TYPE, value);
 		case L2D:
-			return new ValueHolder(Type.DOUBLE_TYPE, value, "Cast");
+			return new ValueHolder(Type.DOUBLE_TYPE, value);
 		case F2I:
-			return new ValueHolder(Type.INT_TYPE, value, "Cast");
+			return new ValueHolder(Type.INT_TYPE, value);
 		case F2L:
-			return new ValueHolder(Type.LONG_TYPE, value, "Cast");
+			return new ValueHolder(Type.LONG_TYPE, value);
 		case F2D:
-			return new ValueHolder(Type.DOUBLE_TYPE, value, "Cast");
+			return new ValueHolder(Type.DOUBLE_TYPE, value);
 		case D2I:
-			return new ValueHolder(Type.INT_TYPE, value, "Cast");
+			return new ValueHolder(Type.INT_TYPE, value);
 		case D2L:
-			return new ValueHolder(Type.LONG_TYPE, value, "Cast");
+			return new ValueHolder(Type.LONG_TYPE, value);
 		case D2F:
-			return new ValueHolder(Type.FLOAT_TYPE, value, "Cast");
+			return new ValueHolder(Type.FLOAT_TYPE, value);
 		case I2B:
-			return new ValueHolder(Type.BYTE_TYPE, value, "Cast");
+			return new ValueHolder(Type.BYTE_TYPE, value);
 		case I2C:
-			return new ValueHolder(Type.CHAR_TYPE, value, "Cast");
+			return new ValueHolder(Type.CHAR_TYPE, value);
 		case I2S:
-			return new ValueHolder(Type.SHORT_TYPE, value, "Cast");
+			return new ValueHolder(Type.SHORT_TYPE, value);
 		case IFEQ:
 		case IFNE:
 		case IFLT:
@@ -237,15 +237,15 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 			return new ArrayRef(Type.getType("[" + Type.getObjectType(tinsn.desc)), value);
 		}
 		case ARRAYLENGTH:
-			return new ValueHolder(Type.INT_TYPE, value, "Length");
+			return new ValueHolder(Type.INT_TYPE, value);
 		case ATHROW:
 			return null;
 		case CHECKCAST: {
 			final TypeInsnNode tinsn = (TypeInsnNode) insn;
-			return new ValueHolder(Type.getObjectType(tinsn.desc), value, "Cast");
+			return new ValueHolder(Type.getObjectType(tinsn.desc), value);
 		}
 		case INSTANCEOF:
-			return new ValueHolder(Type.INT_TYPE, value, "InstanceOf");
+			return new ValueHolder(Type.INT_TYPE, value);
 		case MONITORENTER:
 		case MONITOREXIT:
 		case IFNULL:

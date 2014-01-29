@@ -8,12 +8,9 @@ public class ValueHolder extends Value {
 
 	public final Value value;
 
-	public final String name;
-
-	public ValueHolder(final Type type, final Value value, final String name) {
+	public ValueHolder(final Type type, final Value value) {
 		super(type);
 		this.value = value;
-		this.name = name;
 	}
 
 	@Override
@@ -23,7 +20,7 @@ public class ValueHolder extends Value {
 
 	@Override
 	public String toString() {
-		return String.format("%s(%s)", name, value);
+		return value.toString();
 	}
 
 }

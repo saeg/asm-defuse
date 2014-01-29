@@ -10,33 +10,28 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.objectweb.asm.Type;
 
-public class ArrayLengthTest {
+public class ValueHolderTest {
 
 	private Value value;
 
-	private ValueHolder length;
+	private ValueHolder vh;
 
 	@Before
 	public void setUp() {
 		value = Mockito.mock(Value.class);
 		Mockito.when(value.toString()).thenReturn("value");
 		Mockito.when(value.getVariables()).thenReturn(new HashSet<Variable>(0));
-		length = new ValueHolder(Type.INT_TYPE, value, "Length");
+		vh = new ValueHolder(Type.INT_TYPE, value);
 	}
 
 	@Test
-	public void SizeIsOne() {
-		Assert.assertEquals(1, length.getSize());
+	public void GetVariablesDelegateToValue() {
+		Assert.assertThat(vh.getVariables(), sameInstance(value.getVariables()));
 	}
 
 	@Test
-	public void ArrayLengthToString() {
-		Assert.assertEquals("Length(value)", length.toString());
-	}
-
-	@Test
-	public void GetVariablesDelegateToReferenceValue() {
-		Assert.assertThat(length.getVariables(), sameInstance(value.getVariables()));
+	public void ToStringDelegateToValue() {
+		Assert.assertEquals(value.toString(), vh.toString());
 	}
 
 }
