@@ -206,6 +206,8 @@ public class DefUseAnalyzerTest {
 		}
 
 		// Set instructions that define a local variable
+		defs[0].add(new Local(Type.INT_TYPE, 0));
+		defs[0].add(new Local(Type.INT_TYPE, 1));
 		defs[1].add(new Local(Type.INT_TYPE, 2));
 		defs[4].add(new Local(Type.INT_TYPE, 2));
 		defs[6].add(new Local(Type.INT_TYPE, 3));

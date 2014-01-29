@@ -52,6 +52,7 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 	public Frame<Value>[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
 
 		n = m.instructions.size();
+		duframes = new DefUseFrame[n];
 		rdSets = new RDSet[n];
 		bBlocks = new int[n][];
 		leaders = new int[n];
@@ -64,7 +65,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		}
 
 		final Frame<Value>[] frames = super.analyze(owner, m);
-		final DefUseFrame[] duframes = new DefUseFrame[frames.length];
 		final Set<Variable> vars = new LinkedHashSet<Variable>();
 
 		final Type[] args = Type.getArgumentTypes(m.desc);
@@ -122,7 +122,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 				}
 			}
 		}
-		this.duframes = duframes;
 		variables = vars.toArray(new Variable[vars.size()]);
 
 		if ((m.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
@@ -147,6 +146,7 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			final Variable def = variables[i];
 			if (i < nargs || def instanceof StaticField) {
 				rdSets[0].gen(0, def);
+				duframes[0].addDef(def);
 				for (int j = 1; j < n; j++) {
 					for (final Variable other : duframes[j].getDefinitions()) {
 						if (def.equals(other)) {
