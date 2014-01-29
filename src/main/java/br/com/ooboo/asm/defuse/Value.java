@@ -76,15 +76,15 @@ public class Value implements org.objectweb.asm.tree.analysis.Value {
 		final Value other = (Value) obj;
 
 		if (type == null) {
-			if (other.type != null)
-				return false;
+			// if type is null returns false
+			// we just have ONE instance with type null (UNINITIALIZED_VALUE)
+			// the first command of this method takes care of this case :)
+			return false;
 		} else if (!type.equals(other.type))
 			return false;
 
-		if (insns == null) {
-			if (other.insns != null)
-				return false;
-		} else if (!insns.equals(other.insns))
+		// Don't care about NPE, field *insns* is always different from null.
+		if (!insns.equals(other.insns))
 			return false;
 
 		return true;

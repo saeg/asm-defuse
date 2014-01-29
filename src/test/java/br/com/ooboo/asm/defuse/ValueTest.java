@@ -1,6 +1,8 @@
 package br.com.ooboo.asm.defuse;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 
@@ -9,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AbstractInsnNode;
 
 public class ValueTest {
 
@@ -81,8 +84,23 @@ public class ValueTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
+	public void ThrowAnExceptionWhenSetOfInstructionsIsNull() {
+		new Value(Type.INT_TYPE, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
 	public void ThrowAnExceptionWhenTypeIsAMethodType() {
 		new Value(Type.getMethodType("()V"));
+	}
+
+	@Test
+	public void withReturnANewValue() {
+		Assert.assertThat(value.with(mock(AbstractInsnNode.class)), not(sameInstance(value)));
+	}
+
+	@Test
+	public void withReturnANewValueWithSameType() {
+		Assert.assertEquals(value.type, value.with(mock(AbstractInsnNode.class)).type);
 	}
 
 	@Test
@@ -102,13 +120,20 @@ public class ValueTest {
 	}
 
 	@Test
+	public void DifferentSetOfInstructionsReturnsFalseOnEquals() {
+		final Value other = new Value(Type.INT_TYPE,
+				Collections.singleton(mock(AbstractInsnNode.class)));
+		Assert.assertFalse(value.equals(other));
+	}
+
+	@Test
 	public void EqualsReturnTrue() {
 		final Value other = new Value(Type.INT_TYPE);
 		Assert.assertTrue(value.equals(other));
 	}
 
 	@Test
-	public void DifferentReturnFalseOnEquals() {
+	public void DifferentTypeReturnFalseOnEquals() {
 		final Value other = new Value(Type.LONG_TYPE);
 		Assert.assertFalse(value.equals(other));
 	}
@@ -120,8 +145,15 @@ public class ValueTest {
 	}
 
 	@Test
-	public void DifferentReturnDifferentHashCode() {
+	public void DifferentTypeReturnDifferentHashCode() {
 		final Value other = new Value(Type.LONG_TYPE);
+		Assert.assertNotEquals(value.hashCode(), other.hashCode());
+	}
+
+	@Test
+	public void DifferentSetOfInstructionsReturnDifferentHashCode() {
+		final Value other = new Value(Type.INT_TYPE,
+				Collections.singleton(mock(AbstractInsnNode.class)));
 		Assert.assertNotEquals(value.hashCode(), other.hashCode());
 	}
 
