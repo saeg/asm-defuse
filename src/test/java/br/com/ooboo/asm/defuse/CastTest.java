@@ -21,7 +21,7 @@ public class CastTest {
 		value = Mockito.mock(Value.class);
 		Mockito.when(value.toString()).thenReturn("value");
 		Mockito.when(value.getVariables()).thenReturn(new HashSet<Variable>(0));
-		cast = ValueHolder.cast(Type.INT_TYPE, value);
+		cast = new ValueHolder(Type.INT_TYPE, value, "Cast");
 	}
 
 	@Test

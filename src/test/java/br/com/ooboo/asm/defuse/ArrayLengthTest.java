@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.objectweb.asm.Type;
 
 public class ArrayLengthTest {
 
@@ -20,7 +21,7 @@ public class ArrayLengthTest {
 		value = Mockito.mock(Value.class);
 		Mockito.when(value.toString()).thenReturn("value");
 		Mockito.when(value.getVariables()).thenReturn(new HashSet<Variable>(0));
-		length = ValueHolder.arrayLength(value);
+		length = new ValueHolder(Type.INT_TYPE, value, "Length");
 	}
 
 	@Test

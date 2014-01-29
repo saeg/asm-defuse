@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.objectweb.asm.Type;
 
 public class InstanceOfTest {
 
@@ -20,7 +21,7 @@ public class InstanceOfTest {
 		value = Mockito.mock(Value.class);
 		Mockito.when(value.toString()).thenReturn("value");
 		Mockito.when(value.getVariables()).thenReturn(new HashSet<Variable>(0));
-		iof = ValueHolder.instanceOf(value);
+		iof = new ValueHolder(Type.INT_TYPE, value, "InstanceOf");
 	}
 
 	@Test
