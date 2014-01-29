@@ -324,30 +324,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			throw new IllegalStateException("Invalid variable:" + var);
 		}
 
-		@Override
-		public String toString() {
-			final StringBuilder builder = new StringBuilder();
-			builder.append("in:").append(printSet(in));
-			builder.append("out:").append(printSet(out));
-			builder.append("gen:").append(printSet(gen));
-			builder.append("kill:").append(printSet(kill));
-			return builder.toString();
-		}
-
-		private String printSet(final Set<Integer> set) {
-			final StringBuilder builder = new StringBuilder();
-			builder.append("{ ");
-			for (final Integer i : set) {
-				final int insn = i / vars.length;
-				final int var = i % vars.length;
-				builder.append(insn);
-				builder.append(':');
-				builder.append(vars[var]);
-				builder.append(',');
-			}
-			builder.append(" }\n");
-			return builder.toString();
-		}
 	}
 
 }
