@@ -1,6 +1,9 @@
 package br.com.ooboo.asm.defuse;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
@@ -133,7 +136,7 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case FSTORE:
 		case DSTORE:
 		case ASTORE:
-			return newValue(value.type);
+			return newValue(value.type).with(insn);
 		case DUP:
 		case DUP_X1:
 		case DUP_X2:
@@ -156,7 +159,7 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		case DNEG:
 			return value;
 		case IINC:
-			return Value.INT_VALUE;
+			return Value.INT_VALUE.with(insn);
 		case I2L:
 			return ValueHolder.cast(Type.LONG_TYPE, value);
 		case I2F:
@@ -370,7 +373,10 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 		if (w.getVariables().containsAll(v.getVariables())) {
 			return w;
 		}
-		return new Merge(v.type, v, w);
+		final Set<AbstractInsnNode> insns = new HashSet<AbstractInsnNode>();
+		insns.addAll(v.insns);
+		insns.addAll(w.insns);
+		return new Merge(v.type, v, w, Collections.unmodifiableSet(insns));
 	}
 
 }

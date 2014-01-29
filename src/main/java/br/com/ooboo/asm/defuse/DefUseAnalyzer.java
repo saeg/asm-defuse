@@ -103,9 +103,27 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 				}
 				break;
 			}
+			for (final Variable var : duframes[i].getUses()) {
+				if (var instanceof ObjectField) {
+					Value root = ((ObjectField) var).value;
+					while (root instanceof ObjectField) {
+						root = ((ObjectField) root).value;
+					}
+					if (root instanceof Local) {
+						final Local fieldLocal = (Local) root;
+						for (final AbstractInsnNode fieldDef : duframes[i].getLocal(fieldLocal.var).insns) {
+							final int index = m.instructions.indexOf(fieldDef);
+							duframes[index].addDef(var);
+						}
+						if (duframes[i].getLocal(fieldLocal.var).insns.isEmpty()) {
+							duframes[0].addDef(var);
+						}
+					}
+				}
+			}
 		}
 		this.duframes = duframes;
-		this.variables = vars.toArray(new Variable[vars.size()]);
+		variables = vars.toArray(new Variable[vars.size()]);
 
 		if ((m.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
 			chains = new DefUseChain[0];
@@ -114,10 +132,10 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 		for (int i = 0; i < n; i++) {
 			rdSets[i] = new RDSet(n, variables);
-			for (Variable def : duframes[i].getDefinitions()) {
+			for (final Variable def : duframes[i].getDefinitions()) {
 				rdSets[i].gen(i, def);
 				for (int j = 0; j < n; j++) {
-					for (Variable other : duframes[j].getDefinitions()) {
+					for (final Variable other : duframes[j].getDefinitions()) {
 						if (i != j && def.equals(other)) {
 							rdSets[i].kill(j, def);
 						}
@@ -130,7 +148,7 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			if (i < nargs || def instanceof StaticField) {
 				rdSets[0].gen(0, def);
 				for (int j = 1; j < n; j++) {
-					for (Variable other : duframes[j].getDefinitions()) {
+					for (final Variable other : duframes[j].getDefinitions()) {
 						if (def.equals(other)) {
 							rdSets[0].kill(j, def);
 							rdSets[j].kill(0, def);

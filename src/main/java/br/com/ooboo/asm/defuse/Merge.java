@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AbstractInsnNode;
 
 public class Merge extends Value {
 
@@ -16,6 +17,12 @@ public class Merge extends Value {
 		super(type);
 		this.value1 = value1;
 		this.value2 = value2;
+	}
+
+	public Merge(final Type type, final Value v, final Value w, final Set<AbstractInsnNode> insns) {
+		super(type, insns);
+		value1 = v;
+		value2 = w;
 	}
 
 	@Override

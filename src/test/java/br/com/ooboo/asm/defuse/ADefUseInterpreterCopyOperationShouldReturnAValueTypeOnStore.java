@@ -1,7 +1,5 @@
 package br.com.ooboo.asm.defuse;
 
-import static org.hamcrest.CoreMatchers.sameInstance;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
@@ -38,7 +36,7 @@ public class ADefUseInterpreterCopyOperationShouldReturnAValueTypeOnStore {
 
 	public ADefUseInterpreterCopyOperationShouldReturnAValueTypeOnStore(
 			final int opcode, final Type type, final Value expected) {
-		
+
 		this.insn = new VarInsnNode(opcode, new Random().nextInt());
 		this.value = new Value(type);
 		this.expected = expected;
@@ -48,7 +46,7 @@ public class ADefUseInterpreterCopyOperationShouldReturnAValueTypeOnStore {
 	public void AssertThatDefUseInterpreterCopyOperationReturnValueTypeCorrectly() {
 		final DefUseInterpreter interpreter = new DefUseInterpreter();
 		final Value copy = interpreter.copyOperation(insn, value);
-		Assert.assertThat(copy, sameInstance(expected));
+		Assert.assertEquals(expected.with(insn), copy);
 	}
 
 }

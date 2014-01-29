@@ -336,4 +336,11 @@ public class DefUseFrame extends Frame<Value> {
 		}
 	}
 
+	public void addDef(final Variable var) {
+		final Set<Variable> newDefs = new LinkedHashSet<Variable>();
+		newDefs.addAll(defs);
+		newDefs.add(var);
+		defs = Collections.unmodifiableSet(newDefs);
+	}
+
 }

@@ -27,101 +27,113 @@ public class FrameExecuteDefUseInterpreterTest {
 	@Test
 	public void StoreAValueOfTypeInt() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.ISTORE, 0);
 		frame.push(Value.INT_VALUE);
-		frame.execute(new VarInsnNode(Opcodes.ISTORE, 0), interpreter);
-		Assert.assertEquals(Value.INT_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.INT_VALUE.with(insn), frame.getLocal(0));
 	}
 
 	@Test
 	public void StoreAValueOfTypeFloat() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.FSTORE, 0);
 		frame.push(Value.FLOAT_VALUE);
-		frame.execute(new VarInsnNode(Opcodes.FSTORE, 0), interpreter);
-		Assert.assertEquals(Value.FLOAT_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.FLOAT_VALUE.with(insn), frame.getLocal(0));
 	}
 
 	@Test
 	public void StoreAValueOfTypeLong() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(2, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.LSTORE, 0);
 		frame.push(Value.LONG_VALUE);
-		frame.execute(new VarInsnNode(Opcodes.LSTORE, 0), interpreter);
-		Assert.assertEquals(Value.LONG_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.LONG_VALUE.with(insn), frame.getLocal(0));
 		Assert.assertEquals(Value.UNINITIALIZED_VALUE, frame.getLocal(1));
 	}
 
 	@Test
 	public void StoreAValueOfTypeDouble() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(2, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.DSTORE, 0);
 		frame.push(Value.DOUBLE_VALUE);
-		frame.execute(new VarInsnNode(Opcodes.DSTORE, 0), interpreter);
-		Assert.assertEquals(Value.DOUBLE_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.DOUBLE_VALUE.with(insn), frame.getLocal(0));
 		Assert.assertEquals(Value.UNINITIALIZED_VALUE, frame.getLocal(1));
 	}
 
 	@Test
 	public void StoreAValueOfTypeReference() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.ASTORE, 0);
 		frame.push(Value.REFERENCE_VALUE);
-		frame.execute(new VarInsnNode(Opcodes.ASTORE, 0), interpreter);
-		Assert.assertEquals(Value.REFERENCE_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.REFERENCE_VALUE.with(insn), frame.getLocal(0));
 	}
 
 	@Test
 	public void StoreAValueOfTypeObjectRef() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.ASTORE, 0);
 		frame.push(new ObjectRef(Type.getType("Ljava/lang/String;")));
-		frame.execute(new VarInsnNode(Opcodes.ASTORE, 0), interpreter);
-		Assert.assertEquals(Value.REFERENCE_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.REFERENCE_VALUE.with(insn), frame.getLocal(0));
 	}
 
 	@Test
 	public void StoreAValueOfTypeStaticInt() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.ISTORE, 0);
 		frame.push(new StaticField("Owner", "Name", "I"));
-		frame.execute(new VarInsnNode(Opcodes.ISTORE, 0), interpreter);
-		Assert.assertEquals(Value.INT_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.INT_VALUE.with(insn), frame.getLocal(0));
 	}
 
 	@Test
 	public void StoreAValueOfTypeStaticFloat() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.FSTORE, 0);
 		frame.push(new StaticField("Owner", "Name", "F"));
-		frame.execute(new VarInsnNode(Opcodes.FSTORE, 0), interpreter);
-		Assert.assertEquals(Value.FLOAT_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.FLOAT_VALUE.with(insn), frame.getLocal(0));
 	}
 
 	@Test
 	public void StoreAValueOfTypeStaticLong() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(2, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.LSTORE, 0);
 		frame.push(new StaticField("Owner", "Name", "J"));
-		frame.execute(new VarInsnNode(Opcodes.LSTORE, 0), interpreter);
-		Assert.assertEquals(Value.LONG_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.LONG_VALUE.with(insn), frame.getLocal(0));
 		Assert.assertEquals(Value.UNINITIALIZED_VALUE, frame.getLocal(1));
 	}
 
 	@Test
 	public void StoreAValueOfTypeStaticDouble() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(2, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.DSTORE, 0);
 		frame.push(new StaticField("Owner", "Name", "D"));
-		frame.execute(new VarInsnNode(Opcodes.DSTORE, 0), interpreter);
-		Assert.assertEquals(Value.DOUBLE_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.DOUBLE_VALUE.with(insn), frame.getLocal(0));
 		Assert.assertEquals(Value.UNINITIALIZED_VALUE, frame.getLocal(1));
 	}
 
 	@Test
 	public void StoreAValueOfTypeStaticObjectReference() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.ASTORE, 0);
 		frame.push(new StaticField("Owner", "Name", "Ljava/lang/String;"));
-		frame.execute(new VarInsnNode(Opcodes.ASTORE, 0), interpreter);
-		Assert.assertEquals(Value.REFERENCE_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.REFERENCE_VALUE.with(insn), frame.getLocal(0));
 	}
 
 	@Test
 	public void StoreAValueOfTypeStaticArrayReference() throws AnalyzerException {
 		final Frame<Value> frame = new Frame<Value>(1, 1);
+		final VarInsnNode insn = new VarInsnNode(Opcodes.ASTORE, 0);
 		frame.push(new StaticField("Owner", "Name", "[I"));
-		frame.execute(new VarInsnNode(Opcodes.ASTORE, 0), interpreter);
-		Assert.assertEquals(Value.REFERENCE_VALUE, frame.getLocal(0));
+		frame.execute(insn, interpreter);
+		Assert.assertEquals(Value.REFERENCE_VALUE.with(insn), frame.getLocal(0));
 	}
 
 	@Test

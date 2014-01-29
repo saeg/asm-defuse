@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AbstractInsnNode;
 
 public class Value implements org.objectweb.asm.tree.analysis.Value {
 
@@ -16,19 +17,34 @@ public class Value implements org.objectweb.asm.tree.analysis.Value {
 
 	public final Type type;
 
+	public final Set<AbstractInsnNode> insns;
+
 	// Private constructor, used only by UNINITIALIZED_VALUE
 	private Value() {
 		type = null;
+		insns = Collections.emptySet();
 	}
 
 	public Value(final Type type) {
+		this(type, Collections.<AbstractInsnNode> emptySet());
+	}
+
+	public Value(final Type type, final Set<AbstractInsnNode> insns) {
 		if (type == null) {
 			throw new IllegalArgumentException("Type can't be null");
+		}
+		if (insns == null) {
+			throw new IllegalArgumentException("Set of instructions can't be null");
 		}
 		if (type.getSort() == Type.METHOD) {
 			throw new IllegalArgumentException("Type can't be METHOD");
 		}
 		this.type = type;
+		this.insns = insns;
+	}
+
+	public Value with(final AbstractInsnNode insn) {
+		return new Value(type, Collections.singleton(insn));
 	}
 
 	public Set<Variable> getVariables() {
@@ -42,7 +58,10 @@ public class Value implements org.objectweb.asm.tree.analysis.Value {
 
 	@Override
 	public int hashCode() {
-		return 31 + ((type == null) ? 0 : type.hashCode());
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + insns.hashCode();
+		return prime * result + ((type == null) ? 0 : type.hashCode());
 	}
 
 	@Override
@@ -60,6 +79,12 @@ public class Value implements org.objectweb.asm.tree.analysis.Value {
 			if (other.type != null)
 				return false;
 		} else if (!type.equals(other.type))
+			return false;
+
+		if (insns == null) {
+			if (other.insns != null)
+				return false;
+		} else if (!insns.equals(other.insns))
 			return false;
 
 		return true;

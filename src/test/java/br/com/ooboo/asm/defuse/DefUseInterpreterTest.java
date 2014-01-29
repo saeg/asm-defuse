@@ -88,7 +88,7 @@ public class DefUseInterpreterTest {
 		final Random rnd = new Random();
 		final IincInsnNode insn = new IincInsnNode(rnd.nextInt(), rnd.nextInt());
 		final Value op = interpreter.unaryOperation(insn, Value.INT_VALUE);
-		Assert.assertThat(op, sameInstance(Value.INT_VALUE));
+		Assert.assertEquals(Value.INT_VALUE.with(insn), op);
 	}
 
 	@Test
