@@ -103,7 +103,7 @@ public class DefUseFrameExecuteInvokeStaticOrDynamicInstruction extends
 		assertDef();
 		assertUses(variable1, variable2);
 	}
-	
+
 	@Test
 	public void ReturnAValue() {
 		pushValue().thatUseVariables(variable1);
@@ -113,7 +113,7 @@ public class DefUseFrameExecuteInvokeStaticOrDynamicInstruction extends
 		assertUses();
 	}
 
-	private AbstractInsnNode invoke(String desc) {
+	private AbstractInsnNode invoke(final String desc) {
 		if (op == Opcodes.INVOKEDYNAMIC) {
 			return new InvokeDynamicInsnNode("name", desc, null);
 		}

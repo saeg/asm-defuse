@@ -17,7 +17,7 @@ public class Variable extends Value {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		return this == obj;
 	}
 

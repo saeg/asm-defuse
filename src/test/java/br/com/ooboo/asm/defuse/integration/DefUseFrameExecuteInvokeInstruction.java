@@ -18,7 +18,7 @@ import br.com.ooboo.asm.defuse.Variable;
 
 @RunWith(Parameterized.class)
 public class DefUseFrameExecuteInvokeInstruction extends DefUseFrameExecuteAbstractTest {
-	
+
 	@Parameters
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] {
@@ -97,7 +97,7 @@ public class DefUseFrameExecuteInvokeInstruction extends DefUseFrameExecuteAbstr
 		assertDef();
 		assertUses(variable1, variable2);
 	}
-	
+
 	@Test
 	public void TwoArgsTest1() {
 		pushValue();
@@ -107,7 +107,7 @@ public class DefUseFrameExecuteInvokeInstruction extends DefUseFrameExecuteAbstr
 		assertDef();
 		assertUses();
 	}
-	
+
 	@Test
 	public void TwoArgsTest2() {
 		pushValue().thatUseVariables(variable1);
@@ -117,7 +117,7 @@ public class DefUseFrameExecuteInvokeInstruction extends DefUseFrameExecuteAbstr
 		assertDef();
 		assertUses(variable1);
 	}
-	
+
 	@Test
 	public void TwoArgsTest3() {
 		pushValue();
@@ -127,7 +127,7 @@ public class DefUseFrameExecuteInvokeInstruction extends DefUseFrameExecuteAbstr
 		assertDef();
 		assertUses(variable1);
 	}
-	
+
 	@Test
 	public void TwoArgsTest4() {
 		pushValue();
@@ -137,7 +137,7 @@ public class DefUseFrameExecuteInvokeInstruction extends DefUseFrameExecuteAbstr
 		assertDef();
 		assertUses(variable1);
 	}
-	
+
 	@Test
 	public void TwoArgsTest5() {
 		pushValue().thatUseVariables(variable1);
@@ -147,7 +147,7 @@ public class DefUseFrameExecuteInvokeInstruction extends DefUseFrameExecuteAbstr
 		assertDef();
 		assertUses(variable1, variable2);
 	}
-	
+
 	@Test
 	public void TwoArgsTest6() {
 		pushValue().thatUseVariables(variable1);
@@ -157,7 +157,7 @@ public class DefUseFrameExecuteInvokeInstruction extends DefUseFrameExecuteAbstr
 		assertDef();
 		assertUses(variable1, variable2);
 	}
-	
+
 	@Test
 	public void TwoArgsTest7() {
 		pushValue().thatUseVariables(variable1);
@@ -178,7 +178,7 @@ public class DefUseFrameExecuteInvokeInstruction extends DefUseFrameExecuteAbstr
 		assertUses();
 	}
 
-	private AbstractInsnNode invoke(String desc) {
+	private AbstractInsnNode invoke(final String desc) {
 		return new MethodInsnNode(op, "Owner", "name", desc);
 	}
 
