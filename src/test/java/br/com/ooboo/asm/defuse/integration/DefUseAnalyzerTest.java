@@ -26,6 +26,7 @@ import br.com.ooboo.asm.defuse.DefUseAnalyzer.RDSet;
 import br.com.ooboo.asm.defuse.DefUseChain;
 import br.com.ooboo.asm.defuse.DefUseFrame;
 import br.com.ooboo.asm.defuse.Local;
+import br.com.ooboo.asm.defuse.ObjectField;
 import br.com.ooboo.asm.defuse.StaticField;
 import br.com.ooboo.asm.defuse.Value;
 import br.com.ooboo.asm.defuse.Variable;
@@ -700,6 +701,32 @@ public class DefUseAnalyzerTest {
 		Assert.assertEquals(0, analyzer.getRDSets().length);
 		Assert.assertEquals(0, analyzer.getDefUseChains().length);
 		Assert.assertEquals(0, analyzer.getLeaders().length);
+	}
+
+	@Test
+	public void UseOfObjectFieldWithoutDefinition() throws AnalyzerException {
+		mn = new MethodNode();
+		mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+		mn.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "Owner", "name", "I"));
+		mn.instructions.add(new InsnNode(Opcodes.IRETURN));
+		mn.desc = "()I";
+		mn.maxLocals = 1;
+		mn.maxStack = 1;
+		mn.tryCatchBlocks = Collections.emptyList();
+
+		analyzer.analyze("Owner", mn);
+
+		final Local local = new Local(Type.getObjectType("java/lang/Object"), 0);
+
+		final DefUseChain[] chains = analyzer.getDefUseChains();
+		final Variable[] vars = analyzer.getVariables();
+		Assert.assertEquals(2, chains.length);
+		Assert.assertEquals(0, chains[0].def);
+		Assert.assertEquals(2, chains[0].use);
+		Assert.assertEquals(local, vars[chains[0].var]);
+		Assert.assertEquals(0, chains[1].def);
+		Assert.assertEquals(2, chains[1].use);
+		Assert.assertEquals(new ObjectField("Owner", "name", "I", local), vars[chains[1].var]);
 	}
 
 	private void set(final Set<Integer> set, final int insn, final int var, final int vars) {
