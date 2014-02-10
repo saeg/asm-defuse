@@ -1,12 +1,8 @@
 package br.com.ooboo.asm.defuse;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.objectweb.asm.Type;
@@ -27,10 +23,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 	private Set<Integer>[] successors;
 
 	private Set<Integer>[] predecessors;
-
-	private RDSet[] rdSets;
-
-	private DefUseChain[] chains;
 
 	private int[][] bBlocks;
 
@@ -53,7 +45,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
 		n = m.instructions.size();
 		duframes = new DefUseFrame[n];
-		rdSets = new RDSet[n];
 		bBlocks = new int[n][];
 		leaders = new int[n];
 		Arrays.fill(leaders, -1);
@@ -125,7 +116,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		variables = vars.toArray(new Variable[vars.size()]);
 
 		if ((m.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
-			chains = new DefUseChain[0];
 			return (Frame<Value>[]) new Frame<?>[0];
 		}
 
@@ -135,54 +125,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 				duframes[0].addDef(def);
 			}
 		}
-		for (int i = 0; i < n; i++) {
-			rdSets[i] = new RDSet(n, variables);
-			for (final Variable def : duframes[i].getDefinitions()) {
-				rdSets[i].gen(i, def);
-				for (int j = 0; j < n; j++) {
-					for (final Variable other : duframes[j].getDefinitions()) {
-						if (i != j && def.equals(other)) {
-							rdSets[i].kill(j, def);
-						}
-					}
-				}
-			}
-		}
-
-		boolean changed = true;
-		while (changed) {
-			changed = false;
-			for (int i = 0; i < n; i++) {
-
-				rdSets[i].in.clear();
-				for (final int pred : predecessors[i]) {
-					rdSets[i].in.addAll(rdSets[pred].out);
-				}
-
-				final Set<Integer> oldout = new HashSet<Integer>(rdSets[i].out);
-				final Set<Integer> temp = new HashSet<Integer>(rdSets[i].in);
-				temp.removeAll(rdSets[i].kill);
-				rdSets[i].out.clear();
-				rdSets[i].out.addAll(rdSets[i].gen);
-				rdSets[i].out.addAll(temp);
-
-				if (!rdSets[i].out.equals(oldout)) {
-					changed = true;
-				}
-			}
-		}
-
-		final List<DefUseChain> chains = new ArrayList<DefUseChain>();
-		for (int i = 0; i < n; i++) {
-			for (final Variable use : duframes[i].getUses()) {
-				for (int j = 0; j < n; j++) {
-					if (rdSets[i].in(j, use)) {
-						chains.add(new DefUseChain(j, i, indexOf(use)));
-					}
-				}
-			}
-		}
-		this.chains = chains.toArray(new DefUseChain[chains.size()]);
 
 		final int[] queue = new int[n];
 		int top = 0;
@@ -237,14 +179,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		return variables;
 	}
 
-	public RDSet[] getRDSets() {
-		return rdSets;
-	}
-
-	public DefUseChain[] getDefUseChains() {
-		return chains;
-	}
-
 	public int[] getSuccessors(final int insn) {
 		return toArray(successors[insn]);
 	}
@@ -261,14 +195,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		return bBlocks[id];
 	}
 
-	private int indexOf(final Variable var) {
-		for (int i = 0; i < variables.length; i++) {
-			if (variables[i].equals(var))
-				return i;
-		}
-		throw new IllegalStateException("Invalid variable:" + var);
-	}
-
 	private int[] toArray(final Set<Integer> set) {
 		final int[] array = new int[set.size()];
 		final Iterator<Integer> it = set.iterator();
@@ -277,53 +203,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			array[i++] = it.next();
 		}
 		return array;
-	}
-
-	public static class RDSet {
-
-		private final Set<Integer> in;
-		private final Set<Integer> out;
-		private final Set<Integer> gen;
-		private final Set<Integer> kill;
-
-		private final Variable[] vars;
-
-		public RDSet(final int insns, final Variable[] variables) {
-			in = new HashSet<Integer>();
-			out = new HashSet<Integer>();
-			gen = new HashSet<Integer>();
-			kill = new HashSet<Integer>();
-			vars = variables;
-		}
-
-		public Set<Integer> gen() {
-			return Collections.unmodifiableSet(gen);
-		}
-
-		public void gen(final int insn, final Variable var) {
-			gen.add(insn * vars.length + indexOf(var));
-		}
-
-		public Set<Integer> kill() {
-			return Collections.unmodifiableSet(kill);
-		}
-
-		public void kill(final int insn, final Variable var) {
-			kill.add(insn * vars.length + indexOf(var));
-		}
-
-		public boolean in(final int insn, final Variable var) {
-			return in.contains(insn * vars.length + indexOf(var));
-		}
-
-		private int indexOf(final Variable var) {
-			for (int i = 0; i < vars.length; i++) {
-				if (vars[i].equals(var))
-					return i;
-			}
-			throw new IllegalStateException("Invalid variable:" + var);
-		}
-
 	}
 
 }
