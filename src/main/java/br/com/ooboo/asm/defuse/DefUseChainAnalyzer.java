@@ -47,13 +47,13 @@ public class DefUseChainAnalyzer {
 	private void computeInOut() {
 		rdSets = new RDSet[n];
 		for (int i = 0; i < n; i++) {
-			rdSets[i] = new RDSet(variables);
+			rdSets[i] = new RDSet(variables.length);
 			for (final Variable def : frames[i].getDefinitions()) {
-				rdSets[i].gen(i, def);
+				rdSets[i].gen(i, indexOf(def));
 				for (int j = 0; j < n; j++) {
 					for (final Variable other : frames[j].getDefinitions()) {
 						if (i != j && def.equals(other)) {
-							rdSets[i].kill(j, def);
+							rdSets[i].kill(j, indexOf(def));
 						}
 					}
 				}
@@ -91,7 +91,7 @@ public class DefUseChainAnalyzer {
 		for (int i = 0; i < n; i++) {
 			for (final Variable use : frames[i].getUses()) {
 				for (int j = 0; j < n; j++) {
-					if (rdSets[i].in(j, use)) {
+					if (rdSets[i].in(j, indexOf(use))) {
 						chains.add(new DefUseChain(j, i, indexOf(use)));
 					}
 				}
@@ -123,9 +123,9 @@ public class DefUseChainAnalyzer {
 		private final Set<Integer> gen;
 		private final Set<Integer> kill;
 
-		private final Variable[] vars;
+		private final int vars;
 
-		public RDSet(final Variable[] variables) {
+		public RDSet(final int variables) {
 			in = new HashSet<Integer>();
 			out = new HashSet<Integer>();
 			gen = new HashSet<Integer>();
@@ -137,28 +137,20 @@ public class DefUseChainAnalyzer {
 			return Collections.unmodifiableSet(gen);
 		}
 
-		public void gen(final int insn, final Variable var) {
-			gen.add(insn * vars.length + indexOf(var));
+		public void gen(final int insn, final int var) {
+			gen.add(insn * vars + var);
 		}
 
 		public Set<Integer> kill() {
 			return Collections.unmodifiableSet(kill);
 		}
 
-		public void kill(final int insn, final Variable var) {
-			kill.add(insn * vars.length + indexOf(var));
+		public void kill(final int insn, final int var) {
+			kill.add(insn * vars + var);
 		}
 
-		public boolean in(final int insn, final Variable var) {
-			return in.contains(insn * vars.length + indexOf(var));
-		}
-
-		private int indexOf(final Variable var) {
-			for (int i = 0; i < vars.length; i++) {
-				if (vars[i].equals(var))
-					return i;
-			}
-			throw new IllegalStateException("Invalid variable:" + var);
+		public boolean in(final int insn, final int var) {
+			return in.contains(insn * vars + var);
 		}
 
 	}

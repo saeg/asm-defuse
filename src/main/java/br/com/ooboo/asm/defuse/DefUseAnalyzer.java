@@ -72,15 +72,13 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		}
 		final int nargs = (m.access & ACC_STATIC) == 0 ? args.length + 1 : args.length;
 
-		AbstractInsnNode insn;
-
 		for (int i = 0; i < n; i++) {
 			if (frames[i] == null) {
 				duframes[i] = DefUseFrame.NONE;
 			} else {
 				duframes[i] = new DefUseFrame(frames[i]);
 			}
-			insn = m.instructions.get(i);
+			final AbstractInsnNode insn = m.instructions.get(i);
 			switch (insn.getType()) {
 			case AbstractInsnNode.LABEL:
 			case AbstractInsnNode.LINE:
