@@ -385,6 +385,56 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
+	public void testDefUseChainsGlobal() throws AnalyzerException {
+		prepareMethodMax();
+		chainAnalyzer.setOnlyGlobal(true);
+		chainAnalyzer.analyze("Owner", mn);
+		final DefUseChain[] chains = chainAnalyzer.getDefUseChains();
+		final DefUseChain[] expected = new DefUseChain[15];
+
+		expected[0] = new DefUseChain(0, 10, 1);
+		expected[1] = new DefUseChain(4, 10, 2);
+		expected[2] = new DefUseChain(21, 10, 2);
+
+		expected[3] = new DefUseChain(0, 15, 0);
+		expected[4] = new DefUseChain(4, 15, 2);
+		expected[5] = new DefUseChain(21, 15, 2);
+		expected[6] = new DefUseChain(6, 15, 3);
+		expected[7] = new DefUseChain(19, 15, 3);
+
+		expected[8] = new DefUseChain(0, 19, 0);
+		expected[9] = new DefUseChain(4, 19, 2);
+		expected[10] = new DefUseChain(21, 19, 2);
+
+		expected[11] = new DefUseChain(4, 21, 2);
+		expected[12] = new DefUseChain(21, 21, 2);
+
+		expected[13] = new DefUseChain(6, 25, 3);
+		expected[14] = new DefUseChain(19, 25, 3);
+
+		Assert.assertEquals(expected.length, chains.length);
+
+		final StringBuilder message = new StringBuilder();
+		for (int i = 0; i < expected.length; i++) {
+			final DefUseChain exp = expected[i];
+			boolean found = false;
+			for (final DefUseChain chain : chains) {
+				if (exp.def == chain.def && exp.use == chain.use && exp.var == chain.var) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				message.append("Not found dua: ").append(i).append('\n');
+			}
+		}
+
+		if (message.length() > 0) {
+			Assert.fail(message.toString());
+		}
+	}
+
+	@Test
 	public void ShouldNotThrowAnExceptionWhenAFrameIsNull() {
 		prepareMethodWhitUnreachableCode();
 		Exception exception = null;
