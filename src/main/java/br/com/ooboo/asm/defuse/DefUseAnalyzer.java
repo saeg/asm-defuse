@@ -94,17 +94,14 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			}
 			for (final Variable var : duframes[i].getUses()) {
 				if (var instanceof ObjectField) {
-					Value root = ((ObjectField) var).value;
-					while (root instanceof ObjectField) {
-						root = ((ObjectField) root).value;
-					}
+					final Value root = ((ObjectField) var).getRoot();
 					if (root instanceof Local) {
-						final Local fieldLocal = (Local) root;
-						for (final AbstractInsnNode fieldDef : duframes[i].getLocal(fieldLocal.var).insns) {
-							final int index = m.instructions.indexOf(fieldDef);
+						final Local l = (Local) root;
+						for (final AbstractInsnNode def : duframes[i].getLocal(l.var).insns) {
+							final int index = m.instructions.indexOf(def);
 							duframes[index].addDef(var);
 						}
-						if (duframes[i].getLocal(fieldLocal.var).insns.isEmpty()) {
+						if (duframes[i].getLocal(l.var).insns.isEmpty()) {
 							duframes[0].addDef(var);
 						}
 					}

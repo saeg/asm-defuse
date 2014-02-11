@@ -19,7 +19,6 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.objectweb.asm.tree.analysis.Frame;
 
 import br.com.ooboo.asm.defuse.DefUseAnalyzer;
 import br.com.ooboo.asm.defuse.DefUseChain;
@@ -27,9 +26,6 @@ import br.com.ooboo.asm.defuse.DefUseChainAnalyzer;
 import br.com.ooboo.asm.defuse.DefUseChainAnalyzer.RDSet;
 import br.com.ooboo.asm.defuse.DefUseFrame;
 import br.com.ooboo.asm.defuse.Local;
-import br.com.ooboo.asm.defuse.ObjectField;
-import br.com.ooboo.asm.defuse.StaticField;
-import br.com.ooboo.asm.defuse.Value;
 import br.com.ooboo.asm.defuse.Variable;
 
 public class DefUseAnalyzerTest {
@@ -236,7 +232,7 @@ public class DefUseAnalyzerTest {
 
 		// Default
 		for (int i = 0; i < n; i++) {
-			uses[i] = new HashSet<Variable>();
+			uses[i] = new LinkedHashSet<Variable>();
 		}
 
 		// Set instructions that uses a local variable
@@ -397,12 +393,7 @@ public class DefUseAnalyzerTest {
 		} catch (final Exception e) {
 			exception = e;
 		}
-		final Frame<Value>[] frames = analyzer.getFrames();
-		final DefUseFrame[] duframes = analyzer.getDefUseFrames();
 		Assert.assertNull(exception);
-		Assert.assertNotNull(frames[0]);
-		Assert.assertNull(frames[1]);
-		Assert.assertEquals(DefUseFrame.NONE, duframes[1]);
 	}
 
 	@Test
@@ -414,14 +405,7 @@ public class DefUseAnalyzerTest {
 		} catch (final Exception e) {
 			exception = e;
 		}
-		final Frame<Value>[] frames = analyzer.getFrames();
-		final DefUseFrame[] duframes = analyzer.getDefUseFrames();
 		Assert.assertNull(exception);
-		Assert.assertNotNull(frames[0]);
-		Assert.assertNull(frames[1]);
-		Assert.assertNull(frames[2]);
-		Assert.assertEquals(DefUseFrame.NONE, duframes[1]);
-		Assert.assertEquals(DefUseFrame.NONE, duframes[2]);
 	}
 
 	@Test
@@ -433,19 +417,7 @@ public class DefUseAnalyzerTest {
 		} catch (final Exception e) {
 			exception = e;
 		}
-		final Frame<Value>[] frames = analyzer.getFrames();
-		final DefUseFrame[] duframes = analyzer.getDefUseFrames();
 		Assert.assertNull(exception);
-		Assert.assertNotNull(frames[0]);
-		Assert.assertNotNull(frames[1]);
-		Assert.assertNotNull(frames[2]);
-		Assert.assertNotNull(frames[3]);
-		Assert.assertNull(frames[4]);
-		Assert.assertNull(frames[5]);
-		Assert.assertNotNull(frames[6]);
-		Assert.assertNotNull(frames[7]);
-		Assert.assertEquals(DefUseFrame.NONE, duframes[4]);
-		Assert.assertEquals(DefUseFrame.NONE, duframes[5]);
 	}
 
 	@Test
@@ -558,12 +530,8 @@ public class DefUseAnalyzerTest {
 
 		chainAnalyzer.analyze("Owner", mn);
 
-		final DefUseChain[] chains = chainAnalyzer.getDefUseChains();
-		final Variable[] vars = analyzer.getVariables();
-		Assert.assertEquals(1, chains.length);
-		Assert.assertEquals(0, chains[0].def);
-		Assert.assertEquals(1, chains[0].use);
-		Assert.assertEquals(new StaticField("Owner", "name", "I"), vars[chains[0].var]);
+		final RDSet[] sets = chainAnalyzer.getRDSets();
+		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 1));
 	}
 
 	@Test
@@ -581,14 +549,11 @@ public class DefUseAnalyzerTest {
 
 		chainAnalyzer.analyze("Owner", mn);
 
-		final DefUseChain[] chains = chainAnalyzer.getDefUseChains();
-		final Variable[] vars = analyzer.getVariables();
 		final RDSet[] sets = chainAnalyzer.getRDSets();
-		Assert.assertEquals(1, chains.length);
-		Assert.assertEquals(1, chains[0].def);
-		Assert.assertEquals(3, chains[0].use);
-		Assert.assertEquals(new StaticField("Owner", "name", "I"), vars[chains[0].var]);
-		Assert.assertTrue(isSet(sets[1].kill(), 0, chains[0].var, vars.length));
+		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 1));
+		Assert.assertTrue(isSet(sets[0].kill(), 1, 0, 1));
+		Assert.assertTrue(isSet(sets[1].gen(), 1, 0, 1));
+		Assert.assertTrue(isSet(sets[1].kill(), 0, 0, 1));
 	}
 
 	@Test
@@ -604,12 +569,8 @@ public class DefUseAnalyzerTest {
 
 		chainAnalyzer.analyze("Owner", mn);
 
-		final DefUseChain[] chains = chainAnalyzer.getDefUseChains();
-		final Variable[] vars = analyzer.getVariables();
-		Assert.assertEquals(1, chains.length);
-		Assert.assertEquals(0, chains[0].def);
-		Assert.assertEquals(1, chains[0].use);
-		Assert.assertEquals(new Local(Type.INT_TYPE, 0), vars[chains[0].var]);
+		final RDSet[] sets = chainAnalyzer.getRDSets();
+		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 1));
 	}
 
 	@Test
@@ -627,14 +588,11 @@ public class DefUseAnalyzerTest {
 
 		chainAnalyzer.analyze("Owner", mn);
 
-		final DefUseChain[] chains = chainAnalyzer.getDefUseChains();
-		final Variable[] vars = analyzer.getVariables();
 		final RDSet[] sets = chainAnalyzer.getRDSets();
-		Assert.assertEquals(1, chains.length);
-		Assert.assertEquals(1, chains[0].def);
-		Assert.assertEquals(3, chains[0].use);
-		Assert.assertEquals(new Local(Type.INT_TYPE, 0), vars[chains[0].var]);
-		Assert.assertTrue(isSet(sets[1].kill(), 0, chains[0].var, vars.length));
+		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 1));
+		Assert.assertTrue(isSet(sets[0].kill(), 1, 0, 1));
+		Assert.assertTrue(isSet(sets[1].gen(), 1, 0, 1));
+		Assert.assertTrue(isSet(sets[1].kill(), 0, 0, 1));
 	}
 
 	@Test
@@ -652,14 +610,12 @@ public class DefUseAnalyzerTest {
 
 		chainAnalyzer.analyze("Owner", mn);
 
-		final DefUseChain[] chains = chainAnalyzer.getDefUseChains();
-		final Variable[] vars = analyzer.getVariables();
 		final RDSet[] sets = chainAnalyzer.getRDSets();
-		Assert.assertEquals(1, chains.length);
-		Assert.assertEquals(1, chains[0].def);
-		Assert.assertEquals(3, chains[0].use);
-		Assert.assertEquals(new Local(Type.INT_TYPE, 1), vars[chains[0].var]);
-		Assert.assertTrue(isSet(sets[1].kill(), 0, chains[0].var, vars.length));
+		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 2));
+		Assert.assertTrue(isSet(sets[0].gen(), 0, 1, 2));
+		Assert.assertTrue(isSet(sets[0].kill(), 1, 1, 2));
+		Assert.assertTrue(isSet(sets[1].gen(), 1, 1, 2));
+		Assert.assertTrue(isSet(sets[1].kill(), 0, 1, 2));
 	}
 
 	@Test
@@ -719,18 +675,9 @@ public class DefUseAnalyzerTest {
 		mn.tryCatchBlocks = Collections.emptyList();
 
 		chainAnalyzer.analyze("Owner", mn);
-
-		final Local local = new Local(Type.getObjectType("java/lang/Object"), 0);
-
-		final DefUseChain[] chains = chainAnalyzer.getDefUseChains();
-		final Variable[] vars = analyzer.getVariables();
-		Assert.assertEquals(2, chains.length);
-		Assert.assertEquals(0, chains[0].def);
-		Assert.assertEquals(2, chains[0].use);
-		Assert.assertEquals(local, vars[chains[0].var]);
-		Assert.assertEquals(0, chains[1].def);
-		Assert.assertEquals(2, chains[1].use);
-		Assert.assertEquals(new ObjectField("Owner", "name", "I", local), vars[chains[1].var]);
+		final RDSet[] sets = chainAnalyzer.getRDSets();
+		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 2));
+		Assert.assertTrue(isSet(sets[0].gen(), 0, 1, 2));
 	}
 
 	private void set(final Set<Integer> set, final int insn, final int var, final int vars) {

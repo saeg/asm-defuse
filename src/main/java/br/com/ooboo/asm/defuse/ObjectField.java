@@ -23,17 +23,20 @@ public final class ObjectField extends Field {
 		final Set<Variable> values = new LinkedHashSet<Variable>();
 		values.addAll(value.getVariables());
 
-		// get root
-		Value root = value;
-		while (root instanceof ObjectField) {
-			root = ObjectField.class.cast(root).value;
-		}
-
+		final Value root = getRoot();
 		if (root instanceof Local || root instanceof StaticField) {
 			values.add(this);
 		}
 
 		return Collections.unmodifiableSet(values);
+	}
+
+	public Value getRoot() {
+		Value root = value;
+		while (root instanceof ObjectField) {
+			root = ObjectField.class.cast(root).value;
+		}
+		return root;
 	}
 
 	@Override
