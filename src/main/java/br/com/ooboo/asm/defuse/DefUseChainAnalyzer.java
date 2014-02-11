@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 
@@ -21,6 +23,8 @@ public class DefUseChainAnalyzer {
 
 	private DefUseChain[] chains;
 
+	private InsnList insns;
+
 	private int n;
 
 	private boolean onlyGlobal;
@@ -32,7 +36,7 @@ public class DefUseChainAnalyzer {
 	public DefUseChain[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
 		analyzer.analyze(owner, m);
 
-		init();
+		init(m);
 		computeInOut();
 		reachingDefinitions();
 		computeDefUseChains();
@@ -40,9 +44,10 @@ public class DefUseChainAnalyzer {
 		return chains;
 	}
 
-	private void init() {
+	private void init(final MethodNode m) {
 		frames = analyzer.getDefUseFrames();
 		variables = analyzer.getVariables();
+		insns = m.instructions;
 		n = frames.length;
 	}
 
@@ -94,32 +99,59 @@ public class DefUseChainAnalyzer {
 		final List<DefUseChain> chains = new ArrayList<DefUseChain>();
 		for (int i = 0; i < n; i++) {
 			for (final Variable use : frames[i].getUses()) {
-				for (int j = 0; j < n; j++) {
-					if (rdSets[i].in(j, indexOf(use))) {
-						boolean local = false;
-						if (leaders[i] == leaders[j]) {
-							// definition and use occurs in same basic block
-							for (final int k : analyzer.getBasicBlock(leaders[i])) {
-								if (k == i) {
-									// use occurs before definition
-									break;
-								}
-								if (k == j) {
-									// use occurs after definition
-									local = true;
-									break;
-								}
+
+				if (isPredicate(insns.get(i).getOpcode())) {
+
+					for (final int succ : analyzer.getSuccessors(i)) {
+						for (int j = 0; j < n; j++) {
+							if (rdSets[i].out(j, indexOf(use))) {
+								chains.add(new DefUseChain(j, i, succ, indexOf(use)));
 							}
 						}
-						if (onlyGlobal && local) {
-							continue;
+					}
+
+				} else {
+					for (int j = 0; j < n; j++) {
+						if (rdSets[i].in(j, indexOf(use))) {
+							boolean local = false;
+							if (leaders[i] == leaders[j]) {
+								// definition and use occurs in same basic block
+								for (final int k : analyzer.getBasicBlock(leaders[i])) {
+									if (k == i) {
+										// use occurs before definition
+										break;
+									}
+									if (k == j) {
+										// use occurs after definition
+										local = true;
+										break;
+									}
+								}
+							}
+							if (onlyGlobal && local) {
+								continue;
+							}
+							chains.add(new DefUseChain(j, i, indexOf(use)));
 						}
-						chains.add(new DefUseChain(j, i, indexOf(use)));
 					}
 				}
+
 			}
 		}
 		this.chains = chains.toArray(new DefUseChain[chains.size()]);
+	}
+
+	private boolean isPredicate(final int opcode) {
+		if (opcode >= Opcodes.IFEQ && opcode <= Opcodes.IF_ACMPNE)
+			return true;
+
+		if (opcode == Opcodes.TABLESWITCH ||
+			opcode == Opcodes.LOOKUPSWITCH ||
+			opcode == Opcodes.IFNULL ||
+			opcode == Opcodes.IFNONNULL) {
+			return true;
+		}
+		return false;
 	}
 
 	public void setOnlyGlobal(final boolean onlyGlobal) {
@@ -177,6 +209,10 @@ public class DefUseChainAnalyzer {
 
 		public boolean in(final int insn, final int var) {
 			return in.contains(insn * vars + var);
+		}
+
+		public boolean out(final int insn, final int var) {
+			return out.contains(insn * vars + var);
 		}
 
 	}

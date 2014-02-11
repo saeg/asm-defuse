@@ -333,7 +333,7 @@ public class DefUseAnalyzerTest {
 		prepareMethodMax();
 		chainAnalyzer.analyze("Owner", mn);
 		final DefUseChain[] chains = chainAnalyzer.getDefUseChains();
-		final DefUseChain[] expected = new DefUseChain[18];
+		final DefUseChain[] expected = new DefUseChain[26];
 
 		expected[0] = new DefUseChain(1, 4, 2);
 
@@ -342,25 +342,33 @@ public class DefUseAnalyzerTest {
 		// know bug!!! the algorithm is returning an invalid chain (4, 6, 2)
 		expected[2] = new DefUseChain(4, 6, 2); // Just to avoid build failure
 
-		expected[3] = new DefUseChain(0, 10, 1);
-		expected[4] = new DefUseChain(4, 10, 2);
-		expected[5] = new DefUseChain(21, 10, 2);
+		expected[3] = new DefUseChain(0, 10, 23, 1);
+		expected[4] = new DefUseChain(0, 10, 11, 1);
+		expected[5] = new DefUseChain(4, 10, 23, 2);
+		expected[6] = new DefUseChain(4, 10, 11, 2);
+		expected[7] = new DefUseChain(21, 10, 23, 2);
+		expected[8] = new DefUseChain(21, 10, 11, 2);
 
-		expected[6] = new DefUseChain(0, 15, 0);
-		expected[7] = new DefUseChain(4, 15, 2);
-		expected[8] = new DefUseChain(21, 15, 2);
-		expected[9] = new DefUseChain(6, 15, 3);
-		expected[10] = new DefUseChain(19, 15, 3);
+		expected[9] = new DefUseChain(0, 15, 20, 0);
+		expected[10] = new DefUseChain(0, 15, 16, 0);
+		expected[11] = new DefUseChain(4, 15, 20, 2);
+		expected[12] = new DefUseChain(4, 15, 16, 2);
+		expected[13] = new DefUseChain(21, 15, 20, 2);
+		expected[14] = new DefUseChain(21, 15, 16, 2);
+		expected[15] = new DefUseChain(6, 15, 20, 3);
+		expected[16] = new DefUseChain(6, 15, 16, 3);
+		expected[17] = new DefUseChain(19, 15, 20, 3);
+		expected[18] = new DefUseChain(19, 15, 16, 3);
 
-		expected[11] = new DefUseChain(0, 19, 0);
-		expected[12] = new DefUseChain(4, 19, 2);
-		expected[13] = new DefUseChain(21, 19, 2);
+		expected[19] = new DefUseChain(0, 19, 0);
+		expected[20] = new DefUseChain(4, 19, 2);
+		expected[21] = new DefUseChain(21, 19, 2);
 
-		expected[14] = new DefUseChain(4, 21, 2);
-		expected[15] = new DefUseChain(21, 21, 2);
+		expected[22] = new DefUseChain(4, 21, 2);
+		expected[23] = new DefUseChain(21, 21, 2);
 
-		expected[16] = new DefUseChain(6, 25, 3);
-		expected[17] = new DefUseChain(19, 25, 3);
+		expected[24] = new DefUseChain(6, 25, 3);
+		expected[25] = new DefUseChain(19, 25, 3);
 
 		Assert.assertEquals(expected.length, chains.length);
 
@@ -369,7 +377,10 @@ public class DefUseAnalyzerTest {
 			final DefUseChain exp = expected[i];
 			boolean found = false;
 			for (final DefUseChain chain : chains) {
-				if (exp.def == chain.def && exp.use == chain.use && exp.var == chain.var) {
+				if (exp.def == chain.def &&
+					exp.use == chain.use &&
+					exp.target == chain.target &&
+					exp.var == chain.var) {
 					found = true;
 					break;
 				}
@@ -390,27 +401,35 @@ public class DefUseAnalyzerTest {
 		chainAnalyzer.setOnlyGlobal(true);
 		chainAnalyzer.analyze("Owner", mn);
 		final DefUseChain[] chains = chainAnalyzer.getDefUseChains();
-		final DefUseChain[] expected = new DefUseChain[15];
+		final DefUseChain[] expected = new DefUseChain[23];
 
-		expected[0] = new DefUseChain(0, 10, 1);
-		expected[1] = new DefUseChain(4, 10, 2);
-		expected[2] = new DefUseChain(21, 10, 2);
+		expected[0] = new DefUseChain(0, 10, 23, 1);
+		expected[1] = new DefUseChain(0, 10, 11, 1);
+		expected[2] = new DefUseChain(4, 10, 23, 2);
+		expected[3] = new DefUseChain(4, 10, 11, 2);
+		expected[4] = new DefUseChain(21, 10, 23, 2);
+		expected[5] = new DefUseChain(21, 10, 11, 2);
 
-		expected[3] = new DefUseChain(0, 15, 0);
-		expected[4] = new DefUseChain(4, 15, 2);
-		expected[5] = new DefUseChain(21, 15, 2);
-		expected[6] = new DefUseChain(6, 15, 3);
-		expected[7] = new DefUseChain(19, 15, 3);
+		expected[6] = new DefUseChain(0, 15, 20, 0);
+		expected[7] = new DefUseChain(0, 15, 16, 0);
+		expected[8] = new DefUseChain(4, 15, 20, 2);
+		expected[9] = new DefUseChain(4, 15, 16, 2);
+		expected[10] = new DefUseChain(21, 15, 20, 2);
+		expected[11] = new DefUseChain(21, 15, 16, 2);
+		expected[12] = new DefUseChain(6, 15, 20, 3);
+		expected[13] = new DefUseChain(6, 15, 16, 3);
+		expected[14] = new DefUseChain(19, 15, 20, 3);
+		expected[15] = new DefUseChain(19, 15, 16, 3);
 
-		expected[8] = new DefUseChain(0, 19, 0);
-		expected[9] = new DefUseChain(4, 19, 2);
-		expected[10] = new DefUseChain(21, 19, 2);
+		expected[16] = new DefUseChain(0, 19, 0);
+		expected[17] = new DefUseChain(4, 19, 2);
+		expected[18] = new DefUseChain(21, 19, 2);
 
-		expected[11] = new DefUseChain(4, 21, 2);
-		expected[12] = new DefUseChain(21, 21, 2);
+		expected[19] = new DefUseChain(4, 21, 2);
+		expected[20] = new DefUseChain(21, 21, 2);
 
-		expected[13] = new DefUseChain(6, 25, 3);
-		expected[14] = new DefUseChain(19, 25, 3);
+		expected[21] = new DefUseChain(6, 25, 3);
+		expected[22] = new DefUseChain(19, 25, 3);
 
 		Assert.assertEquals(expected.length, chains.length);
 
@@ -419,7 +438,10 @@ public class DefUseAnalyzerTest {
 			final DefUseChain exp = expected[i];
 			boolean found = false;
 			for (final DefUseChain chain : chains) {
-				if (exp.def == chain.def && exp.use == chain.use && exp.var == chain.var) {
+				if (exp.def == chain.def &&
+					exp.use == chain.use &&
+					exp.target == chain.target &&
+					exp.var == chain.var) {
 					found = true;
 					break;
 				}
