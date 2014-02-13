@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 
@@ -17,8 +15,6 @@ public class DepthFirstDefUseChainSearch {
 
 	private List<Variable> variables;
 
-	private InsnList insns;
-
 	private int n;
 
 	public DepthFirstDefUseChainSearch(final DefUseAnalyzer analyzer) {
@@ -29,7 +25,6 @@ public class DepthFirstDefUseChainSearch {
 		analyzer.analyze(owner, m);
 		frames = analyzer.getDefUseFrames();
 		variables = Arrays.asList(analyzer.getVariables());
-		insns = m.instructions;
 		n = frames.length;
 
 		final List<DefUseChain> list = new ArrayList<DefUseChain>();
@@ -62,7 +57,7 @@ public class DepthFirstDefUseChainSearch {
 
 			if (frames[j].getUses().contains(def)) {
 				// reaching definition
-				if (isPredicate(insns.get(j).getOpcode())) {
+				if (frames[j].predicate) {
 					for (final int succ : analyzer.getSuccessors(j)) {
 						list.add(new DefUseChain(i, j, succ, variables.indexOf(def)));
 					}
@@ -82,19 +77,6 @@ public class DepthFirstDefUseChainSearch {
 				}
 			}
 		}
-	}
-
-	private boolean isPredicate(final int opcode) {
-		if (opcode >= Opcodes.IFEQ && opcode <= Opcodes.IF_ACMPNE)
-			return true;
-
-		if (opcode == Opcodes.TABLESWITCH ||
-			opcode == Opcodes.LOOKUPSWITCH ||
-			opcode == Opcodes.IFNULL ||
-			opcode == Opcodes.IFNONNULL) {
-			return true;
-		}
-		return false;
 	}
 
 }

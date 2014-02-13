@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -73,12 +74,12 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		final int nargs = (m.access & ACC_STATIC) == 0 ? args.length + 1 : args.length;
 
 		for (int i = 0; i < n; i++) {
+			final AbstractInsnNode insn = m.instructions.get(i);
 			if (frames[i] == null) {
 				duframes[i] = DefUseFrame.NONE;
 			} else {
-				duframes[i] = new DefUseFrame(frames[i]);
+				duframes[i] = new DefUseFrame(frames[i], isPredicate(insn.getOpcode()));
 			}
-			final AbstractInsnNode insn = m.instructions.get(i);
 			switch (insn.getType()) {
 			case AbstractInsnNode.LABEL:
 			case AbstractInsnNode.LINE:
@@ -198,6 +199,19 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			array[i++] = it.next();
 		}
 		return array;
+	}
+
+	private boolean isPredicate(final int opcode) {
+		if (opcode >= Opcodes.IFEQ && opcode <= Opcodes.IF_ACMPNE)
+			return true;
+
+		if (opcode == Opcodes.TABLESWITCH ||
+			opcode == Opcodes.LOOKUPSWITCH ||
+			opcode == Opcodes.IFNULL ||
+			opcode == Opcodes.IFNONNULL) {
+			return true;
+		}
+		return false;
 	}
 
 }

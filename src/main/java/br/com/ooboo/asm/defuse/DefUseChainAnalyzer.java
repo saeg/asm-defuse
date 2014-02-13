@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 
@@ -23,8 +21,6 @@ public class DefUseChainAnalyzer {
 
 	private DefUseChain[] chains;
 
-	private InsnList insns;
-
 	private int n;
 
 	private boolean onlyGlobal;
@@ -36,7 +32,7 @@ public class DefUseChainAnalyzer {
 	public DefUseChain[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
 		analyzer.analyze(owner, m);
 
-		init(m);
+		init();
 		computeInOut();
 		reachingDefinitions();
 		computeDefUseChains();
@@ -44,10 +40,9 @@ public class DefUseChainAnalyzer {
 		return chains;
 	}
 
-	private void init(final MethodNode m) {
+	private void init() {
 		frames = analyzer.getDefUseFrames();
 		variables = analyzer.getVariables();
-		insns = m.instructions;
 		n = frames.length;
 	}
 
@@ -100,7 +95,7 @@ public class DefUseChainAnalyzer {
 		for (int i = 0; i < n; i++) {
 			for (final Variable use : frames[i].getUses()) {
 
-				if (isPredicate(insns.get(i).getOpcode())) {
+				if (frames[i].predicate) {
 
 					for (final int succ : analyzer.getSuccessors(i)) {
 						for (int j = 0; j < n; j++) {
@@ -139,19 +134,6 @@ public class DefUseChainAnalyzer {
 			}
 		}
 		this.chains = chains.toArray(new DefUseChain[chains.size()]);
-	}
-
-	private boolean isPredicate(final int opcode) {
-		if (opcode >= Opcodes.IFEQ && opcode <= Opcodes.IF_ACMPNE)
-			return true;
-
-		if (opcode == Opcodes.TABLESWITCH ||
-			opcode == Opcodes.LOOKUPSWITCH ||
-			opcode == Opcodes.IFNULL ||
-			opcode == Opcodes.IFNONNULL) {
-			return true;
-		}
-		return false;
 	}
 
 	public void setOnlyGlobal(final boolean onlyGlobal) {

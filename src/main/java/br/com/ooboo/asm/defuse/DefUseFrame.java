@@ -22,16 +22,25 @@ public class DefUseFrame extends Frame<Value> {
 
 	public static final DefUseFrame NONE = new DefUseFrame(0, 0);
 
+	public final boolean predicate;
+
 	private Set<Variable> defs = Collections.emptySet();
 
 	private Set<Variable> uses = Collections.emptySet();
 
 	public DefUseFrame(final int nLocals, final int nStack) {
 		super(nLocals, nStack);
+		predicate = false;
 	}
 
 	public DefUseFrame(final Frame<? extends Value> src) {
 		super(src);
+		this.predicate = false;
+	}
+
+	public DefUseFrame(final Frame<Value> src, final boolean predicate) {
+		super(src);
+		this.predicate = predicate;
 	}
 
 	public Set<Variable> getDefinitions() {
