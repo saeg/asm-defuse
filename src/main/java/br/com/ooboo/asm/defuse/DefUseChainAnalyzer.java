@@ -141,11 +141,7 @@ public class DefUseChainAnalyzer {
 	}
 
 	private int indexOf(final Variable var) {
-		for (int i = 0; i < variables.length; i++) {
-			if (variables[i].equals(var))
-				return i;
-		}
-		throw new IllegalStateException("Invalid variable:" + var);
+		return ArrayUtils.indexOf(variables, var);
 	}
 
 	public RDSet[] getRDSets() {

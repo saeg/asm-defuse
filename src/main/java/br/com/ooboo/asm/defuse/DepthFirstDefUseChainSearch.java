@@ -1,7 +1,8 @@
 package br.com.ooboo.asm.defuse;
 
+import static br.com.ooboo.asm.defuse.ArrayUtils.indexOf;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.objectweb.asm.tree.MethodNode;
@@ -13,7 +14,7 @@ public class DepthFirstDefUseChainSearch {
 
 	private DefUseFrame[] frames;
 
-	private List<Variable> variables;
+	private Variable[] variables;
 
 	private int n;
 
@@ -24,7 +25,7 @@ public class DepthFirstDefUseChainSearch {
 	public DefUseChain[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
 		analyzer.analyze(owner, m);
 		frames = analyzer.getDefUseFrames();
-		variables = Arrays.asList(analyzer.getVariables());
+		variables = analyzer.getVariables();
 		n = frames.length;
 
 		final List<DefUseChain> list = new ArrayList<DefUseChain>();
@@ -59,10 +60,10 @@ public class DepthFirstDefUseChainSearch {
 				// reaching definition
 				if (frames[j].predicate) {
 					for (final int succ : analyzer.getSuccessors(j)) {
-						list.add(new DefUseChain(i, j, succ, variables.indexOf(def)));
+						list.add(new DefUseChain(i, j, succ, indexOf(variables, def)));
 					}
 				} else {
-					list.add(new DefUseChain(i, j, variables.indexOf(def)));
+					list.add(new DefUseChain(i, j, indexOf(variables, def)));
 				}
 			}
 			if (frames[j].getDefinitions().contains(def)) {
