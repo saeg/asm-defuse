@@ -24,4 +24,21 @@ public class DefUseChain {
 		this.var = var;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+
+		DefUseChain other = (DefUseChain) obj;
+
+		if (def != other.def || use != other.use || target != other.target || var != other.var) {
+			return false;
+		}
+		return true;
+	}
+
 }
