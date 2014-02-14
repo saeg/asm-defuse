@@ -182,8 +182,24 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		return toArray(successors[insn]);
 	}
 
+	public int[][] getSuccessors() {
+		final int[][] successors = new int[n][];
+		for (int i = 0; i < n; i++) {
+			successors[i] = getSuccessors(i);
+		}
+		return successors;
+	}
+
 	public int[] getPredecessors(final int insn) {
 		return toArray(predecessors[insn]);
+	}
+
+	public int[][] getPredecessors() {
+		final int[][] predecessors = new int[n][];
+		for (int i = 0; i < n; i++) {
+			predecessors[i] = getPredecessors(i);
+		}
+		return predecessors;
 	}
 
 	public int[] getLeaders() {

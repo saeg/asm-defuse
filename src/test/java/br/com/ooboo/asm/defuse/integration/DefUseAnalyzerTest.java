@@ -23,24 +23,24 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import br.com.ooboo.asm.defuse.ArrayUtils;
 import br.com.ooboo.asm.defuse.DefUseAnalyzer;
 import br.com.ooboo.asm.defuse.DefUseChain;
-import br.com.ooboo.asm.defuse.DefUseChainAnalyzer;
-import br.com.ooboo.asm.defuse.DefUseChainAnalyzer.RDSet;
 import br.com.ooboo.asm.defuse.DefUseFrame;
 import br.com.ooboo.asm.defuse.Local;
+import br.com.ooboo.asm.defuse.ReachDefsDefUseChainSearch;
+import br.com.ooboo.asm.defuse.ReachDefsDefUseChainSearch.RDSet;
 import br.com.ooboo.asm.defuse.Variable;
 
 public class DefUseAnalyzerTest {
 
 	private DefUseAnalyzer analyzer;
 
-	private DefUseChainAnalyzer chainAnalyzer;
+	private ReachDefsDefUseChainSearch reachDefs;
 
 	private MethodNode mn;
 
 	@Before
 	public void setUp() {
 		analyzer = new DefUseAnalyzer();
-		chainAnalyzer = new DefUseChainAnalyzer(analyzer);
+		reachDefs = new ReachDefsDefUseChainSearch();
 	}
 
 	public void prepareMethodMax() {
@@ -272,8 +272,11 @@ public class DefUseAnalyzerTest {
 	@SuppressWarnings("unchecked")
 	public void testReachingDefinitionsGen() throws AnalyzerException {
 		prepareMethodMax();
-		chainAnalyzer.analyze("Owner", mn);
-		final RDSet[] rdSets = chainAnalyzer.getRDSets();
+		analyzer.analyze("Owner", mn);
+		reachDefs.search(analyzer.getDefUseFrames(), analyzer.getVariables(),
+				analyzer.getSuccessors(), analyzer.getPredecessors());
+
+		final RDSet[] rdSets = reachDefs.getRDSets();
 		final int vars = analyzer.getVariables().length;
 		final int n = mn.instructions.size();
 		final Set<Integer>[] gens = (Set<Integer>[]) new HashSet<?>[n];
@@ -302,8 +305,11 @@ public class DefUseAnalyzerTest {
 	@SuppressWarnings("unchecked")
 	public void testReachingDefinitionsKill() throws AnalyzerException {
 		prepareMethodMax();
-		chainAnalyzer.analyze("Owner", mn);
-		final RDSet[] rdSets = chainAnalyzer.getRDSets();
+		analyzer.analyze("Owner", mn);
+		reachDefs.search(analyzer.getDefUseFrames(), analyzer.getVariables(),
+				analyzer.getSuccessors(), analyzer.getPredecessors());
+
+		final RDSet[] rdSets = reachDefs.getRDSets();
 		final int vars = analyzer.getVariables().length;
 		final int n = mn.instructions.size();
 		final Set<Integer>[] kills = (Set<Integer>[]) new HashSet<?>[n];
@@ -332,8 +338,9 @@ public class DefUseAnalyzerTest {
 	@Test
 	public void testDefUseChains() throws AnalyzerException {
 		prepareMethodMax();
-		chainAnalyzer.analyze("Owner", mn);
-		final DefUseChain[] chains = chainAnalyzer.getDefUseChains();
+		analyzer.analyze("Owner", mn);
+		final DefUseChain[] chains = reachDefs.search(analyzer.getDefUseFrames(),
+				analyzer.getVariables(), analyzer.getSuccessors(), analyzer.getPredecessors());
 		final DefUseChain[] expected = new DefUseChain[26];
 
 		expected[0] = new DefUseChain(1, 4, 2);
@@ -388,9 +395,10 @@ public class DefUseAnalyzerTest {
 	@Test
 	public void testDefUseChainsGlobal() throws AnalyzerException {
 		prepareMethodMax();
-		chainAnalyzer.analyze("Owner", mn);
-		final DefUseChain[] chains = DefUseChain.globals(chainAnalyzer.getDefUseChains(),
-				analyzer.getLeaders(), analyzer.getBasicBlocks());
+		analyzer.analyze("Owner", mn);
+		DefUseChain[] chains = reachDefs.search(analyzer.getDefUseFrames(),
+				analyzer.getVariables(), analyzer.getSuccessors(), analyzer.getPredecessors());
+		chains = DefUseChain.globals(chains, analyzer.getLeaders(), analyzer.getBasicBlocks());
 		final DefUseChain[] expected = new DefUseChain[23];
 
 		expected[0] = new DefUseChain(0, 10, 23, 1);
@@ -579,9 +587,11 @@ public class DefUseAnalyzerTest {
 		mn.access = Opcodes.ACC_STATIC;
 		mn.tryCatchBlocks = Collections.emptyList();
 
-		chainAnalyzer.analyze("Owner", mn);
+		analyzer.analyze("Owner", mn);
+		reachDefs.search(analyzer.getDefUseFrames(), analyzer.getVariables(),
+				analyzer.getSuccessors(), analyzer.getPredecessors());
 
-		final RDSet[] sets = chainAnalyzer.getRDSets();
+		final RDSet[] sets = reachDefs.getRDSets();
 		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 1));
 	}
 
@@ -598,9 +608,11 @@ public class DefUseAnalyzerTest {
 		mn.access = Opcodes.ACC_STATIC;
 		mn.tryCatchBlocks = Collections.emptyList();
 
-		chainAnalyzer.analyze("Owner", mn);
+		analyzer.analyze("Owner", mn);
+		reachDefs.search(analyzer.getDefUseFrames(), analyzer.getVariables(),
+				analyzer.getSuccessors(), analyzer.getPredecessors());
 
-		final RDSet[] sets = chainAnalyzer.getRDSets();
+		final RDSet[] sets = reachDefs.getRDSets();
 		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 1));
 		Assert.assertTrue(isSet(sets[0].kill(), 1, 0, 1));
 		Assert.assertTrue(isSet(sets[1].gen(), 1, 0, 1));
@@ -618,9 +630,11 @@ public class DefUseAnalyzerTest {
 		mn.access = Opcodes.ACC_STATIC;
 		mn.tryCatchBlocks = Collections.emptyList();
 
-		chainAnalyzer.analyze("Owner", mn);
+		analyzer.analyze("Owner", mn);
+		reachDefs.search(analyzer.getDefUseFrames(), analyzer.getVariables(),
+				analyzer.getSuccessors(), analyzer.getPredecessors());
 
-		final RDSet[] sets = chainAnalyzer.getRDSets();
+		final RDSet[] sets = reachDefs.getRDSets();
 		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 1));
 	}
 
@@ -637,9 +651,11 @@ public class DefUseAnalyzerTest {
 		mn.access = Opcodes.ACC_STATIC;
 		mn.tryCatchBlocks = Collections.emptyList();
 
-		chainAnalyzer.analyze("Owner", mn);
+		analyzer.analyze("Owner", mn);
+		reachDefs.search(analyzer.getDefUseFrames(), analyzer.getVariables(),
+				analyzer.getSuccessors(), analyzer.getPredecessors());
 
-		final RDSet[] sets = chainAnalyzer.getRDSets();
+		final RDSet[] sets = reachDefs.getRDSets();
 		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 1));
 		Assert.assertTrue(isSet(sets[0].kill(), 1, 0, 1));
 		Assert.assertTrue(isSet(sets[1].gen(), 1, 0, 1));
@@ -659,9 +675,11 @@ public class DefUseAnalyzerTest {
 		mn.access = Opcodes.ACC_STATIC;
 		mn.tryCatchBlocks = Collections.emptyList();
 
-		chainAnalyzer.analyze("Owner", mn);
+		analyzer.analyze("Owner", mn);
+		reachDefs.search(analyzer.getDefUseFrames(), analyzer.getVariables(),
+				analyzer.getSuccessors(), analyzer.getPredecessors());
 
-		final RDSet[] sets = chainAnalyzer.getRDSets();
+		final RDSet[] sets = reachDefs.getRDSets();
 		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 2));
 		Assert.assertTrue(isSet(sets[0].gen(), 0, 1, 2));
 		Assert.assertTrue(isSet(sets[0].kill(), 1, 1, 2));
@@ -674,13 +692,16 @@ public class DefUseAnalyzerTest {
 		mn = new MethodNode();
 		mn.desc = "()V";
 		mn.access = Opcodes.ACC_ABSTRACT;
-		chainAnalyzer.analyze("Owner", mn);
+
+		analyzer.analyze("Owner", mn);
+		final DefUseChain[] chains = reachDefs.search(analyzer.getDefUseFrames(),
+				analyzer.getVariables(), analyzer.getSuccessors(), analyzer.getPredecessors());
 
 		Assert.assertEquals(0, analyzer.getFrames().length);
 		Assert.assertEquals(0, analyzer.getDefUseFrames().length);
 		Assert.assertEquals(1, analyzer.getVariables().length);
-		Assert.assertEquals(0, chainAnalyzer.getRDSets().length);
-		Assert.assertEquals(0, chainAnalyzer.getDefUseChains().length);
+		Assert.assertEquals(0, reachDefs.getRDSets().length);
+		Assert.assertEquals(0, chains.length);
 		Assert.assertEquals(0, analyzer.getLeaders().length);
 	}
 
@@ -689,13 +710,16 @@ public class DefUseAnalyzerTest {
 		mn = new MethodNode();
 		mn.desc = "()V";
 		mn.access = Opcodes.ACC_NATIVE;
-		chainAnalyzer.analyze("Owner", mn);
+
+		analyzer.analyze("Owner", mn);
+		final DefUseChain[] chains = reachDefs.search(analyzer.getDefUseFrames(),
+				analyzer.getVariables(), analyzer.getSuccessors(), analyzer.getPredecessors());
 
 		Assert.assertEquals(0, analyzer.getFrames().length);
 		Assert.assertEquals(0, analyzer.getDefUseFrames().length);
 		Assert.assertEquals(1, analyzer.getVariables().length);
-		Assert.assertEquals(0, chainAnalyzer.getRDSets().length);
-		Assert.assertEquals(0, chainAnalyzer.getDefUseChains().length);
+		Assert.assertEquals(0, reachDefs.getRDSets().length);
+		Assert.assertEquals(0, chains.length);
 		Assert.assertEquals(0, analyzer.getLeaders().length);
 	}
 
@@ -704,13 +728,16 @@ public class DefUseAnalyzerTest {
 		mn = new MethodNode();
 		mn.desc = "()V";
 		mn.access = Opcodes.ACC_NATIVE | Opcodes.ACC_STATIC;
-		chainAnalyzer.analyze("Owner", mn);
+
+		analyzer.analyze("Owner", mn);
+		final DefUseChain[] chains = reachDefs.search(analyzer.getDefUseFrames(),
+				analyzer.getVariables(), analyzer.getSuccessors(), analyzer.getPredecessors());
 
 		Assert.assertEquals(0, analyzer.getFrames().length);
 		Assert.assertEquals(0, analyzer.getDefUseFrames().length);
 		Assert.assertEquals(0, analyzer.getVariables().length);
-		Assert.assertEquals(0, chainAnalyzer.getRDSets().length);
-		Assert.assertEquals(0, chainAnalyzer.getDefUseChains().length);
+		Assert.assertEquals(0, reachDefs.getRDSets().length);
+		Assert.assertEquals(0, chains.length);
 		Assert.assertEquals(0, analyzer.getLeaders().length);
 	}
 
@@ -725,8 +752,11 @@ public class DefUseAnalyzerTest {
 		mn.maxStack = 1;
 		mn.tryCatchBlocks = Collections.emptyList();
 
-		chainAnalyzer.analyze("Owner", mn);
-		final RDSet[] sets = chainAnalyzer.getRDSets();
+		analyzer.analyze("Owner", mn);
+		reachDefs.search(analyzer.getDefUseFrames(), analyzer.getVariables(),
+				analyzer.getSuccessors(), analyzer.getPredecessors());
+
+		final RDSet[] sets = reachDefs.getRDSets();
 		Assert.assertTrue(isSet(sets[0].gen(), 0, 0, 2));
 		Assert.assertTrue(isSet(sets[0].gen(), 0, 1, 2));
 	}

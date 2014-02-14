@@ -6,42 +6,33 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
-
-public class DefUseChainAnalyzer {
-
-	private final DefUseAnalyzer analyzer;
+public class ReachDefsDefUseChainSearch implements DefUseChainSearch {
 
 	private DefUseFrame[] frames;
 
 	private Variable[] variables;
 
-	private RDSet[] rdSets;
+	private int[][] successors;
 
-	private DefUseChain[] chains;
+	private int[][] predecessors;
+
+	private RDSet[] rdSets;
 
 	private int n;
 
-	public DefUseChainAnalyzer(final DefUseAnalyzer analyzer) {
-		this.analyzer = analyzer;
-	}
+	@Override
+	public DefUseChain[] search(final DefUseFrame[] frames, final Variable[] variables,
+			final int[][] adjacencyListSucc, final int[][] adjacencyListPred) {
 
-	public DefUseChain[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
-		analyzer.analyze(owner, m);
+		this.frames = frames;
+		this.variables = variables;
+		successors = adjacencyListSucc;
+		predecessors = adjacencyListPred;
+		n = frames.length;
 
-		init();
 		computeInOut();
 		reachingDefinitions();
-		computeDefUseChains();
-
-		return chains;
-	}
-
-	private void init() {
-		frames = analyzer.getDefUseFrames();
-		variables = analyzer.getVariables();
-		n = frames.length;
+		return computeDefUseChains();
 	}
 
 	private void computeInOut() {
@@ -68,7 +59,7 @@ public class DefUseChainAnalyzer {
 			for (int i = 0; i < n; i++) {
 
 				rdSets[i].in.clear();
-				for (final int pred : analyzer.getPredecessors(i)) {
+				for (final int pred : predecessors[i]) {
 					rdSets[i].in.addAll(rdSets[pred].out);
 				}
 
@@ -86,14 +77,14 @@ public class DefUseChainAnalyzer {
 		}
 	}
 
-	private void computeDefUseChains() {
+	private DefUseChain[] computeDefUseChains() {
 		final List<DefUseChain> chains = new ArrayList<DefUseChain>();
 		for (int i = 0; i < n; i++) {
 			for (final Variable use : frames[i].getUses()) {
 
 				if (frames[i].predicate) {
 
-					for (final int succ : analyzer.getSuccessors(i)) {
+					for (final int succ : successors[i]) {
 						for (int j = 0; j < n; j++) {
 							if (rdSets[i].out(j, indexOf(use))) {
 								chains.add(new DefUseChain(j, i, succ, indexOf(use)));
@@ -111,7 +102,7 @@ public class DefUseChainAnalyzer {
 
 			}
 		}
-		this.chains = chains.toArray(new DefUseChain[chains.size()]);
+		return chains.toArray(new DefUseChain[chains.size()]);
 	}
 
 	private int indexOf(final Variable var) {
@@ -120,10 +111,6 @@ public class DefUseChainAnalyzer {
 
 	public RDSet[] getRDSets() {
 		return rdSets;
-	}
-
-	public DefUseChain[] getDefUseChains() {
-		return chains;
 	}
 
 	public static class RDSet {

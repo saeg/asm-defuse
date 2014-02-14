@@ -5,27 +5,23 @@ import static br.com.ooboo.asm.defuse.ArrayUtils.indexOf;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
-
-public class DepthFirstDefUseChainSearch {
-
-	private final DefUseAnalyzer analyzer;
+public class DepthFirstDefUseChainSearch implements DefUseChainSearch {
 
 	private DefUseFrame[] frames;
 
 	private Variable[] variables;
 
+	private int[][] successors;
+
 	private int n;
 
-	public DepthFirstDefUseChainSearch(final DefUseAnalyzer analyzer) {
-		this.analyzer = analyzer;
-	}
+	@Override
+	public DefUseChain[] search(final DefUseFrame[] frames, final Variable[] variables,
+			final int[][] adjacencyListSucc, final int[][] adjacencyListPred) {
 
-	public DefUseChain[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
-		analyzer.analyze(owner, m);
-		frames = analyzer.getDefUseFrames();
-		variables = analyzer.getVariables();
+		this.frames = frames;
+		this.variables = variables;
+		successors = adjacencyListSucc;
 		n = frames.length;
 
 		final List<DefUseChain> list = new ArrayList<DefUseChain>();
@@ -46,7 +42,7 @@ public class DepthFirstDefUseChainSearch {
 		final boolean[] queued = new boolean[n];
 		final int[] queue = new int[n];
 		int top = 0;
-		for (final int succ : analyzer.getSuccessors(i)) {
+		for (final int succ : successors[i]) {
 			queue[top++] = succ;
 		}
 		while (top > 0) {
@@ -59,7 +55,7 @@ public class DepthFirstDefUseChainSearch {
 			if (frames[j].getUses().contains(def)) {
 				// reaching definition
 				if (frames[j].predicate) {
-					for (final int succ : analyzer.getSuccessors(j)) {
+					for (final int succ : successors[j]) {
 						list.add(new DefUseChain(i, j, succ, indexOf(variables, def)));
 					}
 				} else {
@@ -71,7 +67,7 @@ public class DepthFirstDefUseChainSearch {
 				continue;
 			}
 
-			for (final int succ : analyzer.getSuccessors(j)) {
+			for (final int succ : successors[j]) {
 				if (!visited[succ] && !queued[succ]) {
 					queue[top++] = succ;
 					queued[succ] = true;
