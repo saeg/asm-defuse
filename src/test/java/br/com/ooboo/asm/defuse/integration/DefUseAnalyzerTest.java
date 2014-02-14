@@ -20,6 +20,7 @@ import org.objectweb.asm.tree.TryCatchBlockNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 
+import br.com.ooboo.asm.defuse.ArrayUtils;
 import br.com.ooboo.asm.defuse.DefUseAnalyzer;
 import br.com.ooboo.asm.defuse.DefUseChain;
 import br.com.ooboo.asm.defuse.DefUseChainAnalyzer;
@@ -374,15 +375,7 @@ public class DefUseAnalyzerTest {
 
 		final StringBuilder message = new StringBuilder();
 		for (int i = 0; i < expected.length; i++) {
-			final DefUseChain exp = expected[i];
-			boolean found = false;
-			for (final DefUseChain chain : chains) {
-				if (chain.equals(exp)) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
+			if (ArrayUtils.indexOf(chains, expected[i]) == -1) {
 				message.append("Not found dua: ").append(i).append('\n');
 			}
 		}
@@ -432,15 +425,7 @@ public class DefUseAnalyzerTest {
 
 		final StringBuilder message = new StringBuilder();
 		for (int i = 0; i < expected.length; i++) {
-			final DefUseChain exp = expected[i];
-			boolean found = false;
-			for (final DefUseChain chain : chains) {
-				if (chain.equals(exp)) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
+			if (ArrayUtils.indexOf(chains, expected[i]) == -1) {
 				message.append("Not found dua: ").append(i).append('\n');
 			}
 		}
