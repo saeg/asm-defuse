@@ -38,19 +38,20 @@ public class DepthFirstDefUseChainSearch implements DefUseChainSearch {
 	 * from i by some definition-clear path.
 	 */
 	private void DFS(final Variable def, final int i, final List<DefUseChain> list) {
-		final boolean[] visited = new boolean[n];
 		final boolean[] queued = new boolean[n];
 		final int[] queue = new int[n];
 		int top = 0;
 		for (final int succ : successors[i]) {
 			queue[top++] = succ;
+			queued[succ] = true;
 		}
 		while (top > 0) {
 
 			final int j = queue[--top];
 
-			// mark as visited
-			visited[j] = true;
+			// is not necessary remove queued mark (since a node is visited only
+			// once). We use the queued mark to indicate that a node has already
+			// been visited or will be visited soon.
 
 			if (frames[j].getUses().contains(def)) {
 				// reaching definition
@@ -68,7 +69,7 @@ public class DepthFirstDefUseChainSearch implements DefUseChainSearch {
 			}
 
 			for (final int succ : successors[j]) {
-				if (!visited[succ] && !queued[succ]) {
+				if (!queued[succ]) {
 					queue[top++] = succ;
 					queued[succ] = true;
 				}
