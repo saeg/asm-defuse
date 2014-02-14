@@ -134,6 +134,9 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			list.add(i);
 			while (successors[i].size() == 1) {
 				final int child = successors[i].iterator().next();
+				if (leaders[child] != -1) {
+					break;
+				}
 				if (predecessors[child].size() == 1) {
 					i = child;
 					leaders[i] = basicBlock;

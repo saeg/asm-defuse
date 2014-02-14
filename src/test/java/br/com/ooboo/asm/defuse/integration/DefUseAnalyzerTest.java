@@ -752,6 +752,21 @@ public class DefUseAnalyzerTest {
 		Assert.assertTrue(isSet(sets[0].gen(), 0, 1, 2));
 	}
 
+	@Test
+	public void ShouldTerminateWhenAnalyzeAStraightLineEndlessLoop() throws AnalyzerException {
+		mn = new MethodNode();
+		final LabelNode label = new LabelNode();
+		mn.instructions.add(label);
+		mn.instructions.add(new InsnNode(Opcodes.NOP));
+		mn.instructions.add(new JumpInsnNode(Opcodes.GOTO, label));
+		mn.desc = "()V";
+		mn.maxLocals = 0;
+		mn.maxStack = 0;
+		mn.access = Opcodes.ACC_STATIC;
+		mn.tryCatchBlocks = Collections.emptyList();
+		analyzer.analyze("Owner", mn);
+	}
+
 	private void set(final Set<Integer> set, final int insn, final int var, final int vars) {
 		set.add(insn * vars + var);
 	}
