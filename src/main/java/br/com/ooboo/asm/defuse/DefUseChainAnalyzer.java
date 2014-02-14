@@ -23,8 +23,6 @@ public class DefUseChainAnalyzer {
 
 	private int n;
 
-	private boolean onlyGlobal;
-
 	public DefUseChainAnalyzer(final DefUseAnalyzer analyzer) {
 		this.analyzer = analyzer;
 	}
@@ -89,8 +87,6 @@ public class DefUseChainAnalyzer {
 	}
 
 	private void computeDefUseChains() {
-		final int[] leaders = analyzer.getLeaders();
-
 		final List<DefUseChain> chains = new ArrayList<DefUseChain>();
 		for (int i = 0; i < n; i++) {
 			for (final Variable use : frames[i].getUses()) {
@@ -108,24 +104,6 @@ public class DefUseChainAnalyzer {
 				} else {
 					for (int j = 0; j < n; j++) {
 						if (rdSets[i].in(j, indexOf(use))) {
-							boolean local = false;
-							if (leaders[i] == leaders[j]) {
-								// definition and use occurs in same basic block
-								for (final int k : analyzer.getBasicBlock(leaders[i])) {
-									if (k == i) {
-										// use occurs before definition
-										break;
-									}
-									if (k == j) {
-										// use occurs after definition
-										local = true;
-										break;
-									}
-								}
-							}
-							if (onlyGlobal && local) {
-								continue;
-							}
 							chains.add(new DefUseChain(j, i, indexOf(use)));
 						}
 					}
@@ -134,10 +112,6 @@ public class DefUseChainAnalyzer {
 			}
 		}
 		this.chains = chains.toArray(new DefUseChain[chains.size()]);
-	}
-
-	public void setOnlyGlobal(final boolean onlyGlobal) {
-		this.onlyGlobal = onlyGlobal;
 	}
 
 	private int indexOf(final Variable var) {

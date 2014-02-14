@@ -1,5 +1,7 @@
 package br.com.ooboo.asm.defuse;
 
+import java.util.Arrays;
+
 public class DefUseChain {
 
 	public final int def;
@@ -25,7 +27,7 @@ public class DefUseChain {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -33,12 +35,39 @@ public class DefUseChain {
 		if (getClass() != obj.getClass())
 			return false;
 
-		DefUseChain other = (DefUseChain) obj;
+		final DefUseChain other = (DefUseChain) obj;
 
 		if (def != other.def || use != other.use || target != other.target || var != other.var) {
 			return false;
 		}
 		return true;
+	}
+
+	public static DefUseChain[] globals(final DefUseChain[] chains, 
+			final int[] leaders, final int[][] basicBlocks) {
+
+		int count = 0;
+		final DefUseChain[] globals = new DefUseChain[chains.length];
+		for (final DefUseChain c : chains) {
+			boolean global = true;
+			if (leaders[c.def] == leaders[c.use]) {
+				// definition and use occurs in same basic block
+				for (final int i : basicBlocks[leaders[c.def]]) {
+					if (i == c.use) {
+						// use occurs before definition
+						break;
+					}
+					if (i == c.def) {
+						// use occurs after definition
+						global = false;
+						break;
+					}
+				}
+			}
+			if (global)
+				globals[count++] = c;
+		}
+		return Arrays.copyOf(globals, count);
 	}
 
 }

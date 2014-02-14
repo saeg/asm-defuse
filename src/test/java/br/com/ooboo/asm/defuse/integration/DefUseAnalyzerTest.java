@@ -377,10 +377,7 @@ public class DefUseAnalyzerTest {
 			final DefUseChain exp = expected[i];
 			boolean found = false;
 			for (final DefUseChain chain : chains) {
-				if (exp.def == chain.def &&
-					exp.use == chain.use &&
-					exp.target == chain.target &&
-					exp.var == chain.var) {
+				if (chain.equals(exp)) {
 					found = true;
 					break;
 				}
@@ -398,9 +395,9 @@ public class DefUseAnalyzerTest {
 	@Test
 	public void testDefUseChainsGlobal() throws AnalyzerException {
 		prepareMethodMax();
-		chainAnalyzer.setOnlyGlobal(true);
 		chainAnalyzer.analyze("Owner", mn);
-		final DefUseChain[] chains = chainAnalyzer.getDefUseChains();
+		final DefUseChain[] chains = DefUseChain.globals(chainAnalyzer.getDefUseChains(),
+				analyzer.getLeaders(), analyzer.getBasicBlocks());
 		final DefUseChain[] expected = new DefUseChain[23];
 
 		expected[0] = new DefUseChain(0, 10, 23, 1);
@@ -438,10 +435,7 @@ public class DefUseAnalyzerTest {
 			final DefUseChain exp = expected[i];
 			boolean found = false;
 			for (final DefUseChain chain : chains) {
-				if (exp.def == chain.def &&
-					exp.use == chain.use &&
-					exp.target == chain.target &&
-					exp.var == chain.var) {
+				if (chain.equals(exp)) {
 					found = true;
 					break;
 				}

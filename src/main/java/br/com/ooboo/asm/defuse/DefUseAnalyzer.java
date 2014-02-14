@@ -194,6 +194,10 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 		return bBlocks[id];
 	}
 
+	public int[][] getBasicBlocks() {
+		return bBlocks;
+	}
+
 	private int[] toArray(final Set<Integer> set) {
 		final int[] array = new int[set.size()];
 		final Iterator<Integer> it = set.iterator();
