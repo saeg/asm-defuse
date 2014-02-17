@@ -1,5 +1,7 @@
 package br.com.ooboo.asm.defuse;
 
+import static br.com.ooboo.asm.defuse.ArrayUtils.indexOf;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,11 +42,12 @@ public class ReachDefsDefUseChainSearch implements DefUseChainSearch {
 		for (int i = 0; i < n; i++) {
 			rdSets[i] = new RDSet(variables.length);
 			for (final Variable def : frames[i].getDefinitions()) {
-				rdSets[i].gen(i, indexOf(def));
+				final int var = indexOf(variables, def);
+				rdSets[i].gen(i, var);
 				for (int j = 0; j < n; j++) {
 					for (final Variable other : frames[j].getDefinitions()) {
 						if (i != j && def.equals(other)) {
-							rdSets[i].kill(j, indexOf(def));
+							rdSets[i].kill(j, var);
 						}
 					}
 				}
@@ -82,20 +85,22 @@ public class ReachDefsDefUseChainSearch implements DefUseChainSearch {
 		for (int i = 0; i < n; i++) {
 			for (final Variable use : frames[i].getUses()) {
 
+				final int var = indexOf(variables, use);
+
 				if (frames[i].predicate) {
 
-					for (final int succ : successors[i]) {
-						for (int j = 0; j < n; j++) {
-							if (rdSets[i].out(j, indexOf(use))) {
-								chains.add(new DefUseChain(j, i, succ, indexOf(use)));
+					for (int j = 0; j < n; j++) {
+						if (rdSets[i].out(j, var)) {
+							for (final int succ : successors[i]) {
+								chains.add(new DefUseChain(j, i, succ, var));
 							}
 						}
 					}
 
 				} else {
 					for (int j = 0; j < n; j++) {
-						if (rdSets[i].in(j, indexOf(use))) {
-							chains.add(new DefUseChain(j, i, indexOf(use)));
+						if (rdSets[i].in(j, var)) {
+							chains.add(new DefUseChain(j, i, var));
 						}
 					}
 				}
@@ -103,10 +108,6 @@ public class ReachDefsDefUseChainSearch implements DefUseChainSearch {
 			}
 		}
 		return chains.toArray(new DefUseChain[chains.size()]);
-	}
-
-	private int indexOf(final Variable var) {
-		return ArrayUtils.indexOf(variables, var);
 	}
 
 	public RDSet[] getRDSets() {
