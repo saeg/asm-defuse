@@ -15,6 +15,7 @@ import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LookupSwitchInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
 import org.objectweb.asm.tree.VarInsnNode;
@@ -774,6 +775,53 @@ public class DefUseAnalyzerTest {
 		mn.access = Opcodes.ACC_STATIC;
 		mn.tryCatchBlocks = Collections.emptyList();
 		analyzer.analyze("Owner", mn);
+	}
+
+	@Test
+	public void ShouldNotVisitAnInstructionTwiceWhenComputingBasicBlocks() throws AnalyzerException {
+		final LabelNode dflt = new LabelNode();
+		final LabelNode case1 = new LabelNode();
+		final LabelNode case2 = new LabelNode();
+		final LabelNode[] labels = new LabelNode[] { case1, case2 };
+
+		mn = new MethodNode();
+		mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 0));
+		mn.instructions.add(new LookupSwitchInsnNode(dflt, new int[] { 0, 1 }, labels));
+		mn.instructions.add(case1);
+		mn.instructions.add(new InsnNode(Opcodes.NOP));
+		mn.instructions.add(new JumpInsnNode(Opcodes.GOTO, dflt));
+		mn.instructions.add(case2);
+		mn.instructions.add(new InsnNode(Opcodes.NOP));
+		mn.instructions.add(dflt);
+		mn.instructions.add(new InsnNode(Opcodes.RETURN));
+		mn.desc = "(I)V";
+		mn.maxLocals = 1;
+		mn.maxStack = 1;
+		mn.access = Opcodes.ACC_STATIC;
+		mn.tryCatchBlocks = Collections.emptyList();
+		analyzer.analyze("Owner", mn);
+
+		final int[] leaders = analyzer.getLeaders();
+		final int[][] bBlocks = analyzer.getBasicBlocks();
+
+		Assert.assertEquals(0, leaders[0]);
+		Assert.assertEquals(0, leaders[1]);
+
+		Assert.assertEquals(2, leaders[2]);
+		Assert.assertEquals(2, leaders[3]);
+		Assert.assertEquals(2, leaders[4]);
+
+		Assert.assertEquals(1, leaders[5]);
+		Assert.assertEquals(1, leaders[6]);
+
+		Assert.assertEquals(3, leaders[7]);
+		Assert.assertEquals(3, leaders[8]);
+
+		Assert.assertEquals(4, bBlocks.length);
+		Assert.assertArrayEquals(new int[] { 0, 1 }, bBlocks[0]);
+		Assert.assertArrayEquals(new int[] { 5, 6 }, bBlocks[1]);
+		Assert.assertArrayEquals(new int[] { 2, 3, 4 }, bBlocks[2]);
+		Assert.assertArrayEquals(new int[] { 7, 8 }, bBlocks[3]);
 	}
 
 	private void set(final Set<Integer> set, final int insn, final int var, final int vars) {

@@ -122,10 +122,12 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			}
 		}
 
+		final boolean[] queued = new boolean[n];
 		final int[] queue = new int[n];
 		int top = 0;
 		int basicBlock = 0;
 		queue[top++] = 0;
+		queued[0] = true;
 		final IntList list = new IntList();
 
 		while (top > 0) {
@@ -148,9 +150,11 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 			bBlocks[basicBlock] = list.toArray();
 			list.clear();
 			basicBlock++;
-			for (final int successor : successors[i]) {
-				if (leaders[successor] == -1)
-					queue[top++] = successor;
+			for (final int succ : successors[i]) {
+				if (!queued[succ]) {
+					queue[top++] = succ;
+					queued[succ] = true;
+				}
 			}
 		}
 		bBlocks = Arrays.copyOf(bBlocks, basicBlock);
