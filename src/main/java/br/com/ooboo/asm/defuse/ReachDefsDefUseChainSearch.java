@@ -32,12 +32,12 @@ public class ReachDefsDefUseChainSearch implements DefUseChainSearch {
 		predecessors = adjacencyListPred;
 		n = frames.length;
 
-		computeInOut();
+		computeGenAndKill();
 		reachingDefinitions();
 		return computeDefUseChains();
 	}
 
-	private void computeInOut() {
+	private void computeGenAndKill() {
 		rdSets = new RDSet[n];
 		for (int i = 0; i < n; i++) {
 			rdSets[i] = new RDSet(variables.length);
