@@ -29,7 +29,11 @@
  */
 package br.com.ooboo.asm.defuse;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.copyOf;
+
+import java.util.LinkedHashSet;
+import java.util.List;
 
 public class DefUseChain {
 
@@ -78,10 +82,26 @@ public class DefUseChain {
 		int count = 0;
 		final DefUseChain[] globals = new DefUseChain[chains.length];
 		for (final DefUseChain c : chains) {
-			if (isGlobal(c, leaders, basicBlocks))
+			if (isGlobal(c, leaders, basicBlocks)) {
 				globals[count++] = c;
+			}
 		}
-		return Arrays.copyOf(globals, count);
+		return copyOf(globals, count);
+	}
+
+	public static DefUseChain[] toBasicBlock(final DefUseChain[] chains,
+			final int[] leaders, final int[][] basicBlocks) {
+
+		int count = 0;
+		final DefUseChain[] bbChains = new DefUseChain[chains.length];
+		for (final DefUseChain c : chains) {
+			if (isGlobal(c, leaders, basicBlocks)) {
+				bbChains[count++] = new DefUseChain(leaders[c.def], leaders[c.use],
+						c.target == -1 ? -1 : leaders[c.target], c.var);
+			}
+		}
+		final List<DefUseChain> l = asList(copyOf(bbChains, count));
+		return new LinkedHashSet<DefUseChain>(l).toArray(new DefUseChain[0]);
 	}
 
 	public static boolean isGlobal(final DefUseChain chain,
