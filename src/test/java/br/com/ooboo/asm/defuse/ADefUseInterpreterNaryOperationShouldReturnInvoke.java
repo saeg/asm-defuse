@@ -64,7 +64,7 @@ public class ADefUseInterpreterNaryOperationShouldReturnInvoke {
 		if (opcode == Opcodes.INVOKEDYNAMIC) {
 			insn = new InvokeDynamicInsnNode(null, "()V", null);
 		} else {
-			insn = new MethodInsnNode(opcode, null, null, "()V");
+			insn = new MethodInsnNode(opcode, null, null, "()V", false);
 		}
 	}
 

@@ -51,7 +51,7 @@ import org.objectweb.asm.tree.analysis.Interpreter;
 public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 
 	public DefUseInterpreter() {
-		super(ASM4);
+		super(ASM5);
 	}
 
 	@Override

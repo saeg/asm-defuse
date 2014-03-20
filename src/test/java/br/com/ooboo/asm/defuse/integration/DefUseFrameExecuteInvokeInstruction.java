@@ -208,7 +208,7 @@ public class DefUseFrameExecuteInvokeInstruction extends DefUseFrameExecuteAbstr
 	}
 
 	private AbstractInsnNode invoke(final String desc) {
-		return new MethodInsnNode(op, "Owner", "name", desc);
+		return new MethodInsnNode(op, "Owner", "name", desc, false);
 	}
 
 }

@@ -146,7 +146,7 @@ public class DefUseFrameExecuteInvokeStaticOrDynamicInstruction extends
 		if (op == Opcodes.INVOKEDYNAMIC) {
 			return new InvokeDynamicInsnNode("name", desc, null);
 		}
-		return new MethodInsnNode(op, "Owner", "name", desc);
+		return new MethodInsnNode(op, "Owner", "name", desc, false);
 	}
 
 }
