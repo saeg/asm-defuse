@@ -72,31 +72,37 @@ public class DefUseChain {
 		return true;
 	}
 
-	public static DefUseChain[] globals(final DefUseChain[] chains, 
+	public static DefUseChain[] globals(final DefUseChain[] chains,
 			final int[] leaders, final int[][] basicBlocks) {
 
 		int count = 0;
 		final DefUseChain[] globals = new DefUseChain[chains.length];
 		for (final DefUseChain c : chains) {
-			boolean global = true;
-			if (leaders[c.def] == leaders[c.use]) {
-				// definition and use occurs in same basic block
-				for (final int i : basicBlocks[leaders[c.def]]) {
-					if (i == c.use) {
-						// use occurs before definition
-						break;
-					}
-					if (i == c.def) {
-						// use occurs after definition
-						global = false;
-						break;
-					}
-				}
-			}
-			if (global)
+			if (isGlobal(c, leaders, basicBlocks))
 				globals[count++] = c;
 		}
 		return Arrays.copyOf(globals, count);
+	}
+
+	public static boolean isGlobal(final DefUseChain chain,
+			final int[] leaders, final int[][] basicBlocks) {
+
+		boolean global = true;
+		if (leaders[chain.def] == leaders[chain.use]) {
+			// definition and use occurs in same basic block
+			for (final int i : basicBlocks[leaders[chain.def]]) {
+				if (i == chain.use) {
+					// use occurs before definition
+					break;
+				}
+				if (i == chain.def) {
+					// use occurs after definition
+					global = false;
+					break;
+				}
+			}
+		}
+		return global;
 	}
 
 }
