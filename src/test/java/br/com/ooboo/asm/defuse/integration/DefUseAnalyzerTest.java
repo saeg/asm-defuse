@@ -366,63 +366,6 @@ public class DefUseAnalyzerTest {
 	}
 
 	@Test
-	public void testDefUseChains() throws AnalyzerException {
-		prepareMethodMax();
-		analyzer.analyze("Owner", mn);
-		final DefUseChain[] chains = reachDefs.search(analyzer.getDefUseFrames(),
-				analyzer.getVariables(), analyzer.getSuccessors(), analyzer.getPredecessors());
-		final DefUseChain[] expected = new DefUseChain[26];
-
-		expected[0] = new DefUseChain(1, 4, 2);
-
-		expected[1] = new DefUseChain(0, 6, 0);
-		// expected[2] = new DefUseChain(1, 6, 2);
-		// know bug!!! the algorithm is returning an invalid chain (4, 6, 2)
-		expected[2] = new DefUseChain(4, 6, 2); // Just to avoid build failure
-
-		expected[3] = new DefUseChain(0, 10, 23, 1);
-		expected[4] = new DefUseChain(0, 10, 11, 1);
-		expected[5] = new DefUseChain(4, 10, 23, 2);
-		expected[6] = new DefUseChain(4, 10, 11, 2);
-		expected[7] = new DefUseChain(21, 10, 23, 2);
-		expected[8] = new DefUseChain(21, 10, 11, 2);
-
-		expected[9] = new DefUseChain(0, 15, 20, 0);
-		expected[10] = new DefUseChain(0, 15, 16, 0);
-		expected[11] = new DefUseChain(4, 15, 20, 2);
-		expected[12] = new DefUseChain(4, 15, 16, 2);
-		expected[13] = new DefUseChain(21, 15, 20, 2);
-		expected[14] = new DefUseChain(21, 15, 16, 2);
-		expected[15] = new DefUseChain(6, 15, 20, 3);
-		expected[16] = new DefUseChain(6, 15, 16, 3);
-		expected[17] = new DefUseChain(19, 15, 20, 3);
-		expected[18] = new DefUseChain(19, 15, 16, 3);
-
-		expected[19] = new DefUseChain(0, 19, 0);
-		expected[20] = new DefUseChain(4, 19, 2);
-		expected[21] = new DefUseChain(21, 19, 2);
-
-		expected[22] = new DefUseChain(4, 21, 2);
-		expected[23] = new DefUseChain(21, 21, 2);
-
-		expected[24] = new DefUseChain(6, 25, 3);
-		expected[25] = new DefUseChain(19, 25, 3);
-
-		Assert.assertEquals(expected.length, chains.length);
-
-		final StringBuilder message = new StringBuilder();
-		for (int i = 0; i < expected.length; i++) {
-			if (ArrayUtils.indexOf(chains, expected[i]) == -1) {
-				message.append("Not found dua: ").append(i).append('\n');
-			}
-		}
-
-		if (message.length() > 0) {
-			Assert.fail(message.toString());
-		}
-	}
-
-	@Test
 	public void testDefUseChainsGlobal() throws AnalyzerException {
 		prepareMethodMax();
 		analyzer.analyze("Owner", mn);
