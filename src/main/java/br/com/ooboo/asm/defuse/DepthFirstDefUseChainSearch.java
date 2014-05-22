@@ -29,7 +29,7 @@
  */
 package br.com.ooboo.asm.defuse;
 
-import static br.com.ooboo.asm.defuse.ArrayUtils.indexOf;
+import static br.usp.each.saeg.commons.ArrayUtils.indexOf;
 
 import java.util.ArrayList;
 import java.util.List;

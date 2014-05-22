@@ -50,7 +50,6 @@ import org.objectweb.asm.tree.TryCatchBlockNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 
-import br.com.ooboo.asm.defuse.ArrayUtils;
 import br.com.ooboo.asm.defuse.DefUseAnalyzer;
 import br.com.ooboo.asm.defuse.DefUseChain;
 import br.com.ooboo.asm.defuse.DefUseFrame;
@@ -58,6 +57,7 @@ import br.com.ooboo.asm.defuse.Local;
 import br.com.ooboo.asm.defuse.ReachDefsDefUseChainSearch;
 import br.com.ooboo.asm.defuse.ReachDefsDefUseChainSearch.RDSet;
 import br.com.ooboo.asm.defuse.Variable;
+import br.usp.each.saeg.commons.ArrayUtils;
 
 public class DefUseAnalyzerTest {
 

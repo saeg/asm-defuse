@@ -48,12 +48,12 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 
-import br.com.ooboo.asm.defuse.ArrayUtils;
 import br.com.ooboo.asm.defuse.DefUseAnalyzer;
 import br.com.ooboo.asm.defuse.DefUseChain;
 import br.com.ooboo.asm.defuse.DefUseChainSearch;
 import br.com.ooboo.asm.defuse.DepthFirstDefUseChainSearch;
 import br.com.ooboo.asm.defuse.ReachDefsDefUseChainSearch;
+import br.usp.each.saeg.commons.ArrayUtils;
 
 @RunWith(Parameterized.class)
 public class DefUseChainSearchTest {

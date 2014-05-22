@@ -124,6 +124,11 @@
 			<version>5.0.2</version>
 		</dependency>
 		<dependency>
+			<groupId>br.usp.each.saeg</groupId>
+			<artifactId>saeg-commons</artifactId>
+			<version>0.0.4</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
