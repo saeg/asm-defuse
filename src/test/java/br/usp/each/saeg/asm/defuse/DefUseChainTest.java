@@ -35,6 +35,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import br.usp.each.saeg.commons.ArrayUtils;
+
 public class DefUseChainTest {
 
 	@Test
@@ -120,6 +122,63 @@ public class DefUseChainTest {
 		final DefUseChain c1 = new DefUseChain(1, 2, 3, 4);
 		final DefUseChain c2 = new DefUseChain(1, 2, 5, 4);
 		Assert.assertFalse(c1.equals(c2));
+	}
+
+	@Test
+	public void ToBasicBlockLocal() {
+		final DefUseChain[] chains = new DefUseChain[1];
+		chains[0] = new DefUseChain(0, 1, 2);
+
+		final int[] leaders = new int[2];
+		leaders[0] = 0;
+		leaders[1] = 0;
+
+		final int[][] basicBlocks = new int[1][];
+		basicBlocks[0] = new int[] { 0, 1 };
+
+		Assert.assertEquals(0, DefUseChain.toBasicBlock(chains, leaders, basicBlocks).length);
+	}
+
+	@Test
+	public void ToBasicBlockCUseGlobal() {
+		final DefUseChain[] chains = new DefUseChain[1];
+		chains[0] = new DefUseChain(1, 3, 5);
+
+		final int[] leaders = new int[4];
+		leaders[0] = 0;
+		leaders[1] = 0;
+		leaders[2] = 1;
+		leaders[3] = 1;
+
+		final int[][] basicBlocks = new int[2][];
+		basicBlocks[0] = new int[] { 0, 1 };
+		basicBlocks[1] = new int[] { 2, 3 };
+
+		final DefUseChain[] bbChains = DefUseChain.toBasicBlock(chains, leaders, basicBlocks);
+		Assert.assertTrue(ArrayUtils.contains(bbChains, new DefUseChain(0, 1, 5)));
+		Assert.assertEquals(1, bbChains.length);
+	}
+
+	@Test
+	public void ToBasicBlockPUseGlobal() {
+		final DefUseChain[] chains = new DefUseChain[1];
+		chains[0] = new DefUseChain(1, 3, 4, 5);
+
+		final int[] leaders = new int[5];
+		leaders[0] = 0;
+		leaders[1] = 0;
+		leaders[2] = 1;
+		leaders[3] = 1;
+		leaders[4] = 2;
+
+		final int[][] basicBlocks = new int[3][];
+		basicBlocks[0] = new int[] { 0, 1 };
+		basicBlocks[1] = new int[] { 2, 3 };
+		basicBlocks[2] = new int[] { 4 };
+
+		final DefUseChain[] bbChains = DefUseChain.toBasicBlock(chains, leaders, basicBlocks);
+		Assert.assertTrue(ArrayUtils.contains(bbChains, new DefUseChain(0, 1, 2, 5)));
+		Assert.assertEquals(1, bbChains.length);
 	}
 
 }

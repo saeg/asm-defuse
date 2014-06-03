@@ -29,6 +29,7 @@
  */
 package br.usp.each.saeg.asm.defuse.integration;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -47,7 +48,8 @@ import br.usp.each.saeg.asm.defuse.Variable;
 
 public class DefUseFrameExecuteDefUseInterpreter extends DefUseFrameExecuteAbstractTest {
 
-	private Value value;
+	private Value value1;
+	private Value value2;
 	private Value obj;
 	private Variable variable1;
 	private Variable variable2;
@@ -58,7 +60,8 @@ public class DefUseFrameExecuteDefUseInterpreter extends DefUseFrameExecuteAbstr
 
 	@Before
 	public void setUp() {
-		value = new Value(Type.INT_TYPE);
+		value1 = new Value(Type.INT_TYPE);
+		value2 = new Value(Type.LONG_TYPE);
 		obj = new Value(Type.getObjectType("java/lang/Object"));
 		variable1 = Mockito.mock(Variable.class);
 		variable2 = Mockito.mock(Variable.class);
@@ -66,23 +69,49 @@ public class DefUseFrameExecuteDefUseInterpreter extends DefUseFrameExecuteAbstr
 
 	@Test
 	public void StoreTest1() {
-		push(value);
+		push(value1);
 		execute(new VarInsnNode(Opcodes.ISTORE, 0));
-		assertDef(new Local(value.type, 0));
+		assertDef(new Local(value1.type, 0));
 		assertUses();
 	}
 
 	@Test
 	public void StoreTest2() {
-		push(value).thatUseVariables(variable1);
+		push(value1).thatUseVariables(variable1);
 		execute(new VarInsnNode(Opcodes.ISTORE, 0));
-		assertDef(new Local(value.type, 0));
+		assertDef(new Local(value1.type, 0));
 		assertUses(variable1);
 	}
 
 	@Test
+	public void StoreTest3() {
+		push(value2);
+		execute(new VarInsnNode(Opcodes.LSTORE, 0));
+		assertDef(new Local(value1.type, 0));
+		assertUses();
+	}
+
+	@Test
+	public void StoreTest4() {
+		frame.setLocal(0, Value.LONG_VALUE);
+		frame.setLocal(1, Value.UNINITIALIZED_VALUE);
+		push(value1);
+		execute(new VarInsnNode(Opcodes.ISTORE, 1));
+		Assert.assertEquals(Value.UNINITIALIZED_VALUE, frame.getLocal(0));
+		Assert.assertNotEquals(Value.UNINITIALIZED_VALUE, frame.getLocal(1));
+	}
+
+	@Test
+	public void StoreTest5() {
+		push(value1);
+		execute(new VarInsnNode(Opcodes.ISTORE, 1));
+		Assert.assertEquals(null, frame.getLocal(0));
+		Assert.assertNotEquals(Value.UNINITIALIZED_VALUE, frame.getLocal(1));
+	}
+
+	@Test
 	public void PutStaticTest1() {
-		push(value);
+		push(value1);
 		execute(new FieldInsnNode(Opcodes.PUTSTATIC, "Owner", "name", "I"));
 		assertDef(new StaticField("Owner", "name", "I"));
 		assertUses();
@@ -90,7 +119,7 @@ public class DefUseFrameExecuteDefUseInterpreter extends DefUseFrameExecuteAbstr
 
 	@Test
 	public void PutStaticTest2() {
-		push(value).thatUseVariables(variable1);
+		push(value1).thatUseVariables(variable1);
 		execute(new FieldInsnNode(Opcodes.PUTSTATIC, "Owner", "name", "I"));
 		assertDef(new StaticField("Owner", "name", "I"));
 		assertUses(variable1);
@@ -99,7 +128,7 @@ public class DefUseFrameExecuteDefUseInterpreter extends DefUseFrameExecuteAbstr
 	@Test
 	public void PutFieldTest1() {
 		obj = push(obj).get();
-		push(value);
+		push(value1);
 		execute(new FieldInsnNode(Opcodes.PUTFIELD, "Owner", "name", "I"));
 		assertDef(new ObjectField("Owner", "name", "I", obj));
 		assertUses();
@@ -108,7 +137,7 @@ public class DefUseFrameExecuteDefUseInterpreter extends DefUseFrameExecuteAbstr
 	@Test
 	public void PutFieldTest2() {
 		obj = push(obj).thatUseVariables(variable1).get();
-		push(value);
+		push(value1);
 		execute(new FieldInsnNode(Opcodes.PUTFIELD, "Owner", "name", "I"));
 		assertDef(new ObjectField("Owner", "name", "I", obj));
 		assertUses(variable1);
@@ -117,7 +146,7 @@ public class DefUseFrameExecuteDefUseInterpreter extends DefUseFrameExecuteAbstr
 	@Test
 	public void PutFieldTest3() {
 		obj = push(obj).get();
-		push(value).thatUseVariables(variable2);
+		push(value1).thatUseVariables(variable2);
 		execute(new FieldInsnNode(Opcodes.PUTFIELD, "Owner", "name", "I"));
 		assertDef(new ObjectField("Owner", "name", "I", obj));
 		assertUses(variable2);
@@ -126,7 +155,7 @@ public class DefUseFrameExecuteDefUseInterpreter extends DefUseFrameExecuteAbstr
 	@Test
 	public void PutFieldTest4() {
 		obj = push(obj).thatUseVariables(variable1).get();
-		push(value).thatUseVariables(variable2);
+		push(value1).thatUseVariables(variable2);
 		execute(new FieldInsnNode(Opcodes.PUTFIELD, "Owner", "name", "I"));
 		assertDef(new ObjectField("Owner", "name", "I", obj));
 		assertUses(variable1, variable2);
