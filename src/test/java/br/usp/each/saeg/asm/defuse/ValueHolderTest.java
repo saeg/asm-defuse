@@ -41,26 +41,26 @@ import org.objectweb.asm.Type;
 
 public class ValueHolderTest {
 
-	private Value value;
+    private Value value;
 
-	private ValueHolder vh;
+    private ValueHolder vh;
 
-	@Before
-	public void setUp() {
-		value = Mockito.mock(Value.class);
-		Mockito.when(value.toString()).thenReturn("value");
-		Mockito.when(value.getVariables()).thenReturn(new HashSet<Variable>(0));
-		vh = new ValueHolder(Type.INT_TYPE, value);
-	}
+    @Before
+    public void setUp() {
+        value = Mockito.mock(Value.class);
+        Mockito.when(value.toString()).thenReturn("value");
+        Mockito.when(value.getVariables()).thenReturn(new HashSet<Variable>(0));
+        vh = new ValueHolder(Type.INT_TYPE, value);
+    }
 
-	@Test
-	public void GetVariablesDelegateToValue() {
-		Assert.assertThat(vh.getVariables(), sameInstance(value.getVariables()));
-	}
+    @Test
+    public void GetVariablesDelegateToValue() {
+        Assert.assertThat(vh.getVariables(), sameInstance(value.getVariables()));
+    }
 
-	@Test
-	public void ToStringDelegateToValue() {
-		Assert.assertEquals(value.toString(), vh.toString());
-	}
+    @Test
+    public void ToStringDelegateToValue() {
+        Assert.assertEquals(value.toString(), vh.toString());
+    }
 
 }

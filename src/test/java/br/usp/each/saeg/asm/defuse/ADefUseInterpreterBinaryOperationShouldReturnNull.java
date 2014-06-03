@@ -45,35 +45,35 @@ import org.objectweb.asm.tree.JumpInsnNode;
 @RunWith(Parameterized.class)
 public class ADefUseInterpreterBinaryOperationShouldReturnNull {
 
-	@Parameters
-	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] {
-				{ Opcodes.IF_ICMPEQ },
-				{ Opcodes.IF_ICMPNE },
-				{ Opcodes.IF_ICMPLT },
-				{ Opcodes.IF_ICMPGE },
-				{ Opcodes.IF_ICMPGT },
-				{ Opcodes.IF_ICMPLE },
-				{ Opcodes.IF_ACMPEQ },
-				{ Opcodes.IF_ACMPNE },
-				{ Opcodes.PUTFIELD }
-		});
-	}
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                { Opcodes.IF_ICMPEQ },
+                { Opcodes.IF_ICMPNE },
+                { Opcodes.IF_ICMPLT },
+                { Opcodes.IF_ICMPGE },
+                { Opcodes.IF_ICMPGT },
+                { Opcodes.IF_ICMPLE },
+                { Opcodes.IF_ACMPEQ },
+                { Opcodes.IF_ACMPNE },
+                { Opcodes.PUTFIELD }
+        });
+    }
 
-	private final AbstractInsnNode insn;
+    private final AbstractInsnNode insn;
 
-	public ADefUseInterpreterBinaryOperationShouldReturnNull(final int opcode) {
-		if (opcode == Opcodes.PUTFIELD) {
-			insn = new FieldInsnNode(opcode, null, null, null);
-		} else {
-			insn = new JumpInsnNode(opcode, null);
-		}
-	}
+    public ADefUseInterpreterBinaryOperationShouldReturnNull(final int opcode) {
+        if (opcode == Opcodes.PUTFIELD) {
+            insn = new FieldInsnNode(opcode, null, null, null);
+        } else {
+            insn = new JumpInsnNode(opcode, null);
+        }
+    }
 
-	@Test
-	public void AssertThatADefUseInterpreterBinaryOperationReturnsNullCorrectly() {
-		final DefUseInterpreter interpreter = new DefUseInterpreter();
-		Assert.assertNull(interpreter.binaryOperation(insn, null, null));
-	}
+    @Test
+    public void AssertThatADefUseInterpreterBinaryOperationReturnsNullCorrectly() {
+        final DefUseInterpreter interpreter = new DefUseInterpreter();
+        Assert.assertNull(interpreter.binaryOperation(insn, null, null));
+    }
 
 }

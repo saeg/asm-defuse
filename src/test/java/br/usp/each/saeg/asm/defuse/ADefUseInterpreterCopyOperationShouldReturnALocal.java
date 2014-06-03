@@ -47,49 +47,49 @@ import org.objectweb.asm.tree.VarInsnNode;
 @RunWith(Parameterized.class)
 public class ADefUseInterpreterCopyOperationShouldReturnALocal {
 
-	@Parameters
-	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { 
-			{ Opcodes.ILOAD, Value.INT_VALUE },
-			{ Opcodes.LLOAD, Value.LONG_VALUE },
-			{ Opcodes.FLOAD, Value.FLOAT_VALUE },
-			{ Opcodes.DLOAD, Value.DOUBLE_VALUE },
-			{ Opcodes.ALOAD, Value.REFERENCE_VALUE }
-		});
-	}
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+            { Opcodes.ILOAD, Value.INT_VALUE },
+            { Opcodes.LLOAD, Value.LONG_VALUE },
+            { Opcodes.FLOAD, Value.FLOAT_VALUE },
+            { Opcodes.DLOAD, Value.DOUBLE_VALUE },
+            { Opcodes.ALOAD, Value.REFERENCE_VALUE }
+        });
+    }
 
-	private final VarInsnNode insn;
+    private final VarInsnNode insn;
 
-	private final Value value;
+    private final Value value;
 
-	private DefUseInterpreter interpreter;
+    private DefUseInterpreter interpreter;
 
-	public ADefUseInterpreterCopyOperationShouldReturnALocal(final int opcode, final Value value) {
-		this.insn = new VarInsnNode(opcode, new Random().nextInt());
-		this.value = value;
-	}
+    public ADefUseInterpreterCopyOperationShouldReturnALocal(final int opcode, final Value value) {
+        this.insn = new VarInsnNode(opcode, new Random().nextInt());
+        this.value = value;
+    }
 
-	@Before
-	public void setUp() {
-		interpreter = new DefUseInterpreter();
-	}
+    @Before
+    public void setUp() {
+        interpreter = new DefUseInterpreter();
+    }
 
-	@Test
-	public void AssertThatDefUseInterpreterCopyOperationReturnLocalCorrectly() {
-		final Local local = (Local) interpreter.copyOperation(insn, value);
-		Assert.assertEquals(insn.var, local.var);
-	}
+    @Test
+    public void AssertThatDefUseInterpreterCopyOperationReturnLocalCorrectly() {
+        final Local local = (Local) interpreter.copyOperation(insn, value);
+        Assert.assertEquals(insn.var, local.var);
+    }
 
-	@Test
-	public void AssertThatDefUseInterpreterCopyOperationReturnLocalWithCorrectSize() {
-		final Local local = (Local) interpreter.copyOperation(insn, value);
-		Assert.assertEquals(value.getSize(), local.getSize());
-	}
+    @Test
+    public void AssertThatDefUseInterpreterCopyOperationReturnLocalWithCorrectSize() {
+        final Local local = (Local) interpreter.copyOperation(insn, value);
+        Assert.assertEquals(value.getSize(), local.getSize());
+    }
 
-	@Test
-	public void AssertThatDefUseInterpreterCopyOperationReturnLocalWithCorrectType() {
-		final Local local = (Local) interpreter.copyOperation(insn, value);
-		Assert.assertThat(local.type, sameInstance(value.type));
-	}
+    @Test
+    public void AssertThatDefUseInterpreterCopyOperationReturnLocalWithCorrectType() {
+        final Local local = (Local) interpreter.copyOperation(insn, value);
+        Assert.assertThat(local.type, sameInstance(value.type));
+    }
 
 }

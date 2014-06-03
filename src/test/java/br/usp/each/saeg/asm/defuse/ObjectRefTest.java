@@ -36,26 +36,26 @@ import org.objectweb.asm.Type;
 
 public class ObjectRefTest {
 
-	private ObjectRef ref;
+    private ObjectRef ref;
 
-	@Before
-	public void setUp() {
-		ref = new ObjectRef(Type.getType("Ljava/lang/String;"));
-	}
+    @Before
+    public void setUp() {
+        ref = new ObjectRef(Type.getType("Ljava/lang/String;"));
+    }
 
-	@Test
-	public void SizeIsOne() {
-		Assert.assertEquals(1, ref.getSize());
-	}
+    @Test
+    public void SizeIsOne() {
+        Assert.assertEquals(1, ref.getSize());
+    }
 
-	@Test
-	public void ObjectRefToString() {
-		Assert.assertEquals("ObjectRef(java.lang.String)", ref.toString());
-	}
+    @Test
+    public void ObjectRefToString() {
+        Assert.assertEquals("ObjectRef(java.lang.String)", ref.toString());
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void ThrowAnExceptionWhenObjectDescriptorIsInvalid() {
-		new ObjectRef(Type.getType("[I"));
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void ThrowAnExceptionWhenObjectDescriptorIsInvalid() {
+        new ObjectRef(Type.getType("[I"));
+    }
 
 }

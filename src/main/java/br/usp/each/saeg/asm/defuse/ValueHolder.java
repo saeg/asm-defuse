@@ -35,21 +35,21 @@ import org.objectweb.asm.Type;
 
 public class ValueHolder extends Value {
 
-	public final Value value;
+    public final Value value;
 
-	public ValueHolder(final Type type, final Value value) {
-		super(type);
-		this.value = value;
-	}
+    public ValueHolder(final Type type, final Value value) {
+        super(type);
+        this.value = value;
+    }
 
-	@Override
-	public Set<Variable> getVariables() {
-		return value.getVariables();
-	}
+    @Override
+    public Set<Variable> getVariables() {
+        return value.getVariables();
+    }
 
-	@Override
-	public String toString() {
-		return value.toString();
-	}
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 
 }

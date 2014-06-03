@@ -38,25 +38,25 @@ import org.objectweb.asm.Type;
 
 public class Invoke extends Value {
 
-	public final List<? extends Value> values;
+    public final List<? extends Value> values;
 
-	public Invoke(final Type returnType, final List<? extends Value> values) {
-		super(returnType);
-		this.values = values;
-	}
+    public Invoke(final Type returnType, final List<? extends Value> values) {
+        super(returnType);
+        this.values = values;
+    }
 
-	@Override
-	public Set<Variable> getVariables() {
-		final Set<Variable> values = new LinkedHashSet<Variable>();
-		for (final Value value : this.values) {
-			values.addAll(value.getVariables());
-		}
-		return Collections.unmodifiableSet(values);
-	}
+    @Override
+    public Set<Variable> getVariables() {
+        final Set<Variable> values = new LinkedHashSet<Variable>();
+        for (final Value value : this.values) {
+            values.addAll(value.getVariables());
+        }
+        return Collections.unmodifiableSet(values);
+    }
 
-	@Override
-	public String toString() {
-		return String.format("%s%s", getClass().getSimpleName(), values);
-	}
+    @Override
+    public String toString() {
+        return String.format("%s%s", getClass().getSimpleName(), values);
+    }
 
 }

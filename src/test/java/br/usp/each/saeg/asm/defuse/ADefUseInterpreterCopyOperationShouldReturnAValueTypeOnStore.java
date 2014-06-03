@@ -46,36 +46,36 @@ import org.objectweb.asm.tree.VarInsnNode;
 @RunWith(Parameterized.class)
 public class ADefUseInterpreterCopyOperationShouldReturnAValueTypeOnStore {
 
-	@Parameters
-	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { 
-			{ Opcodes.ISTORE, Type.INT_TYPE, Value.INT_VALUE },
-			{ Opcodes.LSTORE, Type.LONG_TYPE, Value.LONG_VALUE },
-			{ Opcodes.FSTORE, Type.FLOAT_TYPE, Value.FLOAT_VALUE },
-			{ Opcodes.DSTORE, Type.DOUBLE_TYPE, Value.DOUBLE_VALUE },
-			{ Opcodes.ASTORE, Type.getType("Ljava/lang/Object;"), Value.REFERENCE_VALUE }
-		});
-	}
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+            { Opcodes.ISTORE, Type.INT_TYPE, Value.INT_VALUE },
+            { Opcodes.LSTORE, Type.LONG_TYPE, Value.LONG_VALUE },
+            { Opcodes.FSTORE, Type.FLOAT_TYPE, Value.FLOAT_VALUE },
+            { Opcodes.DSTORE, Type.DOUBLE_TYPE, Value.DOUBLE_VALUE },
+            { Opcodes.ASTORE, Type.getType("Ljava/lang/Object;"), Value.REFERENCE_VALUE }
+        });
+    }
 
-	private final AbstractInsnNode insn;
+    private final AbstractInsnNode insn;
 
-	private final Value value;
+    private final Value value;
 
-	private final Value expected;
+    private final Value expected;
 
-	public ADefUseInterpreterCopyOperationShouldReturnAValueTypeOnStore(
-			final int opcode, final Type type, final Value expected) {
+    public ADefUseInterpreterCopyOperationShouldReturnAValueTypeOnStore(
+            final int opcode, final Type type, final Value expected) {
 
-		this.insn = new VarInsnNode(opcode, new Random().nextInt());
-		this.value = new Value(type);
-		this.expected = expected;
-	}
+        this.insn = new VarInsnNode(opcode, new Random().nextInt());
+        this.value = new Value(type);
+        this.expected = expected;
+    }
 
-	@Test
-	public void AssertThatDefUseInterpreterCopyOperationReturnValueTypeCorrectly() {
-		final DefUseInterpreter interpreter = new DefUseInterpreter();
-		final Value copy = interpreter.copyOperation(insn, value);
-		Assert.assertEquals(expected.with(insn), copy);
-	}
+    @Test
+    public void AssertThatDefUseInterpreterCopyOperationReturnValueTypeCorrectly() {
+        final DefUseInterpreter interpreter = new DefUseInterpreter();
+        final Value copy = interpreter.copyOperation(insn, value);
+        Assert.assertEquals(expected.with(insn), copy);
+    }
 
 }

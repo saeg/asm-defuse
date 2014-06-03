@@ -47,31 +47,31 @@ import org.objectweb.asm.tree.InsnNode;
 @RunWith(Parameterized.class)
 public class ADefUseInterpreterCopyOperationShouldReturnSameValueCorrectly {
 
-	@Parameters
-	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { 
-			{ Opcodes.DUP },
-			{ Opcodes.DUP_X1 },
-			{ Opcodes.DUP_X2 },
-			{ Opcodes.DUP2 },
-			{ Opcodes.DUP2_X1 },
-			{ Opcodes.DUP2_X2 },
-			{ Opcodes.SWAP } 
-		});
-	}
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+            { Opcodes.DUP },
+            { Opcodes.DUP_X1 },
+            { Opcodes.DUP_X2 },
+            { Opcodes.DUP2 },
+            { Opcodes.DUP2_X1 },
+            { Opcodes.DUP2_X2 },
+            { Opcodes.SWAP }
+        });
+    }
 
-	private final AbstractInsnNode insn;
+    private final AbstractInsnNode insn;
 
-	public ADefUseInterpreterCopyOperationShouldReturnSameValueCorrectly(final int opcode) {
-		insn = new InsnNode(opcode);
-	}
+    public ADefUseInterpreterCopyOperationShouldReturnSameValueCorrectly(final int opcode) {
+        insn = new InsnNode(opcode);
+    }
 
-	@Test
-	public void AssertThatDefUseInterpreterCopyOperationReturnSameValueCorrectly() {
-		final Value value = new Value(Type.INT_TYPE);
-		final DefUseInterpreter interpreter = new DefUseInterpreter();
-		final Value copy = interpreter.copyOperation(insn, value);
-		Assert.assertThat(copy, sameInstance(value));
-	}
+    @Test
+    public void AssertThatDefUseInterpreterCopyOperationReturnSameValueCorrectly() {
+        final Value value = new Value(Type.INT_TYPE);
+        final DefUseInterpreter interpreter = new DefUseInterpreter();
+        final Value copy = interpreter.copyOperation(insn, value);
+        Assert.assertThat(copy, sameInstance(value));
+    }
 
 }

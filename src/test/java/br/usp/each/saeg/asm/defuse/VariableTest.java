@@ -38,21 +38,21 @@ import org.objectweb.asm.Type;
 
 public class VariableTest {
 
-	private Variable var;
+    private Variable var;
 
-	@Before
-	public void setUp() {
-		var = new Variable(Type.INT_TYPE);
-	}
+    @Before
+    public void setUp() {
+        var = new Variable(Type.INT_TYPE);
+    }
 
-	@Test
-	public void VariableListContainsSelf() {
-		Assert.assertTrue(var.getVariables().contains(var));
-	}
+    @Test
+    public void VariableListContainsSelf() {
+        Assert.assertTrue(var.getVariables().contains(var));
+    }
 
-	@Test
-	public void VariablesListIsUnmodifiable() {
-		Assert.assertEquals(var.getVariables().getClass(), Collections.singleton(var).getClass());
-	}
+    @Test
+    public void VariablesListIsUnmodifiable() {
+        Assert.assertEquals(var.getVariables().getClass(), Collections.singleton(var).getClass());
+    }
 
 }

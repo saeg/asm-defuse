@@ -38,37 +38,37 @@ import org.objectweb.asm.Type;
 
 public class ArrayRef extends Value {
 
-	public final List<? extends Value> counts;
+    public final List<? extends Value> counts;
 
-	public ArrayRef(final Type type, final List<? extends Value> counts) {
-		super(type);
-		if (type.getSort() != Type.ARRAY) {
-			throw new IllegalArgumentException("Invalid value type: " + type);
-		}
-		this.counts = counts;
-	}
+    public ArrayRef(final Type type, final List<? extends Value> counts) {
+        super(type);
+        if (type.getSort() != Type.ARRAY) {
+            throw new IllegalArgumentException("Invalid value type: " + type);
+        }
+        this.counts = counts;
+    }
 
-	public ArrayRef(final Type type, final Value count) {
-		this(type, Collections.singletonList(count));
-	}
+    public ArrayRef(final Type type, final Value count) {
+        this(type, Collections.singletonList(count));
+    }
 
-	@Override
-	public Set<Variable> getVariables() {
-		final Set<Variable> values = new LinkedHashSet<Variable>();
-		for (final Value value : counts) {
-			values.addAll(value.getVariables());
-		}
-		return Collections.unmodifiableSet(values);
-	}
+    @Override
+    public Set<Variable> getVariables() {
+        final Set<Variable> values = new LinkedHashSet<Variable>();
+        for (final Value value : counts) {
+            values.addAll(value.getVariables());
+        }
+        return Collections.unmodifiableSet(values);
+    }
 
-	@Override
-	public int getSize() {
-		return 1;
-	}
+    @Override
+    public int getSize() {
+        return 1;
+    }
 
-	@Override
-	public String toString() {
-		return String.format("%s%s", getClass().getSimpleName(), counts);
-	}
+    @Override
+    public String toString() {
+        return String.format("%s%s", getClass().getSimpleName(), counts);
+    }
 
 }

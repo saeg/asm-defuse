@@ -40,35 +40,35 @@ import org.objectweb.asm.tree.LdcInsnNode;
 
 public class ADefUseInterpreterNewOperationShouldThrownAnException {
 
-	private DefUseInterpreter interpreter;
+    private DefUseInterpreter interpreter;
 
-	@Before
-	public void setUp() {
-		interpreter = new DefUseInterpreter();
-	}
+    @Before
+    public void setUp() {
+        interpreter = new DefUseInterpreter();
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void WhenOpcodeIsInvalid() {
-		final AbstractInsnNode insn = new InsnNode(Opcodes.DUP);
-		interpreter.newOperation(insn);
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void WhenOpcodeIsInvalid() {
+        final AbstractInsnNode insn = new InsnNode(Opcodes.DUP);
+        interpreter.newOperation(insn);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void WhenLdcTypeSortIsInvalid() {
-		final AbstractInsnNode insn = new LdcInsnNode(Type.getType("V"));
-		interpreter.newOperation(insn);
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void WhenLdcTypeSortIsInvalid() {
+        final AbstractInsnNode insn = new LdcInsnNode(Type.getType("V"));
+        interpreter.newOperation(insn);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void WhenLdcConstantIsInvalid() {
-		final AbstractInsnNode insn = new LdcInsnNode(new Object());
-		interpreter.newOperation(insn);
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void WhenLdcConstantIsInvalid() {
+        final AbstractInsnNode insn = new LdcInsnNode(new Object());
+        interpreter.newOperation(insn);
+    }
 
-	@Test(expected = UnsupportedOperationException.class)
-	public void WhenInstructionIsJSR() {
-		final AbstractInsnNode insn = new JumpInsnNode(Opcodes.JSR, null);
-		interpreter.newOperation(insn);
-	}
+    @Test(expected = UnsupportedOperationException.class)
+    public void WhenInstructionIsJSR() {
+        final AbstractInsnNode insn = new JumpInsnNode(Opcodes.JSR, null);
+        interpreter.newOperation(insn);
+    }
 
 }

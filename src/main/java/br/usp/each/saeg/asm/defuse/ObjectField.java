@@ -37,61 +37,61 @@ import org.objectweb.asm.Type;
 
 public final class ObjectField extends Field {
 
-	public final Value value;
+    public final Value value;
 
-	public ObjectField(final String owner, final String name, final String desc, final Value value) {
-		super(owner, name, desc);
-		if (value.type.getSort() != Type.OBJECT) {
-			throw new IllegalArgumentException("Invalid value type: " + value.type);
-		}
-		this.value = value;
-	}
+    public ObjectField(final String owner, final String name, final String desc, final Value value) {
+        super(owner, name, desc);
+        if (value.type.getSort() != Type.OBJECT) {
+            throw new IllegalArgumentException("Invalid value type: " + value.type);
+        }
+        this.value = value;
+    }
 
-	@Override
-	public Set<Variable> getVariables() {
-		final Set<Variable> values = new LinkedHashSet<Variable>();
-		values.addAll(value.getVariables());
+    @Override
+    public Set<Variable> getVariables() {
+        final Set<Variable> values = new LinkedHashSet<Variable>();
+        values.addAll(value.getVariables());
 
-		final Value root = getRoot();
-		if (root instanceof Local || root instanceof StaticField) {
-			values.add(this);
-		}
+        final Value root = getRoot();
+        if (root instanceof Local || root instanceof StaticField) {
+            values.add(this);
+        }
 
-		return Collections.unmodifiableSet(values);
-	}
+        return Collections.unmodifiableSet(values);
+    }
 
-	public Value getRoot() {
-		Value root = value;
-		while (root instanceof ObjectField) {
-			root = ObjectField.class.cast(root).value;
-		}
-		return root;
-	}
+    public Value getRoot() {
+        Value root = value;
+        while (root instanceof ObjectField) {
+            root = ObjectField.class.cast(root).value;
+        }
+        return root;
+    }
 
-	@Override
-	public String toString() {
-		return String.format("%s.%s.%s", value, owner.replace("/", "."), name);
-	}
+    @Override
+    public String toString() {
+        return String.format("%s.%s.%s", value, owner.replace("/", "."), name);
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + value.hashCode();
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + value.hashCode();
+        return result;
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (!super.equals(obj))
-			return false;
+    @Override
+    public boolean equals(final Object obj) {
+        if (!super.equals(obj))
+            return false;
 
-		final ObjectField other = (ObjectField) obj;
+        final ObjectField other = (ObjectField) obj;
 
-		if (!value.equals(other.value))
-			return false;
+        if (!value.equals(other.value))
+            return false;
 
-		return true;
-	}
+        return true;
+    }
 
 }

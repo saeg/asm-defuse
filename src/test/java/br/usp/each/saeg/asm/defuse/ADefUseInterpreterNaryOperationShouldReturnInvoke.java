@@ -47,33 +47,33 @@ import org.objectweb.asm.tree.MethodInsnNode;
 @RunWith(Parameterized.class)
 public class ADefUseInterpreterNaryOperationShouldReturnInvoke {
 
-	@Parameters
-	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { 
-				{ Opcodes.INVOKEVIRTUAL }, 
-				{ Opcodes.INVOKESPECIAL },
-				{ Opcodes.INVOKESTATIC }, 
-				{ Opcodes.INVOKEINTERFACE }, 
-				{ Opcodes.INVOKEDYNAMIC } 
-		});
-	}
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                { Opcodes.INVOKEVIRTUAL },
+                { Opcodes.INVOKESPECIAL },
+                { Opcodes.INVOKESTATIC },
+                { Opcodes.INVOKEINTERFACE },
+                { Opcodes.INVOKEDYNAMIC }
+        });
+    }
 
-	private AbstractInsnNode insn;
+    private AbstractInsnNode insn;
 
-	public ADefUseInterpreterNaryOperationShouldReturnInvoke(final int opcode) {
-		if (opcode == Opcodes.INVOKEDYNAMIC) {
-			insn = new InvokeDynamicInsnNode(null, "()V", null);
-		} else {
-			insn = new MethodInsnNode(opcode, null, null, "()V", false);
-		}
-	}
+    public ADefUseInterpreterNaryOperationShouldReturnInvoke(final int opcode) {
+        if (opcode == Opcodes.INVOKEDYNAMIC) {
+            insn = new InvokeDynamicInsnNode(null, "()V", null);
+        } else {
+            insn = new MethodInsnNode(opcode, null, null, "()V", false);
+        }
+    }
 
-	@Test
-	public void AssertThatADefUseInterpreterNaryOperationReturnsInvokeValueCorrectly() {
-		final DefUseInterpreter interpreter = new DefUseInterpreter();
-		final List<Value> values = new ArrayList<Value>();
-		final Invoke invoke = (Invoke) interpreter.naryOperation(insn, values);
-		Assert.assertTrue(invoke.values == values);
-	}
+    @Test
+    public void AssertThatADefUseInterpreterNaryOperationReturnsInvokeValueCorrectly() {
+        final DefUseInterpreter interpreter = new DefUseInterpreter();
+        final List<Value> values = new ArrayList<Value>();
+        final Invoke invoke = (Invoke) interpreter.naryOperation(insn, values);
+        Assert.assertTrue(invoke.values == values);
+    }
 
 }

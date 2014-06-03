@@ -45,72 +45,72 @@ import br.usp.each.saeg.asm.defuse.Variable;
 
 public class DefUseFrameExecuteAbstractTest {
 
-	public final DefUseFrame frame;
+    public final DefUseFrame frame;
 
-	public DefUseFrameExecuteAbstractTest(final DefUseFrame frame) {
-		this.frame = frame;
-	}
+    public DefUseFrameExecuteAbstractTest(final DefUseFrame frame) {
+        this.frame = frame;
+    }
 
-	public ValuePushed pushValue() {
-		final Value mock = Mockito.mock(Value.class);
-		frame.push(mock);
-		return new ValuePushed(mock);
-	}
+    public ValuePushed pushValue() {
+        final Value mock = Mockito.mock(Value.class);
+        frame.push(mock);
+        return new ValuePushed(mock);
+    }
 
-	public ValuePushed push(final Class<? extends Value> clazz, final int size) {
-		final Value mock = Mockito.mock(clazz);
-		Mockito.when(mock.getSize()).thenReturn(size);
-		frame.push(mock);
-		return new ValuePushed(mock);
-	}
+    public ValuePushed push(final Class<? extends Value> clazz, final int size) {
+        final Value mock = Mockito.mock(clazz);
+        Mockito.when(mock.getSize()).thenReturn(size);
+        frame.push(mock);
+        return new ValuePushed(mock);
+    }
 
-	public ValuePushed push(final Value value) {
-		final Value mock = Mockito.spy(value);
-		frame.push(mock);
-		return new ValuePushed(mock);
-	}
+    public ValuePushed push(final Value value) {
+        final Value mock = Mockito.spy(value);
+        frame.push(mock);
+        return new ValuePushed(mock);
+    }
 
-	public void execute(final AbstractInsnNode insn) {
-		try {
-			frame.execute(insn, new DefUseInterpreter());
-		} catch (final AnalyzerException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public void execute(final AbstractInsnNode insn) {
+        try {
+            frame.execute(insn, new DefUseInterpreter());
+        } catch (final AnalyzerException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public void assertDef(final Variable... vars) {
-		Assert.assertEquals(vars.length, frame.getDefinitions().size());
-		for (final Variable variable : vars) {
-			Assert.assertTrue(frame.getDefinitions().contains(variable));
-		}
-	}
+    public void assertDef(final Variable... vars) {
+        Assert.assertEquals(vars.length, frame.getDefinitions().size());
+        for (final Variable variable : vars) {
+            Assert.assertTrue(frame.getDefinitions().contains(variable));
+        }
+    }
 
-	public void assertUses(final Variable... vars) {
-		Assert.assertEquals(vars.length, frame.getUses().size());
-		for (final Variable variable : vars) {
-			Assert.assertTrue(frame.getUses().contains(variable));
-		}
-	}
+    public void assertUses(final Variable... vars) {
+        Assert.assertEquals(vars.length, frame.getUses().size());
+        for (final Variable variable : vars) {
+            Assert.assertTrue(frame.getUses().contains(variable));
+        }
+    }
 
-	public class ValuePushed {
+    public class ValuePushed {
 
-		private final Value value;
+        private final Value value;
 
-		public ValuePushed(final Value value) {
-			this.value = value;
-		}
+        public ValuePushed(final Value value) {
+            this.value = value;
+        }
 
-		public ValuePushed thatUseVariables(final Variable... vars) {
-			final Set<Variable> variables = new HashSet<Variable>();
-			variables.addAll(Arrays.asList(vars));
-			Mockito.when(value.getVariables()).thenReturn(variables);
-			return this;
-		}
+        public ValuePushed thatUseVariables(final Variable... vars) {
+            final Set<Variable> variables = new HashSet<Variable>();
+            variables.addAll(Arrays.asList(vars));
+            Mockito.when(value.getVariables()).thenReturn(variables);
+            return this;
+        }
 
-		public Value get() {
-			return value;
-		}
+        public Value get() {
+            return value;
+        }
 
-	}
+    }
 
 }
