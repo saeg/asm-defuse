@@ -140,7 +140,7 @@ public class DefUseChainTest {
 	}
 
 	@Test
-	public void ToBasicBlockCUseGlobal() {
+	public void ToBasicBlockComputationalUseGlobal() {
 		final DefUseChain[] chains = new DefUseChain[1];
 		chains[0] = new DefUseChain(1, 3, 5);
 
@@ -160,7 +160,7 @@ public class DefUseChainTest {
 	}
 
 	@Test
-	public void ToBasicBlockPUseGlobal() {
+	public void ToBasicBlockPredicateUseDefUseChainGlobal() {
 		final DefUseChain[] chains = new DefUseChain[1];
 		chains[0] = new DefUseChain(1, 3, 4, 5);
 
@@ -179,6 +179,41 @@ public class DefUseChainTest {
 		final DefUseChain[] bbChains = DefUseChain.toBasicBlock(chains, leaders, basicBlocks);
 		Assert.assertTrue(ArrayUtils.contains(bbChains, new DefUseChain(0, 1, 2, 5)));
 		Assert.assertEquals(1, bbChains.length);
+	}
+
+	@Test
+	public void ToBasicBlockPredicateUseDefUseChainSameBlock() {
+		final DefUseChain[] chains = new DefUseChain[1];
+		chains[0] = new DefUseChain(0, 1, 2, 3);
+
+		final int[] leaders = new int[3];
+		leaders[0] = 0;
+		leaders[1] = 0;
+		leaders[2] = 1;
+
+		final int[][] basicBlocks = new int[2][];
+		basicBlocks[0] = new int[] { 0, 1 };
+		basicBlocks[1] = new int[] { 2 };
+
+		DefUseChain[] bbChains = DefUseChain.toBasicBlock(chains, leaders, basicBlocks);
+		Assert.assertTrue(ArrayUtils.contains(bbChains, new DefUseChain(0, 0, 1, 3)));
+		Assert.assertEquals(1, bbChains.length);
+	}
+
+	@Test
+	public void PredicateUseDefUseChainIsAlwaysGlobal() {
+		final DefUseChain chain = new DefUseChain(0, 1, 2, 3);
+
+		final int[] leaders = new int[3];
+		leaders[0] = 0;
+		leaders[1] = 0;
+		leaders[2] = 1;
+
+		final int[][] basicBlocks = new int[2][];
+		basicBlocks[0] = new int[] { 0, 1 };
+		basicBlocks[1] = new int[] { 2 };
+
+		Assert.assertTrue(DefUseChain.isGlobal(chain, leaders, basicBlocks));
 	}
 
 }

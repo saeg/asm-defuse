@@ -108,7 +108,7 @@ public class DefUseChain {
 			final int[] leaders, final int[][] basicBlocks) {
 
 		boolean global = true;
-		if (leaders[chain.def] == leaders[chain.use]) {
+		if (chain.target == -1 && leaders[chain.def] == leaders[chain.use]) {
 			// definition and use occurs in same basic block
 			for (final int i : basicBlocks[leaders[chain.def]]) {
 				if (i == chain.use) {
