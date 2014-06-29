@@ -72,8 +72,8 @@ public class ArrayRefTest {
     @Test
     public void VariableListContainsVariablesFromCounts() {
         final Type aType = Mockito.mock(Type.class);
-        final Variable var1 = new Variable(aType);
-        final Variable var2 = new Variable(aType);
+        final Variable var1 = new VariableImpl(aType);
+        final Variable var2 = new VariableImpl(aType);
         final List<Variable> valueVars = Arrays.asList(var1, var2);
         final ArrayRef arref = new ArrayRef(Type.getType("[I"), valueVars);
         final Set<Variable> vars = arref.getVariables();

@@ -55,8 +55,8 @@ public class InvokeTest {
 
     @Test
     public void VariableListContainsVariablesFromValues() {
-        final Variable var1 = new Variable(aType);
-        final Variable var2 = new Variable(aType);
+        final Variable var1 = new VariableImpl(aType);
+        final Variable var2 = new VariableImpl(aType);
         final List<Variable> valueVars = Arrays.asList(var1, var2);
         final Invoke invoke = new Invoke(aType, valueVars);
         final Set<Variable> vars = invoke.getVariables();

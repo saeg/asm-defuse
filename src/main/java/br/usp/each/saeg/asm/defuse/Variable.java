@@ -34,7 +34,7 @@ import java.util.Set;
 
 import org.objectweb.asm.Type;
 
-public class Variable extends Value {
+public abstract class Variable extends Value {
 
     public Variable(final Type type) {
         super(type);
@@ -43,11 +43,6 @@ public class Variable extends Value {
     @Override
     public Set<Variable> getVariables() {
         return Collections.singleton(this);
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return this == obj;
     }
 
 }

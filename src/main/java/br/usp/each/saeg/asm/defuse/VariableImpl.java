@@ -29,30 +29,17 @@
  */
 package br.usp.each.saeg.asm.defuse;
 
-import java.util.Collections;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.objectweb.asm.Type;
 
-public class VariableTest {
+public class VariableImpl extends Variable {
 
-    private Variable var;
-
-    @Before
-    public void setUp() {
-        var = new VariableImpl(Type.INT_TYPE);
+    public VariableImpl(final Type type) {
+        super(type);
     }
 
-    @Test
-    public void VariableListContainsSelf() {
-        Assert.assertTrue(var.getVariables().contains(var));
-    }
-
-    @Test
-    public void VariablesListIsUnmodifiable() {
-        Assert.assertEquals(var.getVariables().getClass(), Collections.singleton(var).getClass());
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj;
     }
 
 }
