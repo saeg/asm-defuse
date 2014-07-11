@@ -34,6 +34,7 @@ import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.objectweb.asm.Type;
 
 public class ObjectFieldTest {
@@ -51,12 +52,8 @@ public class ObjectFieldTest {
 
     @Test
     public void ObjectFieldToString() {
-        final Value v = new Value(Type.getObjectType("java/lang/Object")) {
-            @Override
-            public String toString() {
-                return "value";
-            };
-        };
+        final Value v = Mockito.spy(new Value(Type.getObjectType("java/lang/Object")));
+        Mockito.when(v.toString()).thenReturn("value");
         final ObjectField ofield = new ObjectField("pkg/Owner", "Name", "I", v);
         Assert.assertEquals("value.pkg.Owner.Name", ofield.toString());
     }
@@ -116,12 +113,8 @@ public class ObjectFieldTest {
     @Test
     public void VariableListContainsVariablesFromReferenceValue() {
         final Variable local = new Local(Type.INT_TYPE, 0);
-        final Value ref = new Value(Type.getObjectType("pkg/Owner")) {
-            @Override
-            public Set<Variable> getVariables() {
-                return Collections.singleton(local);
-            }
-        };
+        final Value ref = Mockito.spy(new Value(Type.getObjectType("pkg/Owner")));
+        Mockito.when(ref.getVariables()).thenReturn(Collections.singleton(local));
         final ObjectField ofield = new ObjectField("pkg/Owner", "Name", "I", ref);
         Assert.assertTrue(ofield.getVariables().contains(local));
     }

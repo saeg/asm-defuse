@@ -40,6 +40,7 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -197,22 +198,14 @@ public class DefUseInterpreterTest {
         final Set<Variable> aVars = new HashSet<Variable>();
         aVars.add(new Local(Type.INT_TYPE, 0));
         aVars.add(new Local(Type.INT_TYPE, 1));
-        final Value a = new Value(Type.INT_TYPE) {
-            @Override
-            public Set<Variable> getVariables() {
-                return aVars;
-            };
-        };
+        final Value a = Mockito.spy(new Value(Type.INT_TYPE));
+        Mockito.when(a.getVariables()).thenReturn(aVars);
 
         final Set<Variable> bVars = new HashSet<Variable>();
         bVars.add(new Local(Type.INT_TYPE, 2));
         bVars.add(new Local(Type.INT_TYPE, 3));
-        final Value b = new Value(Type.INT_TYPE) {
-            @Override
-            public Set<Variable> getVariables() {
-                return bVars;
-            };
-        };
+        final Value b = Mockito.spy(new Value(Type.INT_TYPE));
+        Mockito.when(b.getVariables()).thenReturn(bVars);
 
         final Merge merged = (Merge) interpreter.merge(a, b);
         Assert.assertTrue(merged.getVariables().contains(new Local(Type.INT_TYPE, 0)));
@@ -228,22 +221,14 @@ public class DefUseInterpreterTest {
         aVars.add(new Local(Type.INT_TYPE, 1));
         aVars.add(new Local(Type.INT_TYPE, 2));
         aVars.add(new Local(Type.INT_TYPE, 3));
-        final Value a = new Value(Type.INT_TYPE) {
-            @Override
-            public Set<Variable> getVariables() {
-                return aVars;
-            };
-        };
+        final Value a = Mockito.spy(new Value(Type.INT_TYPE));
+        Mockito.when(a.getVariables()).thenReturn(aVars);
 
         final Set<Variable> bVars = new HashSet<Variable>();
         bVars.add(new Local(Type.INT_TYPE, 2));
         bVars.add(new Local(Type.INT_TYPE, 3));
-        final Value b = new Value(Type.INT_TYPE) {
-            @Override
-            public Set<Variable> getVariables() {
-                return bVars;
-            };
-        };
+        final Value b = Mockito.spy(new Value(Type.INT_TYPE));
+        Mockito.when(b.getVariables()).thenReturn(bVars);
 
         final Value merged = interpreter.merge(a, b);
         Assert.assertThat(merged, sameInstance(a));
@@ -254,24 +239,16 @@ public class DefUseInterpreterTest {
         final Set<Variable> aVars = new HashSet<Variable>();
         aVars.add(new Local(Type.INT_TYPE, 0));
         aVars.add(new Local(Type.INT_TYPE, 1));
-        final Value a = new Value(Type.INT_TYPE) {
-            @Override
-            public Set<Variable> getVariables() {
-                return aVars;
-            };
-        };
+        final Value a = Mockito.spy(new Value(Type.INT_TYPE));
+        Mockito.when(a.getVariables()).thenReturn(aVars);
 
         final Set<Variable> bVars = new HashSet<Variable>();
         bVars.add(new Local(Type.INT_TYPE, 0));
         bVars.add(new Local(Type.INT_TYPE, 1));
         bVars.add(new Local(Type.INT_TYPE, 2));
         bVars.add(new Local(Type.INT_TYPE, 3));
-        final Value b = new Value(Type.INT_TYPE) {
-            @Override
-            public Set<Variable> getVariables() {
-                return bVars;
-            };
-        };
+        final Value b = Mockito.spy(new Value(Type.INT_TYPE));
+        Mockito.when(b.getVariables()).thenReturn(bVars);
 
         final Value merged = interpreter.merge(a, b);
         Assert.assertThat(merged, sameInstance(b));
