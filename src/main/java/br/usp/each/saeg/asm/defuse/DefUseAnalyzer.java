@@ -29,8 +29,6 @@
  */
 package br.usp.each.saeg.asm.defuse;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -38,25 +36,16 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Frame;
 
-public class DefUseAnalyzer extends Analyzer<Value> {
+public class DefUseAnalyzer extends FlowAnalyzer<Value> {
 
     private final DefUseInterpreter interpreter;
 
     private DefUseFrame[] duframes;
 
     private Variable[] variables;
-
-    private Set<Integer>[] successors;
-
-    private Set<Integer>[] predecessors;
-
-    private int[][] bBlocks;
-
-    private int[] leaders;
 
     private int n;
 
@@ -75,15 +64,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
         n = m.instructions.size();
         duframes = new DefUseFrame[n];
-        bBlocks = new int[n][];
-        leaders = new int[n];
-        Arrays.fill(leaders, -1);
-        successors = (Set<Integer>[]) new Set<?>[n];
-        predecessors = (Set<Integer>[]) new Set<?>[n];
-        for (int i = 0; i < n; i++) {
-            successors[i] = new LinkedHashSet<Integer>();
-            predecessors[i] = new LinkedHashSet<Integer>();
-        }
 
         final Frame<Value>[] frames = super.analyze(owner, m);
         final Set<Variable> vars = new LinkedHashSet<Variable>();
@@ -151,56 +131,7 @@ public class DefUseAnalyzer extends Analyzer<Value> {
             }
         }
 
-        final boolean[] queued = new boolean[n];
-        final int[] queue = new int[n];
-        int top = 0;
-        int basicBlock = 0;
-        queue[top++] = 0;
-        queued[0] = true;
-        final IntList list = new IntList();
-
-        while (top > 0) {
-            int i = queue[--top];
-            leaders[i] = basicBlock;
-            list.add(i);
-            while (successors[i].size() == 1) {
-                final int child = successors[i].iterator().next();
-                if (leaders[child] != -1) {
-                    break;
-                }
-                if (predecessors[child].size() == 1) {
-                    i = child;
-                    leaders[i] = basicBlock;
-                    list.add(i);
-                } else {
-                    break;
-                }
-            }
-            bBlocks[basicBlock] = list.toArray();
-            list.clear();
-            basicBlock++;
-            for (final int succ : successors[i]) {
-                if (!queued[succ]) {
-                    queue[top++] = succ;
-                    queued[succ] = true;
-                }
-            }
-        }
-        bBlocks = Arrays.copyOf(bBlocks, basicBlock);
-
         return frames;
-    }
-
-    @Override
-    protected void newControlFlowEdge(final int insn, final int successor) {
-        successors[insn].add(successor);
-        predecessors[successor].add(insn);
-    }
-
-    @Override
-    protected boolean newControlFlowExceptionEdge(final int insn, final int successor) {
-        // ignoring exception flow
-        return false;
     }
 
     public DefUseFrame[] getDefUseFrames() {
@@ -209,52 +140,6 @@ public class DefUseAnalyzer extends Analyzer<Value> {
 
     public Variable[] getVariables() {
         return variables;
-    }
-
-    public int[] getSuccessors(final int insn) {
-        return toArray(successors[insn]);
-    }
-
-    public int[][] getSuccessors() {
-        final int[][] successors = new int[n][];
-        for (int i = 0; i < n; i++) {
-            successors[i] = getSuccessors(i);
-        }
-        return successors;
-    }
-
-    public int[] getPredecessors(final int insn) {
-        return toArray(predecessors[insn]);
-    }
-
-    public int[][] getPredecessors() {
-        final int[][] predecessors = new int[n][];
-        for (int i = 0; i < n; i++) {
-            predecessors[i] = getPredecessors(i);
-        }
-        return predecessors;
-    }
-
-    public int[] getLeaders() {
-        return leaders;
-    }
-
-    public int[] getBasicBlock(final int id) {
-        return bBlocks[id];
-    }
-
-    public int[][] getBasicBlocks() {
-        return bBlocks;
-    }
-
-    private int[] toArray(final Set<Integer> set) {
-        final int[] array = new int[set.size()];
-        final Iterator<Integer> it = set.iterator();
-        int i = 0;
-        while (it.hasNext()) {
-            array[i++] = it.next();
-        }
-        return array;
     }
 
     private boolean isPredicate(final int opcode) {
