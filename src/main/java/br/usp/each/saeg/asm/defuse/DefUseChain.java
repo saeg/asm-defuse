@@ -60,6 +60,15 @@ public class DefUseChain {
     }
 
     @Override
+    public String toString() {
+        if (target == -1) {
+            return String.format("(%d, %d, %d)", def, use, var);
+        } else {
+            return String.format("(%d, (%d,%d), %d)", def, use, target, var);
+        }
+    }
+
+    @Override
     public boolean equals(final Object obj) {
         if (this == obj)
             return true;
