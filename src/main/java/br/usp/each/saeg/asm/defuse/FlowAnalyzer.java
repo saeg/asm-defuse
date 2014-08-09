@@ -50,6 +50,8 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
 
     private int[] leaders;
 
+    private int[][] paths;
+
     private int n;
 
     public FlowAnalyzer(final Interpreter<V> interpreter) {
@@ -63,6 +65,7 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
 
         blocks = new int[n][];
         leaders = new int[n];
+        paths = new int[n][];
         Arrays.fill(leaders, -1);
         successors = (Set<Integer>[]) new Set<?>[n];
         predecessors = (Set<Integer>[]) new Set<?>[n];
@@ -112,6 +115,32 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
             }
         }
         blocks = Arrays.copyOf(blocks, basicBlock);
+
+        Arrays.fill(queued, false);
+        for (int i = 0; i < n; i++) {
+            if (successors[i].size() == 0 && leaders[i] != -1) {
+                queue[top++] = i;
+                queued[i] = true;
+            }
+        }
+
+        while (top > 0) {
+            final int i = queue[--top];
+            int b = leaders[i];
+            list.add(b);
+            while (predecessors[blocks[b][0]].size() == 1) {
+                b = leaders[predecessors[blocks[b][0]].iterator().next()];
+                list.add(b);
+            }
+            paths[i] = list.toReverseArray();
+            list.clear();
+            for (final int pred : predecessors[blocks[b][0]]) {
+                if (!queued[pred]) {
+                    queue[top++] = pred;
+                    queued[pred] = true;
+                }
+            }
+        }
 
         return frames;
     }
