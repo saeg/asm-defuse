@@ -60,6 +60,16 @@ public class IntList {
         return values;
     }
 
+    public int[] toReverseArray() {
+        final int[] values = new int[val];
+        IntList current = next;
+        for (int i = 0; i < val; i++) {
+            values[i] = current.val;
+            current = current.next;
+        }
+        return values;
+    }
+
     public void clear() {
         IntList x = this;
         val = 0;
