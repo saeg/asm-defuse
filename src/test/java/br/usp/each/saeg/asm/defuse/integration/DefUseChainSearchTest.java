@@ -52,7 +52,6 @@ import br.usp.each.saeg.asm.defuse.DefUseAnalyzer;
 import br.usp.each.saeg.asm.defuse.DefUseChain;
 import br.usp.each.saeg.asm.defuse.DefUseChainSearch;
 import br.usp.each.saeg.asm.defuse.DepthFirstDefUseChainSearch;
-import br.usp.each.saeg.asm.defuse.ReachDefsDefUseChainSearch;
 import br.usp.each.saeg.commons.ArrayUtils;
 
 @RunWith(Parameterized.class)
@@ -61,8 +60,7 @@ public class DefUseChainSearchTest {
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                { new DepthFirstDefUseChainSearch() },
-                { new ReachDefsDefUseChainSearch() }
+                { new DepthFirstDefUseChainSearch() }
         });
     }
 
