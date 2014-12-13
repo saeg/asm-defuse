@@ -83,7 +83,7 @@ public class DefUseChainSearchTest {
         mn = new MethodNode();
         /* 00 */mn.instructions.add(new InsnNode(Opcodes.ICONST_0));
         /* 01 */mn.instructions.add(new VarInsnNode(Opcodes.ISTORE, 2));
-        /* 02 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 0));
+        /* 02 */mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
         /* 03 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
         /* 04 */mn.instructions.add(new IincInsnNode(2, 1));
         /* 05 */mn.instructions.add(new InsnNode(Opcodes.IALOAD));
@@ -94,13 +94,13 @@ public class DefUseChainSearchTest {
         /* 09 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 1));
         /*    */final LabelNode breakLoop = new LabelNode();
         /* 10 */mn.instructions.add(new JumpInsnNode(Opcodes.IF_ICMPGE, breakLoop));
-        /* 11 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 0));
+        /* 11 */mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
         /* 12 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
         /* 13 */mn.instructions.add(new InsnNode(Opcodes.IALOAD));
         /* 14 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
         /*    */final LabelNode jump = new LabelNode();
         /* 15 */mn.instructions.add(new JumpInsnNode(Opcodes.IF_ICMPLE, jump));
-        /* 16 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 0));
+        /* 16 */mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
         /* 17 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
         /* 18 */mn.instructions.add(new InsnNode(Opcodes.IALOAD));
         /* 19 */mn.instructions.add(new VarInsnNode(Opcodes.ISTORE, 3));
@@ -110,7 +110,7 @@ public class DefUseChainSearchTest {
         /* 23 */mn.instructions.add(breakLoop);
         /* 24 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
         /* 25 */mn.instructions.add(new InsnNode(Opcodes.IRETURN));
-        mn.desc = "(II)I";
+        mn.desc = "([II)I";
         mn.maxLocals = 4;
         mn.maxStack = 2;
         mn.access = Opcodes.ACC_STATIC;
