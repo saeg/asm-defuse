@@ -59,9 +59,17 @@ public class DefUseChain {
         this.var = var;
     }
 
+    public boolean isComputationalChain() {
+        return target == -1;
+    }
+
+    public boolean isPredicateChain() {
+        return target != -1;
+    }
+
     @Override
     public String toString() {
-        if (target == -1) {
+        if (isComputationalChain()) {
             return String.format("(%d, %d, %d)", def, use, var);
         } else {
             return String.format("(%d, (%d,%d), %d)", def, use, target, var);
@@ -106,7 +114,7 @@ public class DefUseChain {
         for (final DefUseChain c : chains) {
             if (isGlobal(c, leaders, basicBlocks)) {
                 bbChains[count++] = new DefUseChain(leaders[c.def], leaders[c.use],
-                        c.target == -1 ? -1 : leaders[c.target], c.var);
+                        c.isPredicateChain() ? leaders[c.target] : -1, c.var);
             }
         }
         final List<DefUseChain> l = asList(copyOf(bbChains, count));
@@ -117,7 +125,7 @@ public class DefUseChain {
             final int[] leaders, final int[][] basicBlocks) {
 
         boolean global = true;
-        if (chain.target == -1 && leaders[chain.def] == leaders[chain.use]) {
+        if (chain.isComputationalChain() && leaders[chain.def] == leaders[chain.use]) {
             // definition and use occurs in same basic block
             for (final int i : basicBlocks[leaders[chain.def]]) {
                 if (i == chain.use) {

@@ -52,6 +52,8 @@ public class DefUseChainTest {
         Assert.assertEquals(use, c.use);
         Assert.assertEquals(var, c.var);
         Assert.assertEquals(-1, c.target);
+        Assert.assertTrue(c.isComputationalChain());
+        Assert.assertFalse(c.isPredicateChain());
     }
 
     @Test
@@ -68,6 +70,8 @@ public class DefUseChainTest {
         Assert.assertEquals(use, c.use);
         Assert.assertEquals(var, c.var);
         Assert.assertEquals(target, c.target);
+        Assert.assertFalse(c.isComputationalChain());
+        Assert.assertTrue(c.isPredicateChain());
     }
 
     @Test
