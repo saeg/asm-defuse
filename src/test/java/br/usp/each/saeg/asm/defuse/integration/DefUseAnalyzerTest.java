@@ -46,6 +46,7 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LookupSwitchInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
+import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 
@@ -56,6 +57,7 @@ import br.usp.each.saeg.asm.defuse.DepthFirstDefUseChainSearch;
 import br.usp.each.saeg.asm.defuse.Local;
 import br.usp.each.saeg.asm.defuse.ObjectField;
 import br.usp.each.saeg.asm.defuse.StaticField;
+import br.usp.each.saeg.asm.defuse.Value;
 import br.usp.each.saeg.asm.defuse.Variable;
 import br.usp.each.saeg.commons.ArrayUtils;
 
@@ -393,7 +395,6 @@ public class DefUseAnalyzerTest {
         Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(1));
         Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(0));
         Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(1));
-
     }
 
     @Test
@@ -654,6 +655,74 @@ public class DefUseAnalyzerTest {
         Assert.assertArrayEquals(new int[] { 5, 6 }, bBlocks[1]);
         Assert.assertArrayEquals(new int[] { 2, 3, 4 }, bBlocks[2]);
         Assert.assertArrayEquals(new int[] { 7, 8 }, bBlocks[3]);
+    }
+
+    @Test
+    public void DefinitionOfReferenceToObjectField() throws AnalyzerException {
+        mn = new MethodNode();
+        mn.instructions.add(new TypeInsnNode(Opcodes.NEW, "LMyClass;"));
+        mn.instructions.add(new VarInsnNode(Opcodes.ASTORE, 0));
+        mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        mn.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "MyClass", "name", "I"));
+        mn.instructions.add(new InsnNode(Opcodes.IRETURN));
+        mn.desc = "()I";
+        mn.maxLocals = 1;
+        mn.maxStack = 1;
+        mn.access = Opcodes.ACC_STATIC;
+        mn.tryCatchBlocks = Collections.emptyList();
+
+        analyzer.analyze("Owner", mn);
+        final DefUseFrame[] frames = analyzer.getDefUseFrames();
+
+        Assert.assertEquals(Value.UNINITIALIZED_VALUE, frames[0].getLocal(0));
+        Assert.assertTrue(frames[1].getDefinitions().contains(
+                new Local(Type.getObjectType("java/lang/Object"), 0)));
+        Assert.assertTrue(frames[1].getDefinitions().contains(
+                new ObjectField("MyClass", "name", "I",
+                        new Local(Type.getObjectType("java/lang/Object"), 0))));
+    }
+
+    @Test
+    public void DefinitionOfReferenceToObjectField2() throws AnalyzerException {
+        mn = new MethodNode();
+        mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 0));
+        final LabelNode label = new LabelNode();
+        mn.instructions.add(new JumpInsnNode(Opcodes.IFEQ, label));
+        mn.instructions.add(new TypeInsnNode(Opcodes.NEW, "LMyClass1;"));
+        mn.instructions.add(new VarInsnNode(Opcodes.ASTORE, 1));
+        final LabelNode end = new LabelNode();
+        mn.instructions.add(new JumpInsnNode(Opcodes.GOTO, end));
+        mn.instructions.add(label);
+        mn.instructions.add(new TypeInsnNode(Opcodes.NEW, "LMyClass2;"));
+        mn.instructions.add(new VarInsnNode(Opcodes.ASTORE, 1));
+        mn.instructions.add(end);
+        mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+        mn.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "MyClass0", "name", "I"));
+        mn.instructions.add(new InsnNode(Opcodes.IRETURN));
+        mn.desc = "(Z)I";
+        mn.maxLocals = 2;
+        mn.maxStack = 1;
+        mn.access = Opcodes.ACC_STATIC;
+        mn.tryCatchBlocks = Collections.emptyList();
+
+        analyzer.analyze("Owner", mn);
+        final DefUseFrame[] frames = analyzer.getDefUseFrames();
+
+        Assert.assertEquals(Value.UNINITIALIZED_VALUE, frames[0].getLocal(1));
+
+        Assert.assertTrue(frames[3].getDefinitions().contains(
+                new Local(Type.getObjectType("java/lang/Object"), 1)));
+
+        Assert.assertTrue(frames[7].getDefinitions().contains(
+                new Local(Type.getObjectType("java/lang/Object"), 1)));
+
+        Assert.assertTrue(frames[3].getDefinitions().contains(
+                new ObjectField("MyClass0", "name", "I",
+                        new Local(Type.getObjectType("java/lang/Object"), 1))));
+
+        Assert.assertTrue(frames[7].getDefinitions().contains(
+                new ObjectField("MyClass0", "name", "I",
+                        new Local(Type.getObjectType("java/lang/Object"), 1))));
     }
 
 }

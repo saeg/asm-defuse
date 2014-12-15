@@ -396,10 +396,10 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 
     @Override
     public Value merge(final Value v, final Value w) {
-        if (v.getVariables().containsAll(w.getVariables())) {
+        if (v.getVariables().containsAll(w.getVariables()) && v.insns.containsAll(w.insns)) {
             return v;
         }
-        if (w.getVariables().containsAll(v.getVariables())) {
+        if (w.getVariables().containsAll(v.getVariables()) && w.insns.containsAll(v.insns)) {
             return w;
         }
         final Set<AbstractInsnNode> insns = new HashSet<AbstractInsnNode>();
