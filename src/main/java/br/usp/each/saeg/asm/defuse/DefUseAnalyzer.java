@@ -113,6 +113,11 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
             final Variable def = variables[i];
             if (i < nargs || def instanceof StaticField) {
                 duframes[0].addDef(def);
+            } else if (def instanceof ObjectField) {
+                final ObjectField defField = (ObjectField) def;
+                if (duframes[0].getDefinitions().contains(defField.getRoot())) {
+                    duframes[0].addDef(def);
+                }
             }
         }
 
@@ -129,7 +134,6 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
                         final int index = instructions.indexOf(def);
                         duframes[index].addDef(var);
                     }
-                    duframes[0].addDef(var);
                 }
             }
         }
