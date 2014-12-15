@@ -129,9 +129,7 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
                         final int index = instructions.indexOf(def);
                         duframes[index].addDef(var);
                     }
-                    if (duframes[i].getLocal(l.var).insns.isEmpty()) {
-                        duframes[0].addDef(var);
-                    }
+                    duframes[0].addDef(var);
                 }
             }
         }

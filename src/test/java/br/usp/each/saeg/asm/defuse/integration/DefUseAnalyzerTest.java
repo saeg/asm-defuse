@@ -725,4 +725,40 @@ public class DefUseAnalyzerTest {
                         new Local(Type.getObjectType("java/lang/Object"), 1))));
     }
 
+    @Test
+    public void DefinitionOfReferenceToObjectField3() throws AnalyzerException {
+        mn = new MethodNode();
+        mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        final LabelNode skip = new LabelNode();
+        mn.instructions.add(new JumpInsnNode(Opcodes.IFNONNULL, skip));
+        mn.instructions.add(new TypeInsnNode(Opcodes.NEW, "LMyClass;"));
+        mn.instructions.add(new VarInsnNode(Opcodes.ASTORE, 0));
+        mn.instructions.add(skip);
+        mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        mn.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "MyClass", "name", "I"));
+        mn.instructions.add(new InsnNode(Opcodes.IRETURN));
+        mn.desc = "(LMyClass;)I";
+        mn.maxLocals = 1;
+        mn.maxStack = 1;
+        mn.access = Opcodes.ACC_STATIC;
+        mn.tryCatchBlocks = Collections.emptyList();
+
+        analyzer.analyze("Owner", mn);
+        final DefUseFrame[] frames = analyzer.getDefUseFrames();
+
+        Assert.assertTrue(frames[0].getDefinitions().contains(
+                new Local(Type.getObjectType("java/lang/Object"), 0)));
+
+        Assert.assertTrue(frames[3].getDefinitions().contains(
+                new Local(Type.getObjectType("java/lang/Object"), 0)));
+
+        Assert.assertTrue(frames[0].getDefinitions().contains(
+                new ObjectField("MyClass", "name", "I",
+                        new Local(Type.getObjectType("java/lang/Object"), 0))));
+
+        Assert.assertTrue(frames[3].getDefinitions().contains(
+                new ObjectField("MyClass", "name", "I",
+                        new Local(Type.getObjectType("java/lang/Object"), 0))));
+    }
+
 }
