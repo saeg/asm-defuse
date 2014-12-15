@@ -39,7 +39,6 @@ import org.junit.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
@@ -70,44 +69,6 @@ public class DefUseAnalyzerTest {
     @Before
     public void setUp() {
         analyzer = new DefUseAnalyzer();
-    }
-
-    public void prepareMethodMax() {
-        mn = new MethodNode();
-        /* 00 */mn.instructions.add(new InsnNode(Opcodes.ICONST_0));
-        /* 01 */mn.instructions.add(new VarInsnNode(Opcodes.ISTORE, 2));
-        /* 02 */mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        /* 03 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
-        /* 04 */mn.instructions.add(new IincInsnNode(2, 1));
-        /* 05 */mn.instructions.add(new InsnNode(Opcodes.IALOAD));
-        /* 06 */mn.instructions.add(new VarInsnNode(Opcodes.ISTORE, 3));
-        /*    */final LabelNode backLoop = new LabelNode();
-        /* 07 */mn.instructions.add(backLoop);
-        /* 08 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
-        /* 09 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 1));
-        /*    */final LabelNode breakLoop = new LabelNode();
-        /* 10 */mn.instructions.add(new JumpInsnNode(Opcodes.IF_ICMPGE, breakLoop));
-        /* 11 */mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        /* 12 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
-        /* 13 */mn.instructions.add(new InsnNode(Opcodes.IALOAD));
-        /* 14 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
-        /*    */final LabelNode jump = new LabelNode();
-        /* 15 */mn.instructions.add(new JumpInsnNode(Opcodes.IF_ICMPLE, jump));
-        /* 16 */mn.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        /* 17 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
-        /* 18 */mn.instructions.add(new InsnNode(Opcodes.IALOAD));
-        /* 19 */mn.instructions.add(new VarInsnNode(Opcodes.ISTORE, 3));
-        /* 20 */mn.instructions.add(jump);
-        /* 21 */mn.instructions.add(new IincInsnNode(2, 1));
-        /* 22 */mn.instructions.add(new JumpInsnNode(Opcodes.GOTO, backLoop));
-        /* 23 */mn.instructions.add(breakLoop);
-        /* 24 */mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
-        /* 25 */mn.instructions.add(new InsnNode(Opcodes.IRETURN));
-        mn.desc = "([II)I";
-        mn.maxLocals = 4;
-        mn.maxStack = 2;
-        mn.access = Opcodes.ACC_STATIC;
-        mn.tryCatchBlocks = Collections.emptyList();
     }
 
     public void prepareMethodWhitUnreachableCode() {
@@ -160,7 +121,7 @@ public class DefUseAnalyzerTest {
 
     @Test
     public void testSucessors() throws AnalyzerException {
-        prepareMethodMax();
+        mn = new MaxMethodNode();
         analyzer.analyze("Owner", mn);
         Assert.assertArrayEquals(new int[] { 1 }, analyzer.getSuccessors(0));
         Assert.assertArrayEquals(new int[] { 2 }, analyzer.getSuccessors(1));
@@ -192,7 +153,7 @@ public class DefUseAnalyzerTest {
 
     @Test
     public void testPredecessors() throws AnalyzerException {
-        prepareMethodMax();
+        mn = new MaxMethodNode();
         analyzer.analyze("Owner", mn);
         Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(0));
         Assert.assertArrayEquals(new int[] { 0 }, analyzer.getPredecessors(1));
@@ -225,7 +186,7 @@ public class DefUseAnalyzerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testDefinitionOfLocalVariable() throws AnalyzerException {
-        prepareMethodMax();
+        mn = new MaxMethodNode();
         analyzer.analyze("Owner", mn);
         final DefUseFrame[] frames = analyzer.getDefUseFrames();
         final int n = frames.length;
@@ -254,7 +215,7 @@ public class DefUseAnalyzerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testUsesOfLocalVariables() throws AnalyzerException {
-        prepareMethodMax();
+        mn = new MaxMethodNode();
         analyzer.analyze("Owner", mn);
         final DefUseFrame[] frames = analyzer.getDefUseFrames();
         final int n = frames.length;
@@ -287,7 +248,7 @@ public class DefUseAnalyzerTest {
 
     @Test
     public void testVariables() throws AnalyzerException {
-        prepareMethodMax();
+        mn = new MaxMethodNode();
         analyzer.analyze("Owner", mn);
         final Variable[] variables = analyzer.getVariables();
         Assert.assertEquals(new Local(Type.INT_TYPE, 0), variables[0]);
@@ -299,7 +260,7 @@ public class DefUseAnalyzerTest {
 
     @Test
     public void testDefUseChainsGlobal() throws AnalyzerException {
-        prepareMethodMax();
+        mn = new MaxMethodNode();
         analyzer.analyze("Owner", mn);
         DefUseChain[] chains = new DepthFirstDefUseChainSearch().search(
                 analyzer.getDefUseFrames(),
@@ -399,7 +360,7 @@ public class DefUseAnalyzerTest {
 
     @Test
     public void testBasicBlocksLeaders() throws AnalyzerException {
-        prepareMethodMax();
+        mn = new MaxMethodNode();
         analyzer.analyze("Owner", mn);
         final int[] leaders = analyzer.getLeaders();
         Assert.assertEquals(0, leaders[0]);
@@ -437,7 +398,7 @@ public class DefUseAnalyzerTest {
 
     @Test
     public void testBasicBlockInstructionsSequence() throws AnalyzerException {
-        prepareMethodMax();
+        mn = new MaxMethodNode();
         analyzer.analyze("Owner", mn);
         Assert.assertArrayEquals(new int[] { 0, 1, 2, 3, 4, 5, 6 }, analyzer.getBasicBlock(0));
         Assert.assertArrayEquals(new int[] { 7, 8, 9, 10 }, analyzer.getBasicBlock(1));
