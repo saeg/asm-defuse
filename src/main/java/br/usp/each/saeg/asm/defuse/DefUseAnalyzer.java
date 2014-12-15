@@ -35,6 +35,7 @@ import java.util.Set;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Frame;
@@ -84,9 +85,7 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
 
         for (int i = 0; i < n; i++) {
             final AbstractInsnNode insn = m.instructions.get(i);
-            if (frames[i] == null) {
-                duframes[i] = DefUseFrame.NONE;
-            } else {
+            if (frames[i] != null) {
                 duframes[i] = new DefUseFrame(frames[i], isPredicate(insn.getOpcode()));
             }
             switch (insn.getType()) {
@@ -95,27 +94,13 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
             case AbstractInsnNode.FRAME:
                 break;
             default:
-                if (duframes[i] != DefUseFrame.NONE) {
+                if (duframes[i] != null) {
                     duframes[i].execute(insn, interpreter);
                     vars.addAll(duframes[i].getDefinitions());
                     vars.addAll(duframes[i].getUses());
+                    reachDefs(m.instructions, i);
                 }
                 break;
-            }
-            for (final Variable var : duframes[i].getUses()) {
-                if (var instanceof ObjectField) {
-                    final Value root = ((ObjectField) var).getRoot();
-                    if (root instanceof Local) {
-                        final Local l = (Local) root;
-                        for (final AbstractInsnNode def : duframes[i].getLocal(l.var).insns) {
-                            final int index = m.instructions.indexOf(def);
-                            duframes[index].addDef(var);
-                        }
-                        if (duframes[i].getLocal(l.var).insns.isEmpty()) {
-                            duframes[0].addDef(var);
-                        }
-                    }
-                }
             }
         }
         variables = vars.toArray(new Variable[vars.size()]);
@@ -132,6 +117,24 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
         }
 
         return frames;
+    }
+
+    private void reachDefs(final InsnList instructions, final int i) {
+        for (final Variable var : duframes[i].getUses()) {
+            if (var instanceof ObjectField) {
+                final Value root = ((ObjectField) var).getRoot();
+                if (root instanceof Local) {
+                    final Local l = (Local) root;
+                    for (final AbstractInsnNode def : duframes[i].getLocal(l.var).insns) {
+                        final int index = instructions.indexOf(def);
+                        duframes[index].addDef(var);
+                    }
+                    if (duframes[i].getLocal(l.var).insns.isEmpty()) {
+                        duframes[0].addDef(var);
+                    }
+                }
+            }
+        }
     }
 
     public DefUseFrame[] getDefUseFrames() {
