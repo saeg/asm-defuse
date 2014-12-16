@@ -39,6 +39,7 @@ import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Frame;
 import org.objectweb.asm.tree.analysis.Interpreter;
+import org.objectweb.asm.tree.analysis.Value;
 
 public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
 
@@ -193,7 +194,33 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
         return blocks;
     }
 
-    private int[] toArray(final Set<Integer> set) {
+    public int[] getPath(final int insn) {
+        int[] path = paths[insn];
+
+        if (path == null) {
+            path = blocks[leaders[insn]];
+            if (paths[path[path.length - 1]] == null) {
+                return Arrays.copyOf(path, indexOf(path, insn) + 1);
+            }
+            path = paths[path[path.length - 1]];
+        }
+
+        int size = 0;
+        for (final int block : path) {
+            size = size + blocks[block].length;
+        }
+        final int[] insnPath = new int[size];
+
+        size = 0;
+        for (final int block : path) {
+            System.arraycopy(blocks[block], 0, insnPath, size, blocks[block].length);
+            size = size + blocks[block].length;
+        }
+
+        return Arrays.copyOf(insnPath, indexOf(insnPath, insn) + 1);
+    }
+
+    private static int[] toArray(final Set<Integer> set) {
         final int[] array = new int[set.size()];
         final Iterator<Integer> it = set.iterator();
         int i = 0;
@@ -201,6 +228,14 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
             array[i++] = it.next();
         }
         return array;
+    }
+
+    private static int indexOf(final int[] array, final int value) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == value)
+                return i;
+        }
+        return -1;
     }
 
 }
