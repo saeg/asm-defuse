@@ -45,6 +45,7 @@ import br.usp.each.saeg.asm.defuse.DefUseAnalyzer;
 import br.usp.each.saeg.asm.defuse.DefUseChain;
 import br.usp.each.saeg.asm.defuse.DefUseChainSearch;
 import br.usp.each.saeg.asm.defuse.DepthFirstDefUseChainSearch;
+import br.usp.each.saeg.asm.defuse.MaxMethodNode;
 import br.usp.each.saeg.commons.ArrayUtils;
 
 @RunWith(Parameterized.class)

@@ -27,7 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-package br.usp.each.saeg.asm.defuse.integration;
+package br.usp.each.saeg.asm.defuse;
 
 import java.util.Collections;
 
@@ -41,7 +41,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 public class MaxMethodNode extends MethodNode {
 
-    protected MaxMethodNode() {
+    public MaxMethodNode() {
         super(Opcodes.ASM5);
 
         // set-up

@@ -54,6 +54,7 @@ import br.usp.each.saeg.asm.defuse.DefUseChain;
 import br.usp.each.saeg.asm.defuse.DefUseFrame;
 import br.usp.each.saeg.asm.defuse.DepthFirstDefUseChainSearch;
 import br.usp.each.saeg.asm.defuse.Local;
+import br.usp.each.saeg.asm.defuse.MaxMethodNode;
 import br.usp.each.saeg.asm.defuse.ObjectField;
 import br.usp.each.saeg.asm.defuse.StaticField;
 import br.usp.each.saeg.asm.defuse.Value;

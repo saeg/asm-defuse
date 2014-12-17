@@ -200,6 +200,9 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
         if (path == null) {
             path = blocks[leaders[insn]];
             if (paths[path[path.length - 1]] == null) {
+                if (predecessors[path[0]].size() == 1) {
+                    path = merge(getPath(predecessors[path[0]].iterator().next()), path);
+                }
                 return Arrays.copyOf(path, indexOf(path, insn) + 1);
             }
             path = paths[path[path.length - 1]];
@@ -236,6 +239,13 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
                 return i;
         }
         return -1;
+    }
+
+    private static int[] merge(final int[] array1, final int[] array2) {
+        final int[] result = new int[array1.length + array2.length];
+        System.arraycopy(array1, 0, result, 0, array1.length);
+        System.arraycopy(array2, 0, result, array1.length, array2.length);
+        return result;
     }
 
 }
