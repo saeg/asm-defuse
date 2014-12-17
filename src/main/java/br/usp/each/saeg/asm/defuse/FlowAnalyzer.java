@@ -200,7 +200,7 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
         if (path == null) {
             path = blocks[leaders[insn]];
             if (paths[path[path.length - 1]] == null) {
-                if (predecessors[path[0]].size() == 1) {
+                if (path[0] != 0 && predecessors[path[0]].size() == 1) {
                     path = merge(getPath(predecessors[path[0]].iterator().next()), path);
                 }
                 return Arrays.copyOf(path, indexOf(path, insn) + 1);

@@ -92,4 +92,28 @@ public class FlowAnalyzerTest {
         Assert.assertArrayEquals(new int[] { 0, 1, 2, 3, 7, 8 }, analyzer.getPath(8));
     }
 
+    @Test
+    public void testPathInfiniteLoop() throws AnalyzerException {
+        final MethodNode mn = new MethodNode();
+
+        // set-up
+
+        mn.desc = "()V";
+        mn.maxLocals = 0;
+        mn.maxStack = 0;
+        mn.access = Opcodes.ACC_STATIC;
+        mn.tryCatchBlocks = Collections.emptyList();
+
+        // instructions
+
+        final LabelNode label = new LabelNode();
+        mn.instructions.add(label);
+        mn.instructions.add(new JumpInsnNode(Opcodes.GOTO, label));
+
+        analyzer.analyze("Owner", mn);
+
+        Assert.assertArrayEquals(new int[] { 0 }, analyzer.getPath(0));
+        Assert.assertArrayEquals(new int[] { 0, 1 }, analyzer.getPath(1));
+    }
+
 }
