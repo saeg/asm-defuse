@@ -12,7 +12,7 @@
 	<version>0.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>asm-defuse</name>
-	<url>https://github.com/andrioli/asm-defuse</url>
+	<url>https://github.com/saeg/asm-defuse</url>
 	<description>asm powered by definitions/uses analysis</description>
 	<inceptionYear>2014</inceptionYear>
 
@@ -25,15 +25,15 @@
 	</licenses>
 
 	<scm>
-		<url>https://github.com/andrioli/asm-defuse</url>
-		<connection>scm:git:https://github.com/andrioli/asm-defuse.git</connection>
-		<developerConnection>scm:git:git@github.com:andrioli/asm-defuse.git</developerConnection>
+		<url>https://github.com/saeg/asm-defuse</url>
+		<connection>scm:git:https://github.com/saeg/asm-defuse.git</connection>
+		<developerConnection>scm:git:git@github.com:saeg/asm-defuse.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
 		<system>GitHub Issues</system>
-		<url>https://github.com/andrioli/asm-defuse/issues</url>
+		<url>https://github.com/saeg/asm-defuse/issues</url>
 	</issueManagement>
 
 	<developers>
