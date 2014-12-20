@@ -29,8 +29,11 @@
  */
 package br.usp.each.saeg.asm.defuse;
 
+import static br.usp.each.saeg.commons.ArrayUtils.indexOf;
+import static br.usp.each.saeg.commons.ArrayUtils.merge;
+import static br.usp.each.saeg.commons.ArrayUtils.toArray;
+
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -159,7 +162,7 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
     }
 
     public int[] getSuccessors(final int insn) {
-        return toArray(successors[insn]);
+        return toArray(successors[insn], new int[0]);
     }
 
     public int[][] getSuccessors() {
@@ -171,7 +174,7 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
     }
 
     public int[] getPredecessors(final int insn) {
-        return toArray(predecessors[insn]);
+        return toArray(predecessors[insn], new int[0]);
     }
 
     public int[][] getPredecessors() {
@@ -221,31 +224,6 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
         }
 
         return Arrays.copyOf(insnPath, indexOf(insnPath, insn) + 1);
-    }
-
-    private static int[] toArray(final Set<Integer> set) {
-        final int[] array = new int[set.size()];
-        final Iterator<Integer> it = set.iterator();
-        int i = 0;
-        while (it.hasNext()) {
-            array[i++] = it.next();
-        }
-        return array;
-    }
-
-    private static int indexOf(final int[] array, final int value) {
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] == value)
-                return i;
-        }
-        return -1;
-    }
-
-    private static int[] merge(final int[] array1, final int[] array2) {
-        final int[] result = new int[array1.length + array2.length];
-        System.arraycopy(array1, 0, result, 0, array1.length);
-        System.arraycopy(array2, 0, result, array1.length, array2.length);
-        return result;
     }
 
 }
