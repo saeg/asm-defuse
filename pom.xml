@@ -138,7 +138,7 @@
 				<artifactId>license-maven-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
-					<header>BSD-NOTICE-TEMPLATE.txt</header>
+					<header>LICENSE-TEMPLATE.txt</header>
 					<properties>
 						<owner>Roberto Araujo</owner>
 						<email>roberto.andrioli@gmail.com</email>
