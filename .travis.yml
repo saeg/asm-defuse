@@ -9,4 +9,4 @@ jdk:
 script: mvn verify
 
 after_success:
-  - mvn jacoco:report coveralls:report
+  - mvn coveralls:report
