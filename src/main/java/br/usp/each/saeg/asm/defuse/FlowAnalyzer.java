@@ -197,6 +197,10 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
         return blocks;
     }
 
+    public int[][] getPaths() {
+        return paths;
+    }
+
     public int[] getPath(final int insn) {
         int[] path = paths[insn];
 
