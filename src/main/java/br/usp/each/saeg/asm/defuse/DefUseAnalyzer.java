@@ -85,7 +85,9 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
 
         for (int i = 0; i < n; i++) {
             final AbstractInsnNode insn = m.instructions.get(i);
-            if (frames[i] != null) {
+            if (frames[i] == null) {
+                duframes[i] = DefUseFrame.NONE;
+            } else {
                 duframes[i] = new DefUseFrame(frames[i], isPredicate(insn.getOpcode()));
             }
             switch (insn.getType()) {
@@ -94,7 +96,7 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
             case AbstractInsnNode.FRAME:
                 break;
             default:
-                if (duframes[i] != null) {
+                if (duframes[i] != DefUseFrame.NONE) {
                     duframes[i].execute(insn, interpreter);
                     vars.addAll(duframes[i].getDefinitions());
                     vars.addAll(duframes[i].getUses());

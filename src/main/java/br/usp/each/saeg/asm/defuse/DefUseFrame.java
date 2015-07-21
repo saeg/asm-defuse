@@ -49,6 +49,8 @@ import org.objectweb.asm.tree.analysis.Interpreter;
 
 public class DefUseFrame extends Frame<Value> {
 
+    public static final DefUseFrame NONE = new DefUseFrame(0, 0);
+
     public final boolean predicate;
 
     private Set<Variable> defs = Collections.emptySet();
