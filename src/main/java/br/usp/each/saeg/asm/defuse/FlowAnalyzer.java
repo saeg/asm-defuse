@@ -132,7 +132,7 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
             final int i = queue[--top];
             int b = leaders[i];
             list.add(b);
-            while (predecessors[blocks[b][0]].size() == 1) {
+            while (predecessors[blocks[b][0]].size() == 1 && blocks[b][0] != 0) {
                 b = leaders[predecessors[blocks[b][0]].iterator().next()];
                 list.add(b);
             }
