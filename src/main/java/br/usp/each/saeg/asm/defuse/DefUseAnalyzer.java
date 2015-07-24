@@ -100,9 +100,13 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
                     duframes[i].execute(insn, interpreter);
                     vars.addAll(duframes[i].getDefinitions());
                     vars.addAll(duframes[i].getUses());
-                    reachDefs(m.instructions, i);
                 }
                 break;
+            }
+        }
+        for (int i = 0; i < n; i++) {
+            if (duframes[i] != DefUseFrame.NONE) {
+                reachDefs(m.instructions, i);
             }
         }
         variables = vars.toArray(new Variable[vars.size()]);
