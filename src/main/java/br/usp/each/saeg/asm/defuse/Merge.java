@@ -54,12 +54,17 @@ public class Merge extends Value {
         value2 = w;
     }
 
+    private Set<Variable> cache;
+
     @Override
     public Set<Variable> getVariables() {
+        if (cache != null) {
+            return cache;
+        }
         final Set<Variable> values = new LinkedHashSet<Variable>();
         values.addAll(value1.getVariables());
         values.addAll(value2.getVariables());
-        return Collections.unmodifiableSet(values);
+        return cache = Collections.unmodifiableSet(values);
     }
 
     @Override
