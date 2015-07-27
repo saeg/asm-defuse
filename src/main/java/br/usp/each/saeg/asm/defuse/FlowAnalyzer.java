@@ -97,16 +97,12 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
             list.add(i);
             while (successors[i].size() == 1) {
                 final int child = successors[i].iterator().next();
-                if (queued[child]) {
+                if (queued[child] || predecessors[child].size() > 1) {
                     break;
                 }
-                if (predecessors[child].size() == 1) {
-                    i = child;
-                    leaders[i] = basicBlock;
-                    list.add(i);
-                } else {
-                    break;
-                }
+                i = child;
+                leaders[i] = basicBlock;
+                list.add(i);
             }
             blocks[basicBlock] = list.toArray();
             list.clear();
