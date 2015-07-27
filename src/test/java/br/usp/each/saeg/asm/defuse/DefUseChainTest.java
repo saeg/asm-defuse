@@ -82,6 +82,13 @@ public class DefUseChainTest {
     }
 
     @Test
+    public void EqualsReturnSameHashCode() {
+        final DefUseChain c1 = new DefUseChain(1, 2, 3, 4);
+        final DefUseChain c2 = new DefUseChain(1, 2, 3, 4);
+        Assert.assertEquals(c1.hashCode(), c2.hashCode());
+    }
+
+    @Test
     public void EqualsASelfReturnTrue() {
         final DefUseChain c1 = new DefUseChain(1, 2, 3);
         Assert.assertTrue(c1.equals(c1));
@@ -108,10 +115,24 @@ public class DefUseChainTest {
     }
 
     @Test
+    public void DifferentDefReturnsDifferentHashCode() {
+        final DefUseChain c1 = new DefUseChain(1, 2, 3);
+        final DefUseChain c2 = new DefUseChain(4, 2, 3);
+        Assert.assertNotEquals(c1.hashCode(), c2.hashCode());
+    }
+
+    @Test
     public void DifferentUseReturnsFalseOnEquals() {
         final DefUseChain c1 = new DefUseChain(1, 2, 3);
         final DefUseChain c2 = new DefUseChain(1, 4, 3);
         Assert.assertFalse(c1.equals(c2));
+    }
+
+    @Test
+    public void DifferentUseReturnsDifferentHashCode() {
+        final DefUseChain c1 = new DefUseChain(1, 2, 3);
+        final DefUseChain c2 = new DefUseChain(1, 4, 3);
+        Assert.assertNotEquals(c1.hashCode(), c2.hashCode());
     }
 
     @Test
@@ -122,10 +143,24 @@ public class DefUseChainTest {
     }
 
     @Test
+    public void DifferentVarReturnsDifferentHashCode() {
+        final DefUseChain c1 = new DefUseChain(1, 2, 3);
+        final DefUseChain c2 = new DefUseChain(1, 2, 4);
+        Assert.assertNotEquals(c1.hashCode(), c2.hashCode());
+    }
+
+    @Test
     public void DifferentTargetReturnsFalseOnEquals() {
         final DefUseChain c1 = new DefUseChain(1, 2, 3, 4);
         final DefUseChain c2 = new DefUseChain(1, 2, 5, 4);
         Assert.assertFalse(c1.equals(c2));
+    }
+
+    @Test
+    public void DifferentTargetReturnsDiffretentHashCode() {
+        final DefUseChain c1 = new DefUseChain(1, 2, 3, 4);
+        final DefUseChain c2 = new DefUseChain(1, 2, 5, 4);
+        Assert.assertNotEquals(c1.hashCode(), c2.hashCode());
     }
 
     @Test
@@ -218,6 +253,27 @@ public class DefUseChainTest {
         basicBlocks[1] = new int[] { 2 };
 
         Assert.assertTrue(DefUseChain.isGlobal(chain, leaders, basicBlocks));
+    }
+
+    @Test
+    public void ToBasicBlockRemoveDuplicates() {
+        final DefUseChain[] chains = new DefUseChain[2];
+        chains[0] = new DefUseChain(0, 2, 4);
+        chains[1] = new DefUseChain(1, 3, 4);
+
+        final int[] leaders = new int[4];
+        leaders[0] = 0;
+        leaders[1] = 0;
+        leaders[2] = 1;
+        leaders[3] = 1;
+
+        final int[][] basicBlocks = new int[2][];
+        basicBlocks[0] = new int[] { 0, 1 };
+        basicBlocks[1] = new int[] { 2, 3 };
+
+        final DefUseChain[] bbChains = DefUseChain.toBasicBlock(chains, leaders, basicBlocks);
+        Assert.assertTrue(ArrayUtils.contains(bbChains, new DefUseChain(0, 1, 4)));
+        Assert.assertEquals(1, bbChains.length);
     }
 
 }

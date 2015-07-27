@@ -93,6 +93,17 @@ public class DefUseChain {
         return true;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + def;
+        result = prime * result + use;
+        result = prime * result + target;
+        result = prime * result + var;
+        return result;
+    }
+
     public static DefUseChain[] globals(final DefUseChain[] chains,
             final int[] leaders, final int[][] basicBlocks) {
 
