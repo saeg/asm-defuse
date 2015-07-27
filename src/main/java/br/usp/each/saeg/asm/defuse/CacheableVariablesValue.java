@@ -29,42 +29,31 @@
  */
 package br.usp.each.saeg.asm.defuse;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 
-public class Merge extends CacheableVariablesValue {
+public abstract class CacheableVariablesValue extends Value {
 
-    public final Value value1;
+    private Set<Variable> cache;
 
-    public final Value value2;
-
-    public Merge(final Type type, final Value value1, final Value value2) {
+    public CacheableVariablesValue(final Type type) {
         super(type);
-        this.value1 = value1;
-        this.value2 = value2;
     }
 
-    public Merge(final Type type, final Value v, final Value w, final Set<AbstractInsnNode> insns) {
+    public CacheableVariablesValue(final Type type, final Set<AbstractInsnNode> insns) {
         super(type, insns);
-        value1 = v;
-        value2 = w;
     }
 
     @Override
-    public Set<Variable> initVariables() {
-        final Set<Variable> values = new LinkedHashSet<Variable>();
-        values.addAll(value1.getVariables());
-        values.addAll(value2.getVariables());
-        return Collections.unmodifiableSet(values);
+    public Set<Variable> getVariables() {
+        if (cache != null)
+            return cache;
+
+        return cache = initVariables();
     }
 
-    @Override
-    public String toString() {
-        return String.format("(%s,%s)", value1, value2);
-    }
+    public abstract Set<Variable> initVariables();
 
 }
