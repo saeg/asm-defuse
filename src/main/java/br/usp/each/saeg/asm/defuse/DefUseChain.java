@@ -124,8 +124,7 @@ public class DefUseChain {
         final DefUseChain[] bbChains = new DefUseChain[chains.length];
         for (final DefUseChain c : chains) {
             if (isGlobal(c, leaders, basicBlocks)) {
-                bbChains[count++] = new DefUseChain(leaders[c.def], leaders[c.use],
-                        c.isPredicateChain() ? leaders[c.target] : -1, c.var);
+                bbChains[count++] = toBasicBlock(c, leaders);
             }
         }
         final List<DefUseChain> l = asList(copyOf(bbChains, count));
@@ -151,6 +150,11 @@ public class DefUseChain {
             }
         }
         return global;
+    }
+
+    public static DefUseChain toBasicBlock(final DefUseChain chain, final int[] leaders) {
+        return new DefUseChain(leaders[chain.def], leaders[chain.use],
+                chain.isPredicateChain() ? leaders[chain.target] : -1, chain.var);
     }
 
 }
