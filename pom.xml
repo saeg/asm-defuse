@@ -167,6 +167,17 @@
 				<groupId>org.eluder.coveralls</groupId>
 				<artifactId>coveralls-maven-plugin</artifactId>
 				<version>3.2.0</version>
+				<dependencies>
+					<!--
+						Override JGit version. Unfortunately the plug-in uses
+						version 4.0.1 that is not compatible with Java 6
+					-->
+					<dependency>
+						<groupId>org.eclipse.jgit</groupId>
+						<artifactId>org.eclipse.jgit</artifactId>
+						<version>3.7.1.201504261725-r</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
