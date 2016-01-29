@@ -8,7 +8,7 @@ jdk:
   - openjdk7
   - openjdk6
 
-script: mvn verify
+script: mvn verify -Ppitest
 
 after_success:
   - mvn coveralls:report
