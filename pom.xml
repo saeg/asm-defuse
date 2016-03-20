@@ -10,6 +10,10 @@
 	<description>asm powered by definitions/uses analysis</description>
 	<inceptionYear>2013</inceptionYear>
 
+	<organization>
+		<name>University of Sao Paulo</name>
+	</organization>
+
 	<licenses>
 		<license>
 			<name>The BSD 3-Clause License</name>
