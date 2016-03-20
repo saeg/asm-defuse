@@ -45,6 +45,11 @@
 		<url>https://github.com/saeg/asm-defuse/issues</url>
 	</issueManagement>
 
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/saeg/asm-defuse</url>
+	</ciManagement>
+
 	<developers>
 		<developer>
 			<email>roberto.andrioli@gmail.com</email>
