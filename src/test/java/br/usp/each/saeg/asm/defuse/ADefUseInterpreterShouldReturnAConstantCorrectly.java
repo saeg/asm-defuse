@@ -94,7 +94,7 @@ public class ADefUseInterpreterShouldReturnAConstantCorrectly {
                     // method type
                     { Opcodes.LDC, Value.REFERENCE_VALUE, Type.getType("()I") },
                     // method handle
-                    { Opcodes.LDC, Value.REFERENCE_VALUE, new Handle(0, "", "", "") }
+                    { Opcodes.LDC, Value.REFERENCE_VALUE, new Handle(0, "", "", "", false) }
 
             }
         );
