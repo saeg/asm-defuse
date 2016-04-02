@@ -80,7 +80,7 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
 
         final Frame<V>[] frames = super.analyze(owner, m);
         if ((m.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
-            return (Frame<V>[]) new Frame<?>[0];
+            return frames;
         }
 
         final boolean[] queued = new boolean[n];

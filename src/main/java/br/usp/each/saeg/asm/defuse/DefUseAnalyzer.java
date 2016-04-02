@@ -60,7 +60,6 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Frame<Value>[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
 
         n = m.instructions.size();
@@ -112,7 +111,7 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
         variables = vars.toArray(new Variable[vars.size()]);
 
         if ((m.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
-            return (Frame<Value>[]) new Frame<?>[0];
+            return frames;
         }
 
         for (int i = 0; i < variables.length; i++) {
