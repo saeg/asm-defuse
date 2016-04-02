@@ -36,8 +36,6 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-import br.usp.each.saeg.asm.defuse.FlowAnalyzer;
-
 public class MaxMethodNodeFlowAnalyzerTest {
 
     private FlowAnalyzer<BasicValue> analyzer;
@@ -153,36 +151,6 @@ public class MaxMethodNodeFlowAnalyzerTest {
         Assert.assertArrayEquals(new int[] { 11, 12, 13, 14, 15 }, analyzer.getBasicBlock(3));
         Assert.assertArrayEquals(new int[] { 20, 21, 22 }, analyzer.getBasicBlock(4));
         Assert.assertArrayEquals(new int[] { 16, 17, 18, 19 }, analyzer.getBasicBlock(5));
-    }
-
-    @Test
-    public void testPaths() {
-        Assert.assertArrayEquals(new int[] { 0 }, analyzer.getPath(0));
-        Assert.assertArrayEquals(new int[] { 0, 1 }, analyzer.getPath(1));
-        Assert.assertArrayEquals(new int[] { 0, 1, 2 }, analyzer.getPath(2));
-        Assert.assertArrayEquals(new int[] { 0, 1, 2, 3 }, analyzer.getPath(3));
-        Assert.assertArrayEquals(new int[] { 0, 1, 2, 3, 4 }, analyzer.getPath(4));
-        Assert.assertArrayEquals(new int[] { 0, 1, 2, 3, 4, 5 }, analyzer.getPath(5));
-        Assert.assertArrayEquals(new int[] { 0, 1, 2, 3, 4, 5, 6 }, analyzer.getPath(6));
-        Assert.assertArrayEquals(new int[] { 7 }, analyzer.getPath(7));
-        Assert.assertArrayEquals(new int[] { 7, 8 }, analyzer.getPath(8));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9 }, analyzer.getPath(9));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10 }, analyzer.getPath(10));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11 }, analyzer.getPath(11));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12 }, analyzer.getPath(12));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13 }, analyzer.getPath(13));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14 }, analyzer.getPath(14));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15 }, analyzer.getPath(15));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 },analyzer.getPath(16));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 },analyzer.getPath(17));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 },analyzer.getPath(18));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 },analyzer.getPath(19));
-        Assert.assertArrayEquals(new int[] { 20 }, analyzer.getPath(20));
-        Assert.assertArrayEquals(new int[] { 20, 21 }, analyzer.getPath(21));
-        Assert.assertArrayEquals(new int[] { 20, 21, 22 }, analyzer.getPath(22));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 23 }, analyzer.getPath(23));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 23, 24 }, analyzer.getPath(24));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 23, 24, 25 }, analyzer.getPath(25));
     }
 
 }

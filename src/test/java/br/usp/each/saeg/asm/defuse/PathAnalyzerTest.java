@@ -44,13 +44,13 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
-public class FlowAnalyzerTest {
+public class PathAnalyzerTest {
 
-    private FlowAnalyzer<BasicValue> analyzer;
+    private PathAnalyzer<BasicValue> analyzer;
 
     @Before
     public void setUp() {
-        analyzer = new FlowAnalyzer<BasicValue>(new BasicInterpreter());
+        analyzer = new PathAnalyzer<BasicValue>(new BasicInterpreter());
     }
 
     @Test
