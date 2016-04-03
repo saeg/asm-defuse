@@ -52,7 +52,9 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import br.usp.each.saeg.asm.defuse.DefUseAnalyzer;
 import br.usp.each.saeg.asm.defuse.DefUseChain;
 import br.usp.each.saeg.asm.defuse.DefUseFrame;
+import br.usp.each.saeg.asm.defuse.DefUseInterpreter;
 import br.usp.each.saeg.asm.defuse.DepthFirstDefUseChainSearch;
+import br.usp.each.saeg.asm.defuse.FlowAnalyzer;
 import br.usp.each.saeg.asm.defuse.Local;
 import br.usp.each.saeg.asm.defuse.MaxMethodNode;
 import br.usp.each.saeg.asm.defuse.ObjectField;
@@ -63,13 +65,17 @@ import br.usp.each.saeg.commons.ArrayUtils;
 
 public class DefUseAnalyzerTest {
 
+    private FlowAnalyzer<Value> flowAnalyzer;
+
     private DefUseAnalyzer analyzer;
 
     private MethodNode mn;
 
     @Before
     public void setUp() {
-        analyzer = new DefUseAnalyzer();
+        final DefUseInterpreter interpreter = new DefUseInterpreter();
+        flowAnalyzer = new FlowAnalyzer<Value>(interpreter);
+        analyzer = new DefUseAnalyzer(flowAnalyzer, interpreter);
     }
 
     public void prepareMethodWhitUnreachableCode() {
@@ -202,9 +208,9 @@ public class DefUseAnalyzerTest {
         DefUseChain[] chains = new DepthFirstDefUseChainSearch().search(
                 analyzer.getDefUseFrames(),
                 analyzer.getVariables(),
-                analyzer.getSuccessors(),
-                analyzer.getPredecessors());
-        chains = DefUseChain.globals(chains, analyzer.getLeaders(), analyzer.getBasicBlocks());
+                flowAnalyzer.getSuccessors(),
+                flowAnalyzer.getPredecessors());
+        chains = DefUseChain.globals(chains, flowAnalyzer.getLeaders(), flowAnalyzer.getBasicBlocks());
         final DefUseChain[] expected = new DefUseChain[23];
 
         expected[0] = new DefUseChain(0, 10, 23, 1);
@@ -289,10 +295,10 @@ public class DefUseAnalyzerTest {
     public void ShouldNotCreateEdgesToUnreachableInstruction() throws AnalyzerException {
         prepareMethodWhitUnreachableCode();
         analyzer.analyze("Owner", mn);
-        Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(0));
-        Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(1));
-        Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(0));
-        Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(1));
+        Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getSuccessors(0));
+        Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getSuccessors(1));
+        Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getPredecessors(0));
+        Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getPredecessors(1));
     }
 
     @Test
@@ -300,27 +306,27 @@ public class DefUseAnalyzerTest {
         prepareMethodWithTryCatchBlock();
         analyzer.analyze("Owner", mn);
 
-        Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(0));
-        Assert.assertArrayEquals(new int[] { 0 }, analyzer.getPredecessors(1));
-        Assert.assertArrayEquals(new int[] { 1 }, analyzer.getPredecessors(2));
-        Assert.assertArrayEquals(new int[] { 2 }, analyzer.getPredecessors(3));
-        Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(4));
-        Assert.assertArrayEquals(new int[] {}, analyzer.getPredecessors(5));
-        Assert.assertArrayEquals(new int[] { 3 }, analyzer.getPredecessors(6));
-        Assert.assertArrayEquals(new int[] { 6 }, analyzer.getPredecessors(7));
+        Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getPredecessors(0));
+        Assert.assertArrayEquals(new int[] { 0 }, flowAnalyzer.getPredecessors(1));
+        Assert.assertArrayEquals(new int[] { 1 }, flowAnalyzer.getPredecessors(2));
+        Assert.assertArrayEquals(new int[] { 2 }, flowAnalyzer.getPredecessors(3));
+        Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getPredecessors(4));
+        Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getPredecessors(5));
+        Assert.assertArrayEquals(new int[] { 3 }, flowAnalyzer.getPredecessors(6));
+        Assert.assertArrayEquals(new int[] { 6 }, flowAnalyzer.getPredecessors(7));
 
-        Assert.assertArrayEquals(new int[] { 1 }, analyzer.getSuccessors(0));
-        Assert.assertArrayEquals(new int[] { 2 }, analyzer.getSuccessors(1));
-        Assert.assertArrayEquals(new int[] { 3 }, analyzer.getSuccessors(2));
-        Assert.assertArrayEquals(new int[] { 6 }, analyzer.getSuccessors(3));
-        Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(4));
-        Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(5));
-        Assert.assertArrayEquals(new int[] { 7 }, analyzer.getSuccessors(6));
-        Assert.assertArrayEquals(new int[] {}, analyzer.getSuccessors(7));
+        Assert.assertArrayEquals(new int[] { 1 }, flowAnalyzer.getSuccessors(0));
+        Assert.assertArrayEquals(new int[] { 2 }, flowAnalyzer.getSuccessors(1));
+        Assert.assertArrayEquals(new int[] { 3 }, flowAnalyzer.getSuccessors(2));
+        Assert.assertArrayEquals(new int[] { 6 }, flowAnalyzer.getSuccessors(3));
+        Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getSuccessors(4));
+        Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getSuccessors(5));
+        Assert.assertArrayEquals(new int[] { 7 }, flowAnalyzer.getSuccessors(6));
+        Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getSuccessors(7));
 
-        Assert.assertArrayEquals(new int[] { 0, 1, 2, 3, 6, 7 }, analyzer.getBasicBlock(0));
+        Assert.assertArrayEquals(new int[] { 0, 1, 2, 3, 6, 7 }, flowAnalyzer.getBasicBlock(0));
 
-        final int[] leaders = analyzer.getLeaders();
+        final int[] leaders = flowAnalyzer.getLeaders();
         Assert.assertEquals(0, leaders[0]);
         Assert.assertEquals(0, leaders[1]);
         Assert.assertEquals(0, leaders[2]);
@@ -373,14 +379,14 @@ public class DefUseAnalyzerTest {
         final DefUseChain[] chains = new DepthFirstDefUseChainSearch().search(
                 analyzer.getDefUseFrames(),
                 analyzer.getVariables(),
-                analyzer.getSuccessors(),
-                analyzer.getPredecessors());
+                flowAnalyzer.getSuccessors(),
+                flowAnalyzer.getPredecessors());
 
-        Assert.assertEquals(0, analyzer.getFrames().length);
+        Assert.assertEquals(0, flowAnalyzer.getFrames().length);
         Assert.assertEquals(0, analyzer.getDefUseFrames().length);
         Assert.assertEquals(1, analyzer.getVariables().length);
         Assert.assertEquals(0, chains.length);
-        Assert.assertEquals(0, analyzer.getLeaders().length);
+        Assert.assertEquals(0, flowAnalyzer.getLeaders().length);
     }
 
     @Test
@@ -393,14 +399,14 @@ public class DefUseAnalyzerTest {
         final DefUseChain[] chains = new DepthFirstDefUseChainSearch().search(
                 analyzer.getDefUseFrames(),
                 analyzer.getVariables(),
-                analyzer.getSuccessors(),
-                analyzer.getPredecessors());
+                flowAnalyzer.getSuccessors(),
+                flowAnalyzer.getPredecessors());
 
-        Assert.assertEquals(0, analyzer.getFrames().length);
+        Assert.assertEquals(0, flowAnalyzer.getFrames().length);
         Assert.assertEquals(0, analyzer.getDefUseFrames().length);
         Assert.assertEquals(1, analyzer.getVariables().length);
         Assert.assertEquals(0, chains.length);
-        Assert.assertEquals(0, analyzer.getLeaders().length);
+        Assert.assertEquals(0, flowAnalyzer.getLeaders().length);
     }
 
     @Test
@@ -413,14 +419,14 @@ public class DefUseAnalyzerTest {
         final DefUseChain[] chains = new DepthFirstDefUseChainSearch().search(
                 analyzer.getDefUseFrames(),
                 analyzer.getVariables(),
-                analyzer.getSuccessors(),
-                analyzer.getPredecessors());
+                flowAnalyzer.getSuccessors(),
+                flowAnalyzer.getPredecessors());
 
-        Assert.assertEquals(0, analyzer.getFrames().length);
+        Assert.assertEquals(0, flowAnalyzer.getFrames().length);
         Assert.assertEquals(0, analyzer.getDefUseFrames().length);
         Assert.assertEquals(0, analyzer.getVariables().length);
         Assert.assertEquals(0, chains.length);
-        Assert.assertEquals(0, analyzer.getLeaders().length);
+        Assert.assertEquals(0, flowAnalyzer.getLeaders().length);
     }
 
     @Test
@@ -482,8 +488,8 @@ public class DefUseAnalyzerTest {
         mn.tryCatchBlocks = Collections.emptyList();
         analyzer.analyze("Owner", mn);
 
-        final int[] leaders = analyzer.getLeaders();
-        final int[][] bBlocks = analyzer.getBasicBlocks();
+        final int[] leaders = flowAnalyzer.getLeaders();
+        final int[][] bBlocks = flowAnalyzer.getBasicBlocks();
 
         Assert.assertEquals(0, leaders[0]);
         Assert.assertEquals(0, leaders[1]);

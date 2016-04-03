@@ -37,10 +37,13 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Frame;
 
-public class DefUseAnalyzer extends FlowAnalyzer<Value> {
+public class DefUseAnalyzer implements Opcodes {
+
+    private final Analyzer<Value> analyzer;
 
     private final DefUseInterpreter interpreter;
 
@@ -55,17 +58,21 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
     }
 
     private DefUseAnalyzer(final DefUseInterpreter interpreter) {
-        super(interpreter);
+        this(new Analyzer<Value>(interpreter), interpreter);
+    }
+
+    public DefUseAnalyzer(final Analyzer<Value> analyzer, final DefUseInterpreter interpreter) {
+        this.analyzer = analyzer;
         this.interpreter = interpreter;
     }
 
-    @Override
-    public Frame<Value>[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
+    public DefUseFrame[] analyze(final String owner, final MethodNode m)
+            throws AnalyzerException {
 
         n = m.instructions.size();
         duframes = new DefUseFrame[n];
 
-        final Frame<Value>[] frames = super.analyze(owner, m);
+        final Frame<Value>[] frames = analyzer.analyze(owner, m);
         final Set<Variable> vars = new LinkedHashSet<Variable>();
 
         final Type[] args = Type.getArgumentTypes(m.desc);
@@ -111,7 +118,7 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
         variables = vars.toArray(new Variable[vars.size()]);
 
         if (frames.length == 0) {
-            return frames;
+            return duframes;
         }
 
         for (int i = 0; i < variables.length; i++) {
@@ -126,7 +133,7 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
             }
         }
 
-        return frames;
+        return duframes;
     }
 
     private void reachDefs(final InsnList instructions, final int i) {

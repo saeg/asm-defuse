@@ -44,8 +44,11 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import br.usp.each.saeg.asm.defuse.DefUseAnalyzer;
 import br.usp.each.saeg.asm.defuse.DefUseChain;
 import br.usp.each.saeg.asm.defuse.DefUseChainSearch;
+import br.usp.each.saeg.asm.defuse.DefUseInterpreter;
 import br.usp.each.saeg.asm.defuse.DepthFirstDefUseChainSearch;
+import br.usp.each.saeg.asm.defuse.FlowAnalyzer;
 import br.usp.each.saeg.asm.defuse.MaxMethodNode;
+import br.usp.each.saeg.asm.defuse.Value;
 import br.usp.each.saeg.commons.ArrayUtils;
 
 @RunWith(Parameterized.class)
@@ -60,6 +63,8 @@ public class DefUseChainSearchTest {
 
     private final DefUseChainSearch search;
 
+    private FlowAnalyzer<Value> flowAnalyzer;
+
     private DefUseAnalyzer analyzer;
 
     private MethodNode mn;
@@ -70,7 +75,9 @@ public class DefUseChainSearchTest {
 
     @Before
     public void setUp() {
-        analyzer = new DefUseAnalyzer();
+        final DefUseInterpreter interpreter = new DefUseInterpreter();
+        flowAnalyzer = new FlowAnalyzer<Value>(interpreter);
+        analyzer = new DefUseAnalyzer(flowAnalyzer, interpreter);
         mn = new MaxMethodNode();
     }
 
@@ -80,7 +87,7 @@ public class DefUseChainSearchTest {
 
         final DefUseChain[] chains = search.search(
                 analyzer.getDefUseFrames(), analyzer.getVariables(),
-                analyzer.getSuccessors(), analyzer.getPredecessors());
+                flowAnalyzer.getSuccessors(), flowAnalyzer.getPredecessors());
 
         final DefUseChain[] expected = new DefUseChain[26];
 
