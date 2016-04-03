@@ -51,7 +51,7 @@ public class PathAnalyzer<V extends Value> extends FlowAnalyzer<V> {
     @Override
     public Frame<V>[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
         final Frame<V>[] frames = super.analyze(owner, m);
-        if ((m.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
+        if (frames.length == 0) {
             return frames;
         }
 
@@ -86,7 +86,6 @@ public class PathAnalyzer<V extends Value> extends FlowAnalyzer<V> {
                 }
             }
         }
-
 
         return frames;
     }

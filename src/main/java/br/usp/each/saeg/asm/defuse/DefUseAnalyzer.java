@@ -110,7 +110,7 @@ public class DefUseAnalyzer extends FlowAnalyzer<Value> {
         }
         variables = vars.toArray(new Variable[vars.size()]);
 
-        if ((m.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
+        if (frames.length == 0) {
             return frames;
         }
 

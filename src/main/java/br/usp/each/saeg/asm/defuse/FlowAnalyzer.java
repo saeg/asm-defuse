@@ -74,7 +74,7 @@ public class FlowAnalyzer<V extends Value> extends Analyzer<V> {
         }
 
         final Frame<V>[] frames = super.analyze(owner, m);
-        if ((m.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
+        if (frames.length == 0) {
             return frames;
         }
 
