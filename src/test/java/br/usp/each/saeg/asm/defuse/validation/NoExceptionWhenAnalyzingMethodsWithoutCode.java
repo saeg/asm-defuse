@@ -50,6 +50,7 @@ import org.objectweb.asm.tree.analysis.Frame;
 import br.usp.each.saeg.asm.defuse.DefUseAnalyzer;
 import br.usp.each.saeg.asm.defuse.DefUseFrame;
 import br.usp.each.saeg.asm.defuse.FlowAnalyzer;
+import br.usp.each.saeg.asm.defuse.PathAnalyzer;
 import br.usp.each.saeg.asm.defuse.Value;
 import br.usp.each.saeg.asm.defuse.Variable;
 import br.usp.each.saeg.asm.defuse.validation.targets.Interface;
@@ -87,6 +88,16 @@ public class NoExceptionWhenAnalyzingMethodsWithoutCode {
         Assert.assertEquals(0, predecessors.length);
         Assert.assertEquals(0, basicBlocks.length);
         Assert.assertEquals(0, leaders.length);
+    }
+
+    @Test
+    public void pathAnalyzer() throws AnalyzerException {
+        final PathAnalyzer<BasicValue> analyzer = new PathAnalyzer<BasicValue>(new BasicInterpreter());
+        final Frame<BasicValue>[] frames = analyzer.analyze("owner", mn);
+        final int[][] paths = analyzer.getPaths();
+
+        Assert.assertEquals(0, frames.length);
+        Assert.assertEquals(0, paths.length);
     }
 
     @Test

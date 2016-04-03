@@ -51,11 +51,10 @@ public class PathAnalyzer<V extends Value> extends FlowAnalyzer<V> {
     @Override
     public Frame<V>[] analyze(final String owner, final MethodNode m) throws AnalyzerException {
         final Frame<V>[] frames = super.analyze(owner, m);
+        paths = new int[n][];
         if (frames.length == 0) {
             return frames;
         }
-
-        paths = new int[n][];
 
         final boolean[] queued = new boolean[n];
         final int[] queue = new int[n];
