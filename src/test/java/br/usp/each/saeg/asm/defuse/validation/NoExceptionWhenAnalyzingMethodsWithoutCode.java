@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -44,9 +45,13 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.BasicValue;
+import org.objectweb.asm.tree.analysis.Frame;
 
 import br.usp.each.saeg.asm.defuse.DefUseAnalyzer;
+import br.usp.each.saeg.asm.defuse.DefUseFrame;
 import br.usp.each.saeg.asm.defuse.FlowAnalyzer;
+import br.usp.each.saeg.asm.defuse.Value;
+import br.usp.each.saeg.asm.defuse.Variable;
 import br.usp.each.saeg.asm.defuse.validation.targets.Interface;
 import br.usp.each.saeg.asm.defuse.validation.targets.Native;
 
@@ -70,12 +75,30 @@ public class NoExceptionWhenAnalyzingMethodsWithoutCode {
 
     @Test
     public void flowAnalyzer() throws AnalyzerException {
-        new FlowAnalyzer<BasicValue>(new BasicInterpreter()).analyze("owner", mn);
+        final FlowAnalyzer<BasicValue> analyzer = new FlowAnalyzer<BasicValue>(new BasicInterpreter());
+        final Frame<BasicValue>[] frames = analyzer.analyze("owner", mn);
+        final int[][] successors = analyzer.getSuccessors();
+        final int[][] predecessors = analyzer.getPredecessors();
+        final int[][] basicBlocks = analyzer.getBasicBlocks();
+        final int[] leaders = analyzer.getLeaders();
+
+        Assert.assertEquals(0, frames.length);
+        Assert.assertEquals(0, successors.length);
+        Assert.assertEquals(0, predecessors.length);
+        Assert.assertEquals(0, basicBlocks.length);
+        Assert.assertEquals(0, leaders.length);
     }
 
     @Test
     public void defUseAnalyzer() throws AnalyzerException {
-        new DefUseAnalyzer().analyze("owner", mn);
+        final DefUseAnalyzer analyzer = new DefUseAnalyzer();
+        final Frame<Value>[] frames = analyzer.analyze("owner", mn);
+        final DefUseFrame[] duframes = analyzer.getDefUseFrames();
+        final Variable[] variables = analyzer.getVariables();
+
+        Assert.assertEquals(0, frames.length);
+        Assert.assertEquals(0, duframes.length);
+        Assert.assertEquals(1, variables.length); // The methods are not static!
     }
 
 }
