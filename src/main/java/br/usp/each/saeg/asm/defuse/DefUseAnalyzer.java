@@ -51,8 +51,6 @@ public class DefUseAnalyzer implements Opcodes {
 
     private Variable[] variables;
 
-    private int n;
-
     public DefUseAnalyzer() {
         this(new DefUseInterpreter());
     }
@@ -69,7 +67,7 @@ public class DefUseAnalyzer implements Opcodes {
     public DefUseFrame[] analyze(final String owner, final MethodNode m)
             throws AnalyzerException {
 
-        n = m.instructions.size();
+        int n = m.instructions.size();
         duframes = new DefUseFrame[n];
 
         final Frame<Value>[] frames = analyzer.analyze(owner, m);
