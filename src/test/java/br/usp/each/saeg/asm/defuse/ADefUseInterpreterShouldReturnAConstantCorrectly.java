@@ -100,7 +100,7 @@ public class ADefUseInterpreterShouldReturnAConstantCorrectly {
         );
     }
 
-    private AbstractInsnNode insn;
+    private final AbstractInsnNode insn;
 
     private final Value expected;
 

@@ -58,7 +58,7 @@ public class ADefUseInterpreterNaryOperationShouldReturnInvoke {
         });
     }
 
-    private AbstractInsnNode insn;
+    private final AbstractInsnNode insn;
 
     public ADefUseInterpreterNaryOperationShouldReturnInvoke(final int opcode) {
         if (opcode == Opcodes.INVOKEDYNAMIC) {

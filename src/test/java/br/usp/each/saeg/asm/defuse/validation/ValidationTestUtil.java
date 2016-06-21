@@ -51,7 +51,7 @@ public class ValidationTestUtil {
     }
 
     public static MethodNode getMethodNode(
-            final ClassNode cn, final String name, final String desc) throws IOException {
+            final ClassNode cn, final String name, final String desc) {
         for (final MethodNode mn : cn.methods) {
             if (mn.name.equals(name) && mn.desc.equals(desc)) {
                 return mn;
