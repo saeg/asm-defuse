@@ -79,9 +79,9 @@ public class DefUseAnalyzer implements Opcodes {
             final Type ctype = Type.getObjectType(owner);
             vars.add(new Local(ctype, local++));
         }
-        for (int i = 0; i < args.length; ++i) {
-            vars.add(new Local(args[i], local++));
-            if (args[i].getSize() == 2) {
+        for (Type type : args) {
+            vars.add(new Local(type, local++));
+            if (type.getSize() == 2) {
                 local++;
             }
         }
