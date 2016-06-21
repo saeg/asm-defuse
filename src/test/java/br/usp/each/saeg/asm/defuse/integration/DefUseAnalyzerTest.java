@@ -78,7 +78,7 @@ public class DefUseAnalyzerTest {
         analyzer = new DefUseAnalyzer(flowAnalyzer, interpreter);
     }
 
-    public void prepareMethodWhitUnreachableCode() {
+    public void prepareMethodWithUnreachableCode() {
         mn = new MethodNode();
         mn.instructions.add(new InsnNode(Opcodes.RETURN));
         // unreachable instruction (frame will be null)
@@ -90,7 +90,7 @@ public class DefUseAnalyzerTest {
         mn.tryCatchBlocks = Collections.emptyList();
     }
 
-    public void prepareMethodWhitUnreachableCodeThatManipuleteVariableArrayAndStack() {
+    public void prepareMethodWithUnreachableCodeThatManipulateVariableArrayAndStack() {
         mn = new MethodNode();
         mn.instructions.add(new InsnNode(Opcodes.RETURN));
         // unreachable instruction (frame will be null)
@@ -257,7 +257,7 @@ public class DefUseAnalyzerTest {
 
     @Test
     public void ShouldNotThrowAnExceptionWhenAFrameIsNull() {
-        prepareMethodWhitUnreachableCode();
+        prepareMethodWithUnreachableCode();
         Exception exception = null;
         try {
             analyzer.analyze("Owner", mn);
@@ -269,7 +269,7 @@ public class DefUseAnalyzerTest {
 
     @Test
     public void ShouldNotThrowAnExceptionWhenExecuteUnreachableCode() {
-        prepareMethodWhitUnreachableCodeThatManipuleteVariableArrayAndStack();
+        prepareMethodWithUnreachableCodeThatManipulateVariableArrayAndStack();
         Exception exception = null;
         try {
             analyzer.analyze("Owner", mn);
@@ -293,7 +293,7 @@ public class DefUseAnalyzerTest {
 
     @Test
     public void ShouldNotCreateEdgesToUnreachableInstruction() throws AnalyzerException {
-        prepareMethodWhitUnreachableCode();
+        prepareMethodWithUnreachableCode();
         analyzer.analyze("Owner", mn);
         Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getSuccessors(0));
         Assert.assertArrayEquals(new int[] {}, flowAnalyzer.getSuccessors(1));
@@ -354,7 +354,7 @@ public class DefUseAnalyzerTest {
     }
 
     @Test
-    public void UseOfParameterdWithoutDefinition() throws AnalyzerException {
+    public void UseOfParametersWithoutDefinition() throws AnalyzerException {
         mn = new MethodNode();
         mn.instructions.add(new VarInsnNode(Opcodes.ILOAD, 0));
         mn.instructions.add(new InsnNode(Opcodes.IRETURN));

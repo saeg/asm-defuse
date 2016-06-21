@@ -159,7 +159,7 @@ public class DefUseChainTest {
     }
 
     @Test
-    public void DifferentTargetReturnsDiffretentHashCode() {
+    public void DifferentTargetReturnsDifferentHashCode() {
         final DefUseChain c1 = new DefUseChain(1, 2, 3, 4);
         final DefUseChain c2 = new DefUseChain(1, 2, 5, 4);
         Assert.assertNotEquals(c1.hashCode(), c2.hashCode());

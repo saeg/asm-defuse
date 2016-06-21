@@ -47,7 +47,7 @@ public class MaxMethodNodeFlowAnalyzerTest {
     }
 
     @Test
-    public void testSucessors() {
+    public void testSuccessors() {
         Assert.assertArrayEquals(new int[] { 1 }, analyzer.getSuccessors(0));
         Assert.assertArrayEquals(new int[] { 2 }, analyzer.getSuccessors(1));
         Assert.assertArrayEquals(new int[] { 3 }, analyzer.getSuccessors(2));

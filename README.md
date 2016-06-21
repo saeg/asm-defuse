@@ -7,7 +7,7 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/557263cf3935300021000040/badge.svg?style=flat)](https://www.versioneye.com/user/projects/557263cf3935300021000040)
 [![Maven Central](https://img.shields.io/maven-central/v/br.usp.each.saeg/asm-defuse.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/br.usp.each.saeg/asm-defuse)
 
-ASM-DefUse extends [ASM](http://asm.ow2.org/) analysis API with control- and data-flow algorithmns for definition/uses analysis.
+ASM-DefUse extends [ASM](http://asm.ow2.org/) analysis API with control- and data-flow algorithms for definition/uses analysis.
 
 ## Requirements
 
