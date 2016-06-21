@@ -31,7 +31,7 @@ package br.usp.each.saeg.asm.defuse;
 
 public interface DefUseChainSearch {
 
-    public DefUseChain[] search(final DefUseFrame[] frames, final Variable[] variables,
+    DefUseChain[] search(final DefUseFrame[] frames, final Variable[] variables,
             final int[][] adjacencyListSucc, final int[][] adjacencyListPred);
 
 }
