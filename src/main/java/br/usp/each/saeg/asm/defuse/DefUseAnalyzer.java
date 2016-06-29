@@ -67,7 +67,7 @@ public class DefUseAnalyzer implements Opcodes {
     public DefUseFrame[] analyze(final String owner, final MethodNode m)
             throws AnalyzerException {
 
-        int n = m.instructions.size();
+        final int n = m.instructions.size();
         duframes = new DefUseFrame[n];
 
         final Frame<Value>[] frames = analyzer.analyze(owner, m);
@@ -79,7 +79,7 @@ public class DefUseAnalyzer implements Opcodes {
             final Type ctype = Type.getObjectType(owner);
             vars.add(new Local(ctype, local++));
         }
-        for (Type type : args) {
+        for (final Type type : args) {
             vars.add(new Local(type, local++));
             if (type.getSize() == 2) {
                 local++;

@@ -64,10 +64,10 @@ public class MaxMethodNodePathAnalyzerTest {
         Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13 }, analyzer.getPath(13));
         Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14 }, analyzer.getPath(14));
         Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15 }, analyzer.getPath(15));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 },analyzer.getPath(16));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 },analyzer.getPath(17));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 },analyzer.getPath(18));
-        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 },analyzer.getPath(19));
+        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, analyzer.getPath(16));
+        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 }, analyzer.getPath(17));
+        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 }, analyzer.getPath(18));
+        Assert.assertArrayEquals(new int[] { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 }, analyzer.getPath(19));
         Assert.assertArrayEquals(new int[] { 20 }, analyzer.getPath(20));
         Assert.assertArrayEquals(new int[] { 20, 21 }, analyzer.getPath(21));
         Assert.assertArrayEquals(new int[] { 20, 21, 22 }, analyzer.getPath(22));
