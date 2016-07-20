@@ -3,7 +3,7 @@
 
 	<groupId>br.usp.each.saeg</groupId>
 	<artifactId>asm-defuse</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>asm-defuse</name>
 	<url>https://github.com/saeg/asm-defuse</url>
@@ -26,7 +26,7 @@
 		<url>https://github.com/saeg/asm-defuse</url>
 		<connection>scm:git:https://github.com/saeg/asm-defuse.git</connection>
 		<developerConnection>scm:git:git@github.com:saeg/asm-defuse.git</developerConnection>
-		<tag>asm-defuse-0.0.4</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>
