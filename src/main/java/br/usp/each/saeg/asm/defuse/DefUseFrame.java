@@ -84,7 +84,7 @@ public class DefUseFrame extends Frame<Value> {
     public void execute(final AbstractInsnNode insn, final Interpreter<Value> interpreter)
             throws AnalyzerException {
 
-        Value value1, value2;
+        Value value1, value2, value3;
         List<Value> values;
         int var;
         Variable variable;
@@ -155,7 +155,14 @@ public class DefUseFrame extends Frame<Value> {
         case Opcodes.BASTORE:
         case Opcodes.CASTORE:
         case Opcodes.SASTORE:
-            super.execute(insn, interpreter);
+            value3 = pop();
+            value2 = pop();
+            value1 = pop();
+            uses = new LinkedHashSet<Variable>();
+            uses.addAll(value3.getVariables());
+            uses.addAll(value2.getVariables());
+            uses.addAll(value1.getVariables());
+            uses = Collections.unmodifiableSet(uses);
             break;
         case Opcodes.POP:
             value1 = pop();
