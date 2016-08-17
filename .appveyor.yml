@@ -1,0 +1,13 @@
+cache:
+  - C:\Users\appveyor\apache-maven-3.3.9
+  - C:\Users\appveyor\.m2
+
+install:
+  - if not exist C:\Users\appveyor\apache-maven-3.3.9 (
+      curl -LsS "http://www.apache.org/dyn/closer.cgi?action=download&filename=maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip" > apache-maven-3.3.9-bin.zip &&
+      unzip apache-maven-3.3.9-bin.zip -d C:\Users\appveyor
+    )
+  - SET PATH=C:\Users\appveyor\apache-maven-3.3.9\bin;%PATH%
+
+build_script:
+  - mvn verify
