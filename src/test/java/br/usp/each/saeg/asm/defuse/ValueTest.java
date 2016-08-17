@@ -144,7 +144,7 @@ public class ValueTest {
 
     @Test
     public void DifferentClassReturnsFalseOnEquals() {
-        final Value other = Mockito.mock(Value.class);
+        final Value other = mock(Value.class);
         Assert.assertFalse(value.equals(other));
     }
 
@@ -208,7 +208,7 @@ public class ValueTest {
 
     @Test
     public void ValueToString() {
-        final Type type = Mockito.mock(Type.class);
+        final Type type = mock(Type.class);
         final Value value = new Value(type);
         Mockito.when(type.getDescriptor()).thenReturn("Some Value");
         Assert.assertEquals("Some Value", value.toString());
