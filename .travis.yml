@@ -2,7 +2,12 @@ language: java
 
 sudo: false
 
+dist: precise
+
 addons:
+  hosts:
+    - travis
+  hostname: travis
   apt:
     packages:
       - oracle-java9-installer
