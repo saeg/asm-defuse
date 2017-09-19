@@ -178,6 +178,8 @@ public class DefUseChainTest {
         basicBlocks[0] = new int[] { 0, 1 };
 
         Assert.assertEquals(0, DefUseChain.toBasicBlock(chains, leaders, basicBlocks).length);
+        Assert.assertFalse(DefUseChain.isGlobal(chains[0], leaders, basicBlocks));
+        Assert.assertTrue(DefUseChain.isLocal(chains[0], leaders, basicBlocks));
     }
 
     @Test
@@ -198,6 +200,8 @@ public class DefUseChainTest {
         final DefUseChain[] bbChains = DefUseChain.toBasicBlock(chains, leaders, basicBlocks);
         Assert.assertTrue(ArrayUtils.contains(bbChains, new DefUseChain(0, 1, 5)));
         Assert.assertEquals(1, bbChains.length);
+        Assert.assertTrue(DefUseChain.isGlobal(chains[0], leaders, basicBlocks));
+        Assert.assertFalse(DefUseChain.isLocal(chains[0], leaders, basicBlocks));
     }
 
     @Test
@@ -220,6 +224,8 @@ public class DefUseChainTest {
         final DefUseChain[] bbChains = DefUseChain.toBasicBlock(chains, leaders, basicBlocks);
         Assert.assertTrue(ArrayUtils.contains(bbChains, new DefUseChain(0, 1, 2, 5)));
         Assert.assertEquals(1, bbChains.length);
+        Assert.assertTrue(DefUseChain.isGlobal(chains[0], leaders, basicBlocks));
+        Assert.assertFalse(DefUseChain.isLocal(chains[0], leaders, basicBlocks));
     }
 
     @Test
@@ -239,6 +245,8 @@ public class DefUseChainTest {
         final DefUseChain[] bbChains = DefUseChain.toBasicBlock(chains, leaders, basicBlocks);
         Assert.assertTrue(ArrayUtils.contains(bbChains, new DefUseChain(0, 0, 1, 3)));
         Assert.assertEquals(1, bbChains.length);
+        Assert.assertTrue(DefUseChain.isGlobal(chains[0], leaders, basicBlocks));
+        Assert.assertFalse(DefUseChain.isLocal(chains[0], leaders, basicBlocks));
     }
 
     @Test
@@ -255,6 +263,7 @@ public class DefUseChainTest {
         basicBlocks[1] = new int[] { 2 };
 
         Assert.assertTrue(DefUseChain.isGlobal(chain, leaders, basicBlocks));
+        Assert.assertFalse(DefUseChain.isLocal(chain, leaders, basicBlocks));
     }
 
     @Test

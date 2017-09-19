@@ -117,6 +117,19 @@ public class DefUseChain {
         return copyOf(globals, count);
     }
 
+    public static DefUseChain[] locals(final DefUseChain[] chains,
+            final int[] leaders, final int[][] basicBlocks) {
+
+        int count = 0;
+        final DefUseChain[] locals = new DefUseChain[chains.length];
+        for (final DefUseChain c : chains) {
+            if (isLocal(c, leaders, basicBlocks)) {
+                locals[count++] = c;
+            }
+        }
+        return copyOf(locals, count);
+    }
+
     public static DefUseChain[] toBasicBlock(final DefUseChain[] chains,
             final int[] leaders, final int[][] basicBlocks) {
 
@@ -150,6 +163,12 @@ public class DefUseChain {
             }
         }
         return global;
+    }
+
+    public static boolean isLocal(final DefUseChain chain,
+            final int[] leaders, final int[][] basicBlocks) {
+
+        return !isGlobal(chain, leaders, basicBlocks);
     }
 
     public static DefUseChain toBasicBlock(final DefUseChain chain, final int[] leaders) {

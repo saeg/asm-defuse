@@ -256,6 +256,36 @@ public class DefUseAnalyzerTest {
     }
 
     @Test
+    public void testDefUseChainsLocal() throws AnalyzerException {
+        mn = new MaxMethodNode();
+        analyzer.analyze("Owner", mn);
+        DefUseChain[] chains = new DepthFirstDefUseChainSearch().search(
+                analyzer.getDefUseFrames(),
+                analyzer.getVariables(),
+                flowAnalyzer.getSuccessors(),
+                flowAnalyzer.getPredecessors());
+        chains = DefUseChain.locals(chains, flowAnalyzer.getLeaders(), flowAnalyzer.getBasicBlocks());
+        final DefUseChain[] expected = new DefUseChain[3];
+
+        expected[0] = new DefUseChain(0, 6, 0);
+        expected[1] = new DefUseChain(1, 4, 2);
+        expected[2] = new DefUseChain(4, 6, 2); // Bug/Known limitation here
+
+        Assert.assertEquals(expected.length, chains.length);
+
+        final StringBuilder message = new StringBuilder();
+        for (int i = 0; i < expected.length; i++) {
+            if (ArrayUtils.indexOf(chains, expected[i]) == -1) {
+                message.append("Not found dua: ").append(i).append('\n');
+            }
+        }
+
+        if (message.length() > 0) {
+            Assert.fail(message.toString());
+        }
+    }
+
+    @Test
     public void ShouldNotThrowAnExceptionWhenAFrameIsNull() {
         prepareMethodWithUnreachableCode();
         Exception exception = null;
