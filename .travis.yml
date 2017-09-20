@@ -2,34 +2,12 @@ language: java
 
 sudo: false
 
-dist: precise
-
-addons:
-  hosts:
-    - travis
-  hostname: travis
-  apt:
-    packages:
-      - oracle-java9-installer
-
-env:
-  - JDK=oraclejdk9 MAVEN_SKIP_RC=true
-  - JDK=oraclejdk8
-  - JDK=oraclejdk7
-  - JDK=openjdk7
-  - JDK=openjdk6
-
-before_install:
-  - remove_dir_from_path $JAVA_HOME/bin
-  - export JAVA_HOME=/usr/lib/jvm/java-9-oracle
-  - export PATH=$JAVA_HOME/bin:$PATH
+jdk:
+  - oraclejdk9
+  - oraclejdk8
+  - openjdk7
 
 install: true
-
-before_script:
-  - if [[ "$JDK" != "oraclejdk9" ]]; then jdk_switcher use $JDK; fi
-  - java -Xmx32m -version
-  - javac -J-Xmx32m -version
 
 script: mvn verify -Ppitest
 
