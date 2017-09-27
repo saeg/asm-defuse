@@ -44,7 +44,7 @@ public class ValidationTestUtil {
         final String file = "/" + target.getName().replace('.', '/') + ".class";
         final InputStream is = ValidationTestUtil.class.getResourceAsStream(file);
         final ClassReader classReader = new ClassReader(is);
-        final ClassNode cn = new ClassNode(Opcodes.ASM5);
+        final ClassNode cn = new ClassNode(Opcodes.ASM6);
         classReader.accept(cn, 0);
         is.close();
         return cn;
