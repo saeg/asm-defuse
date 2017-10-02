@@ -14,10 +14,10 @@ jdk:
   - openjdk6
 
 before_script:
-  - if [[ "$JDK" != "openjdk6" ]]; then wget https://archive.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.zip; fi
-  - if [[ "$JDK" != "openjdk6" ]]; then unzip -qq apache-maven-3.2.5-bin.zip -d ../; fi
-  - if [[ "$JDK" != "openjdk6" ]]; then export M2_HOME=$PWD/../apache-maven-3.2.5; fi
-  - if [[ "$JDK" != "openjdk6" ]]; then export PATH=$M2_HOME/bin:$PATH; fi
+  - wget https://archive.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.zip
+  - unzip -qq apache-maven-3.2.5-bin.zip -d ../
+  - export M2_HOME=$PWD/../apache-maven-3.2.5
+  - export PATH=$M2_HOME/bin:$PATH
 
 install: true
 
