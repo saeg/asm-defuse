@@ -106,6 +106,9 @@
 					<excludes>
 						<exclude>pom.xml</exclude>
 						<exclude>.appveyor.yml</exclude>
+						<exclude>mvnw</exclude>
+						<exclude>mvnw.cmd</exclude>
+						<exclude>.mvn/**</exclude>
 					</excludes>
 				</configuration>
 				<executions>
