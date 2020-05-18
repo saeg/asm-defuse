@@ -16,5 +16,7 @@ jobs:
     - uses: actions/setup-java@v1
       with:
         java-version: 8
+    - name: Java version
+      run: java -version && javac -version
     - name: Build
       run: ./mvnw verify -Ppitest
