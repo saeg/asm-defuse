@@ -46,8 +46,8 @@
 	</issueManagement>
 
 	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.org/saeg/asm-defuse</url>
+		<system>GitHub Actions</system>
+		<url>https://github.com/saeg/asm-defuse/actions</url>
 	</ciManagement>
 
 	<developers>
@@ -105,7 +105,6 @@
 					</properties>
 					<excludes>
 						<exclude>pom.xml</exclude>
-						<exclude>.appveyor.yml</exclude>
 						<exclude>.github/**</exclude>
 						<exclude>mvnw</exclude>
 						<exclude>mvnw.cmd</exclude>
