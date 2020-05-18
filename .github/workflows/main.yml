@@ -21,4 +21,4 @@ jobs:
     - name: Java version
       run: java -version && javac -version
     - name: Build
-      run: ./mvnw verify -Ppitest
+      run: ./mvnw verify -Ppitest -s .mvn/settings.xml
