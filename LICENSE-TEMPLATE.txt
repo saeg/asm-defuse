@@ -1,5 +1,5 @@
 ${project.name}: ${project.description} 
-Copyright (c) ${project.inceptionYear}, 2018 ${owner} (${email})
+Copyright (c) ${project.inceptionYear}, 2020 ${owner} (${email})
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
