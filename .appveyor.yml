@@ -1,5 +1,0 @@
-cache:
-  - C:\Users\appveyor\.m2
-
-build_script:
-  - .\mvnw verify
