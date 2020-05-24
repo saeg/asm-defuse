@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.objectweb.asm.ConstantDynamic;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -48,6 +49,7 @@ import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
+@SuppressWarnings("deprecation")
 public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 
     public DefUseInterpreter() {
@@ -129,6 +131,9 @@ public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
                 }
             } else if (cst instanceof Handle) {
                 return Value.REFERENCE_VALUE;
+            } else if (cst instanceof ConstantDynamic) {
+                final String desc = ((ConstantDynamic) cst).getDescriptor();
+                return newValue(Type.getType(desc));
             } else {
                 throw new IllegalArgumentException("Illegal LDC constant " + cst);
             }
