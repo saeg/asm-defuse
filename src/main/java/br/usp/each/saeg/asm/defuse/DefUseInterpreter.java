@@ -49,11 +49,10 @@ import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.tree.analysis.Interpreter;
 
-@SuppressWarnings("deprecation")
 public class DefUseInterpreter extends Interpreter<Value> implements Opcodes {
 
     public DefUseInterpreter() {
-        super(ASM6);
+        super(ASM7);
     }
 
     @Override
