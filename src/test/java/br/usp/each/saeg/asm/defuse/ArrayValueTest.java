@@ -40,7 +40,7 @@ import org.objectweb.asm.Type;
 
 public class ArrayValueTest {
 
-    private static final Type type = Mockito.mock(Type.class);
+    private static final Type type = Type.getType("I");
     private static final Set<Variable> value1Vars = Collections.singleton((Variable) new VariableImpl(type));
     private static final Set<Variable> value2Vars = Collections.singleton((Variable) new VariableImpl(type));
 

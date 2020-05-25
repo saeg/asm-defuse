@@ -281,7 +281,7 @@
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-analysis</artifactId>
-			<version>6.0</version>
+			<version>8.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>br.usp.each.saeg</groupId>

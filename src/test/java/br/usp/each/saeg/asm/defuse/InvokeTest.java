@@ -40,7 +40,7 @@ import org.objectweb.asm.Type;
 
 public class InvokeTest {
 
-    private static final Type aType = Mockito.mock(Type.class);
+    private static final Type aType = Type.getType("I");
 
     @Test
     public void InvokeToString() {

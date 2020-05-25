@@ -38,7 +38,6 @@ import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 
@@ -208,11 +207,9 @@ public class ValueTest {
 
     @Test
     public void ValueToString() {
-        final Type type = mock(Type.class);
+        final Type type = Type.getObjectType("SomeValue");
         final Value value = new Value(type);
-        Mockito.when(type.getDescriptor()).thenReturn("Some Value");
-        Assert.assertEquals("Some Value", value.toString());
-        Mockito.verify(type, Mockito.times(1)).getDescriptor();
+        Assert.assertEquals("LSomeValue;", value.toString());
     }
 
 }
