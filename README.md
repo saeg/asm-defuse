@@ -2,7 +2,6 @@
 
 [ASM](http://asm.ow2.org/) powered by definitions/uses analysis
 
-[![Coverage Status](https://img.shields.io/coveralls/saeg/asm-defuse.svg?style=flat-square)](https://coveralls.io/r/saeg/asm-defuse?branch=master)
 [![Maven Central](https://img.shields.io/maven-central/v/br.usp.each.saeg/asm-defuse.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/br.usp.each.saeg/asm-defuse)
 
 ASM-DefUse extends [ASM](http://asm.ow2.org/) analysis API with control- and data-flow algorithms for definition/uses analysis.
