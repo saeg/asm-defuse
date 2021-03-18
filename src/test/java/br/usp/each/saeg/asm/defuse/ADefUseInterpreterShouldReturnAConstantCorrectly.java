@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -119,7 +120,7 @@ public class ADefUseInterpreterShouldReturnAConstantCorrectly {
     public void AssertThatNewOperationReturnsAConstantCorrectly() {
         final DefUseInterpreter interpreter = new DefUseInterpreter();
         final Value op = interpreter.newOperation(insn);
-        Assert.assertThat(op, sameInstance(expected));
+        MatcherAssert.assertThat(op, sameInstance(expected));
     }
 
 }

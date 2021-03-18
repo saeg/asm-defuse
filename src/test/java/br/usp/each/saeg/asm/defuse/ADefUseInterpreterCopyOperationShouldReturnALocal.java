@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +90,7 @@ public class ADefUseInterpreterCopyOperationShouldReturnALocal {
     @Test
     public void AssertThatDefUseInterpreterCopyOperationReturnLocalWithCorrectType() {
         final Local local = (Local) interpreter.copyOperation(insn, value);
-        Assert.assertThat(local.type, sameInstance(value.type));
+        MatcherAssert.assertThat(local.type, sameInstance(value.type));
     }
 
 }

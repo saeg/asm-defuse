@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,7 +87,7 @@ public class DefUseInterpreterTest {
         final InsnNode insn = new InsnNode(Opcodes.INEG);
         final Value value = new Value(Type.INT_TYPE);
         final Value op = interpreter.unaryOperation(insn, value);
-        Assert.assertThat(op, sameInstance(value));
+        MatcherAssert.assertThat(op, sameInstance(value));
     }
 
     @Test
@@ -94,7 +95,7 @@ public class DefUseInterpreterTest {
         final InsnNode insn = new InsnNode(Opcodes.LNEG);
         final Value value = new Value(Type.LONG_TYPE);
         final Value op = interpreter.unaryOperation(insn, value);
-        Assert.assertThat(op, sameInstance(value));
+        MatcherAssert.assertThat(op, sameInstance(value));
     }
 
     @Test
@@ -102,7 +103,7 @@ public class DefUseInterpreterTest {
         final InsnNode insn = new InsnNode(Opcodes.FNEG);
         final Value value = new Value(Type.FLOAT_TYPE);
         final Value op = interpreter.unaryOperation(insn, value);
-        Assert.assertThat(op, sameInstance(value));
+        MatcherAssert.assertThat(op, sameInstance(value));
     }
 
     @Test
@@ -110,7 +111,7 @@ public class DefUseInterpreterTest {
         final InsnNode insn = new InsnNode(Opcodes.DNEG);
         final Value value = new Value(Type.DOUBLE_TYPE);
         final Value op = interpreter.unaryOperation(insn, value);
-        Assert.assertThat(op, sameInstance(value));
+        MatcherAssert.assertThat(op, sameInstance(value));
     }
 
     @Test
@@ -129,7 +130,7 @@ public class DefUseInterpreterTest {
         Assert.assertEquals(insn.owner, sfield.owner);
         Assert.assertEquals(insn.name, sfield.name);
         Assert.assertEquals(insn.desc, sfield.desc);
-        Assert.assertThat(sfield.value, sameInstance(value));
+        MatcherAssert.assertThat(sfield.value, sameInstance(value));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -231,7 +232,7 @@ public class DefUseInterpreterTest {
         Mockito.when(b.getVariables()).thenReturn(bVars);
 
         final Value merged = interpreter.merge(a, b);
-        Assert.assertThat(merged, sameInstance(a));
+        MatcherAssert.assertThat(merged, sameInstance(a));
     }
 
     @Test
@@ -251,7 +252,7 @@ public class DefUseInterpreterTest {
         Mockito.when(b.getVariables()).thenReturn(bVars);
 
         final Value merged = interpreter.merge(a, b);
-        Assert.assertThat(merged, sameInstance(b));
+        MatcherAssert.assertThat(merged, sameInstance(b));
     }
 
 }
