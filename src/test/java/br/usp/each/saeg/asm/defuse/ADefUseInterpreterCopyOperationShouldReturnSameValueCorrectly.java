@@ -34,6 +34,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,7 +72,7 @@ public class ADefUseInterpreterCopyOperationShouldReturnSameValueCorrectly {
         final Value value = new Value(Type.INT_TYPE);
         final DefUseInterpreter interpreter = new DefUseInterpreter();
         final Value copy = interpreter.copyOperation(insn, value);
-        Assert.assertThat(copy, sameInstance(value));
+        MatcherAssert.assertThat(copy, sameInstance(value));
     }
 
 }

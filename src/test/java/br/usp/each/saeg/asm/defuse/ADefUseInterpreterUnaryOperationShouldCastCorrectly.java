@@ -34,6 +34,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,7 +95,7 @@ public class ADefUseInterpreterUnaryOperationShouldCastCorrectly {
         if (insn.getOpcode() == Opcodes.CHECKCAST) {
             Assert.assertEquals(expected, cast.type);
         } else {
-            Assert.assertThat(cast.type, sameInstance(expected));
+            MatcherAssert.assertThat(cast.type, sameInstance(expected));
         }
     }
 

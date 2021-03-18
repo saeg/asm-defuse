@@ -35,6 +35,7 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -103,7 +104,7 @@ public class ValueTest {
 
     @Test
     public void VariablesSetIsUnmodifiable() {
-        Assert.assertThat(value.getVariables(), sameInstance(Collections.EMPTY_SET));
+        MatcherAssert.assertThat(value.getVariables(), sameInstance(Collections.EMPTY_SET));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -123,7 +124,7 @@ public class ValueTest {
 
     @Test
     public void withReturnANewValue() {
-        Assert.assertThat(value.with(mock(AbstractInsnNode.class)), not(sameInstance(value)));
+        MatcherAssert.assertThat(value.with(mock(AbstractInsnNode.class)), not(sameInstance(value)));
     }
 
     @Test

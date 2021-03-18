@@ -33,6 +33,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 
 import java.util.HashSet;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,7 +56,7 @@ public class ValueHolderTest {
 
     @Test
     public void GetVariablesDelegateToValue() {
-        Assert.assertThat(vh.getVariables(), sameInstance(value.getVariables()));
+        MatcherAssert.assertThat(vh.getVariables(), sameInstance(value.getVariables()));
     }
 
     @Test
