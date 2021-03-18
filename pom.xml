@@ -63,6 +63,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>6</maven.compiler.source>
 		<maven.compiler.target>6</maven.compiler.target>
+		<pitest.jvmArg>-Dfoo=bar</pitest.jvmArg>
 	</properties>
 
 	<build>
@@ -190,6 +191,15 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>jdk16</id>
+			<activation>
+				<jdk>[16,)</jdk>
+			</activation>
+			<properties>
+				<pitest.jvmArg>--illegal-access=permit</pitest.jvmArg>
+			</properties>
+		</profile>
+		<profile>
 			<id>pitest</id>
 			<build>
 				<plugins>
@@ -207,6 +217,9 @@
 							</execution>
 						</executions>
 						<configuration>
+							<jvmArgs>
+								<jvmArg>${pitest.jvmArg}</jvmArg>
+							</jvmArgs>
 							<threads>2</threads>
 							<timestampedReports>false</timestampedReports>
 							<mutationThreshold>70</mutationThreshold>

@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-18.04, windows-2019]
-        java: [6, 7, 7.0.121, 8, 9, 10, 11, 12, 13, 14, 15]
+        java: [6, 7, 7.0.121, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
@@ -23,3 +23,6 @@ jobs:
       run: java -version && javac -version
     - name: Build
       run: ./mvnw verify -Ppitest
+      env:
+        MAVEN_OPTS: "${{ matrix.java == 16 && '--illegal-access=permit' || '' }}"
+        # This is required only to run PIT Mutation Testing 1.2.5 with Java > 16
