@@ -24,5 +24,5 @@ jobs:
     - name: Build
       run: ./mvnw verify -Ppitest
       env:
-        MAVEN_OPTS: "${{ matrix.java == 16 && '--illegal-access=permit' || '' }}"
+        MAVEN_OPTS: "${{ matrix.java >= 16 && '--illegal-access=permit' || '' }}"
         # This is required only to run PIT Mutation Testing 1.2.5 with Java > 16
