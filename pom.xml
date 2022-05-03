@@ -63,7 +63,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>6</maven.compiler.source>
 		<maven.compiler.target>6</maven.compiler.target>
-		<pitest.jvmArg>-Dfoo=bar</pitest.jvmArg>
 	</properties>
 
 	<build>
@@ -175,6 +174,27 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.2.5</version>
+				<executions>
+					<execution>
+						<id>pitest</id>
+						<phase>test</phase>
+						<goals>
+							<goal>mutationCoverage</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skip>true</skip>
+					<threads>2</threads>
+					<timestampedReports>false</timestampedReports>
+					<mutationThreshold>70</mutationThreshold>
+					<coverageThreshold>80</coverageThreshold>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -195,9 +215,42 @@
 			<activation>
 				<jdk>[16,)</jdk>
 			</activation>
-			<properties>
-				<pitest.jvmArg>--illegal-access=permit</pitest.jvmArg>
-			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<configuration>
+							<jvmArgs>
+								<jvmArg>--illegal-access=permit</jvmArg>
+							</jvmArgs>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jdk17</id>
+			<activation>
+				<jdk>[17,)</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<configuration>
+							<jvmArgs>
+								<jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
+								<jvmArg>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</jvmArg>
+								<jvmArg>--add-opens=java.base/java.text=ALL-UNNAMED</jvmArg>
+								<jvmArg>--add-opens=java.desktop/java.awt.font=ALL-UNNAMED</jvmArg>
+								<jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
+							</jvmArgs>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>pitest</id>
@@ -206,24 +259,8 @@
 					<plugin>
 						<groupId>org.pitest</groupId>
 						<artifactId>pitest-maven</artifactId>
-						<version>1.2.5</version>
-						<executions>
-							<execution>
-								<id>pitest</id>
-								<phase>test</phase>
-								<goals>
-									<goal>mutationCoverage</goal>
-								</goals>
-							</execution>
-						</executions>
 						<configuration>
-							<jvmArgs>
-								<jvmArg>${pitest.jvmArg}</jvmArg>
-							</jvmArgs>
-							<threads>2</threads>
-							<timestampedReports>false</timestampedReports>
-							<mutationThreshold>70</mutationThreshold>
-							<coverageThreshold>80</coverageThreshold>
+							<skip>false</skip>
 						</configuration>
 					</plugin>
 				</plugins>

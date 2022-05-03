@@ -22,7 +22,17 @@ jobs:
     - name: Java version
       run: java -version && javac -version
     - name: Build
+      if: ${{ matrix.java < 16 }}
+      run: ./mvnw verify -Ppitest
+    - name: Build
+      if: ${{ matrix.java == 16 }}
       run: ./mvnw verify -Ppitest
       env:
-        MAVEN_OPTS: "${{ matrix.java >= 16 && '--illegal-access=permit' || '' }}"
-        # This is required only to run PIT Mutation Testing 1.2.5 with Java > 16
+        MAVEN_OPTS: "--illegal-access=permit"
+        # This is required only to run PIT Mutation Testing 1.2.5 with Java == 16
+    - name: Build
+      if: ${{ matrix.java >= 17 }}
+      run: ./mvnw verify -Ppitest
+      env:
+        MAVEN_OPTS: "--add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
+        # This is required only to run PIT Mutation Testing 1.2.5 with Java >= 17
