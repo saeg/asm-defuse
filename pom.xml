@@ -222,25 +222,6 @@
 						<artifactId>pitest-maven</artifactId>
 						<configuration>
 							<jvmArgs>
-								<jvmArg>--illegal-access=permit</jvmArg>
-							</jvmArgs>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>jdk17</id>
-			<activation>
-				<jdk>[17,)</jdk>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.pitest</groupId>
-						<artifactId>pitest-maven</artifactId>
-						<configuration>
-							<jvmArgs>
 								<jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
 								<jvmArg>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</jvmArg>
 								<jvmArg>--add-opens=java.base/java.text=ALL-UNNAMED</jvmArg>
