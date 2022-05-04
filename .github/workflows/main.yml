@@ -19,13 +19,15 @@ jobs:
     - uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java }}
+    - id: get-major-java-version
+      run: echo "::set-output name=value::$(echo ${{ matrix.java }} | cut -d. -f1)"
     - name: Java version
       run: java -version && javac -version
     - name: Build
-      if: ${{ matrix.java < 16 }}
+      if: ${{ steps.get-major-java-version.outputs.value < 16 }}
       run: ./mvnw verify -Ppitest
     - name: Build
-      if: ${{ matrix.java >= 16 }}
+      if: ${{ steps.get-major-java-version.outputs.value >= 16 }}
       run: ./mvnw verify -Ppitest
       env:
         MAVEN_OPTS: "--add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
