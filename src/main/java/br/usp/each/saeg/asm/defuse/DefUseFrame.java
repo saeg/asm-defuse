@@ -326,7 +326,7 @@ public class DefUseFrame extends Frame<Value> {
         case Opcodes.INVOKEINTERFACE: {
             values = new ArrayList<Value>();
             final String desc = ((MethodInsnNode) insn).desc;
-            for (int i = Type.getArgumentTypes(desc).length; i > 0; --i) {
+            for (int i = Type.getArgumentCount(desc); i > 0; --i) {
                 values.add(0, pop());
             }
             if (insn.getOpcode() != Opcodes.INVOKESTATIC) {
@@ -342,7 +342,7 @@ public class DefUseFrame extends Frame<Value> {
         case Opcodes.INVOKEDYNAMIC: {
             values = new ArrayList<Value>();
             final String desc = ((InvokeDynamicInsnNode) insn).desc;
-            for (int i = Type.getArgumentTypes(desc).length; i > 0; --i) {
+            for (int i = Type.getArgumentCount(desc); i > 0; --i) {
                 values.add(0, pop());
             }
             if (Type.getReturnType(desc) == Type.VOID_TYPE) {
